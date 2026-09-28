@@ -2,8 +2,10 @@
 
 Inspects transform module paths to determine which backend framework (Kornia, Albumentations, TorchVision) is in use.
 
-Detection is driven by a pluggable adapter registry. The three built-in backends self-register at import time via
-:func:`register_adapter`. Third-party adapters may register through the ``fused_transforms.adapters`` entry-point
+Detection is driven by a pluggable adapter registry. The three built-in backends register at import time by module
+prefix only: detection matches a transform's module path, so it never needs the backend imported, and each built-in
+adapter module (with the backend library it imports) loads on first access to its registry entry's ``adapter``.
+Third-party adapters may register through :func:`register_adapter` or the ``fused_transforms.adapters`` entry-point
 group; those are loaded **lazily** on the first detection miss (never at package import) so that ``import
 fused_transforms`` neither executes third-party code nor pays their import cost.
 
@@ -19,12 +21,15 @@ Examples:
 
 from __future__ import annotations
 
+import sys
 import warnings
-from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING
+from importlib import import_module
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from fused_transforms.types import TransformAdapter
 
 
@@ -41,23 +46,58 @@ class Backend(Enum):
 ADAPTERS_ENTRY_POINT_GROUP = "fused_transforms.adapters"
 
 
-@dataclass(frozen=True, slots=True)
 class _Entry:
-    """A registered adapter: its backend tag, module prefixes, and capabilities.
+    """A registered adapter: its backend tag, module prefixes, and an adapter instance resolved on first access.
+
+    Detection reads only ``backend`` and ``prefixes``. The adapter comes either ready-made (:func:`register_adapter`)
+    or from a zero-argument ``loader`` (the built-ins), which runs once, the first time ``adapter`` or
+    ``capabilities`` is read, so registering a built-in never imports its backend library.
 
     Attributes:
         backend: The ``Backend`` this adapter detects (``Backend.UNKNOWN`` for third-party adapters that map to no
             built-in enum member).
-        adapter: The adapter instance implementing ``TransformAdapter``.
         prefixes: Module-path prefixes (e.g. ``"kornia."``) that identify transforms handled by this adapter.
-        capabilities: Canonical op names the adapter can build.
+
+    Examples:
+        ```pycon
+        >>> entry = _Entry(Backend.UNKNOWN, ("dummypkg.",), loader=lambda: object())
+        >>> entry.prefixes
+        ('dummypkg.',)
+
+        ```
 
     """
 
-    backend: Backend
-    adapter: TransformAdapter
-    prefixes: tuple[str, ...]
-    capabilities: frozenset[str] = field(default_factory=frozenset)
+    __slots__ = ("_adapter", "_loader", "backend", "prefixes")
+
+    def __init__(
+        self,
+        backend: Backend,
+        prefixes: tuple[str, ...],
+        adapter: TransformAdapter | None = None,
+        *,
+        loader: Callable[[], TransformAdapter] | None = None,
+    ) -> None:
+        """Initialize the entry from exactly one of ``adapter`` and ``loader``."""
+        if (adapter is None) == (loader is None):
+            raise ValueError("_Entry needs exactly one of adapter= or loader=")
+        self.backend = backend
+        self.prefixes = prefixes
+        self._adapter = adapter
+        self._loader = loader
+
+    @property
+    def adapter(self) -> TransformAdapter:
+        """Return the adapter instance, running the loader on first access."""
+        if self._adapter is None:
+            # Benign race: two threads may both run the loader; adapters are stateless, the last one wins.
+            self._adapter = cast("Callable[[], TransformAdapter]", self._loader)()
+        return self._adapter
+
+    @property
+    def capabilities(self) -> frozenset[str]:
+        """Return the canonical op names the adapter can build (loads a lazily registered adapter)."""
+        return adapter_capabilities(self.adapter)
 
 
 #: name -> _Entry. Built-ins self-register at import; third-party adapters load lazily (see ``_load_entrypoints``).
@@ -124,12 +164,7 @@ def register_adapter(
 
     """
     prefixes = (module_prefixes,) if isinstance(module_prefixes, str) else tuple(module_prefixes)
-    _ADAPTER_REGISTRY[name] = _Entry(
-        backend=backend,
-        adapter=adapter,
-        prefixes=prefixes,
-        capabilities=adapter_capabilities(adapter),
-    )
+    _ADAPTER_REGISTRY[name] = _Entry(backend, prefixes, adapter)
 
 
 def _load_entrypoints() -> None:
@@ -359,19 +394,72 @@ def _match_backend_from_mro(cls: type) -> Backend | None:
     return None
 
 
-def _register_builtins() -> None:
-    """Self-register the three built-in adapters (kornia, torchvision, albumentations) at import.
+def _builtin_adapter_loader(module_name: str, class_name: str) -> Callable[[], TransformAdapter]:
+    """Return a loader that imports a built-in adapter module on first use and instantiates its adapter class.
 
-    Kept as a function (invoked at module bottom) so import order is explicit and the registry is populated exactly
-    once. Adapter classes carry their own ``capabilities`` frozenset; ``register_adapter`` reads it via the getattr
-    helper, so an adapter missing the member simply registers with empty capabilities.
+    Args:
+        module_name: Dotted adapter module, e.g. ``"fused_transforms.adapters.kornia"``.
+        class_name: Adapter class defined there, e.g. ``"KorniaAdapter"``.
+
+    Returns:
+        A zero-argument callable producing the adapter instance.
 
     """
-    from fused_transforms.adapters import AlbumentationsAdapter, KorniaAdapter, TorchVisionAdapter
 
-    register_adapter("kornia", KorniaAdapter(), "kornia.", backend=Backend.KORNIA)
-    register_adapter("albumentations", AlbumentationsAdapter(), "albumentations.", backend=Backend.ALBUMENTATIONS)
-    register_adapter("torchvision", TorchVisionAdapter(), "torchvision.", backend=Backend.TORCHVISION)
+    def load() -> TransformAdapter:
+        return cast("TransformAdapter", getattr(import_module(module_name), class_name)())
+
+    return load
+
+
+#: Built-in backend -> adapter class name defined in ``fused_transforms.adapters.<backend value>``.
+_BUILTIN_ADAPTER_CLASSES: dict[Backend, str] = {
+    Backend.KORNIA: "KorniaAdapter",
+    Backend.ALBUMENTATIONS: "AlbumentationsAdapter",
+    Backend.TORCHVISION: "TorchVisionAdapter",
+}
+
+
+def is_builtin_adapter(adapter: object, backend: Backend) -> bool:
+    """Return whether ``adapter`` is (a subclass of) the built-in adapter for ``backend``, without importing it.
+
+    An instance of an adapter class implies the module defining that class is already imported, so this consults
+    ``sys.modules`` rather than importing: asking whether a Kornia pipeline's adapter is the Albumentations one
+    must not import Albumentations.
+
+    Args:
+        adapter: Any object, typically a pipeline's or segment's adapter.
+        backend: The built-in backend to test against.
+
+    Returns:
+        ``True`` when ``adapter`` is an instance of that backend's built-in adapter class.
+
+    Examples:
+        ```pycon
+        >>> is_builtin_adapter(object(), Backend.KORNIA)
+        False
+
+        ```
+
+    """
+    class_name = _BUILTIN_ADAPTER_CLASSES.get(backend)
+    module = sys.modules.get(f"fused_transforms.adapters.{backend.value}")
+    adapter_cls = getattr(module, class_name, None) if module is not None and class_name is not None else None
+    return isinstance(adapter_cls, type) and isinstance(adapter, adapter_cls)
+
+
+def _register_builtins() -> None:
+    """Register the three built-in adapters (kornia, torchvision, albumentations) at import, by module prefix only.
+
+    Kept as a function (invoked at module bottom) so import order is explicit and the registry is populated exactly
+    once. Nothing here imports an adapter module or a backend library: each entry holds a loader that does so the first
+    time its ``adapter`` (or ``capabilities``, read from the adapter class) is needed.
+
+    """
+    for backend, class_name in _BUILTIN_ADAPTER_CLASSES.items():
+        name = backend.value
+        loader = _builtin_adapter_loader(f"fused_transforms.adapters.{name}", class_name)
+        _ADAPTER_REGISTRY[name] = _Entry(backend, (f"{name}.",), loader=loader)
 
 
 _register_builtins()

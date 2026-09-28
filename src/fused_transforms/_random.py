@@ -6,9 +6,9 @@ random stream instead of sharing the global one.
 
 Two invariants hold across this module:
 
-- ``generator=None`` reproduces the historical call *exactly* — same function,
-  same device, no extra hop — so existing pipelines keep their bit-for-bit
-  behaviour on every device.
+- ``generator=None`` draws from the global torch stream with the plain torch
+  call — same function, same device, no extra hop — so seeding with
+  ``torch.manual_seed`` controls it bit for bit on every device.
 - A generator whose device differs from the target device draws on the
   generator's device and copies the result across, so one CPU generator can seed
   a CUDA or MPS pipeline. ``torch`` itself rejects that combination.

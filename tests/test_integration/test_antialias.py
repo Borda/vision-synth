@@ -20,7 +20,7 @@ import pytest
 import torch
 
 import fused_transforms.affine.segment as segment
-import fused_transforms.core.pipeline as pipeline
+from fused_transforms import _compat
 from fused_transforms._compat import _KORNIA_AVAILABLE, _TORCHVISION_AVAILABLE
 from fused_transforms.affine.matrix import estimate_scale
 from fused_transforms.affine.segment import (
@@ -298,7 +298,8 @@ def test_antialias_true_rejects_missing_kornia_at_construction(monkeypatch: pyte
     """Explicit antialiasing never silently degrades when Kornia is unavailable."""
     from fused_transforms.compose import FusedCompose
 
-    monkeypatch.setattr(pipeline, "_KORNIA_AVAILABLE", False)
+    # What import_backend caches for a Kornia that is absent (or installed but failing to import).
+    monkeypatch.setitem(_compat._LOADED, "kornia", None)
 
     with pytest.raises(ImportError, match="antialias=True requires the optional kornia dependency"):
         FusedCompose([], antialias=True)
@@ -306,7 +307,8 @@ def test_antialias_true_rejects_missing_kornia_at_construction(monkeypatch: pyte
 
 def test_build_segments_antialias_rejects_missing_kornia(monkeypatch: pytest.MonkeyPatch) -> None:
     """The exported segment builder has the same explicit optional-dependency contract."""
-    monkeypatch.setattr(segment, "_KORNIA_AVAILABLE", False)
+    # What import_backend caches for a Kornia that is absent (or installed but failing to import).
+    monkeypatch.setitem(_compat._LOADED, "kornia", None)
 
     with pytest.raises(ImportError, match="antialias=True requires the optional kornia dependency"):
         build_segments([], adapter=object(), antialias=True)  # type: ignore[arg-type]

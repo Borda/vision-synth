@@ -709,7 +709,7 @@ class TestProjectiveSegmentBuildSegments:
 
     def test_albu_projective_segment_requires_cv2(self, monkeypatch: pytest.MonkeyPatch):
         """AlbuProjectiveSegment raises a clear ImportError when cv2 is unavailable."""
-        monkeypatch.setattr(segment_mod, "_cv2", None)
+        monkeypatch.setattr(segment_mod, "_cv2_module", lambda: None)
 
         adapter = _StubAdapter()
         projective_transform = self._proj_transform()
@@ -730,7 +730,7 @@ class TestCv2ReflectionBorderParity:
 
     def test_reflection_maps_to_border_reflect_101(self):
         """The _CV2_BORDER table maps "reflection" to BORDER_REFLECT_101, not BORDER_REFLECT."""
-        assert segment_mod._CV2_BORDER["reflection"] == segment_mod._cv2.BORDER_REFLECT_101
+        assert segment_mod._CV2_BORDER["reflection"] == segment_mod._require_cv2().BORDER_REFLECT_101
 
     def test_translated_border_pixels_match_torch_grid_sample(self):
         """A +2px translation warped via cv2 with the mapped border equals the torch reflection path."""
@@ -751,11 +751,11 @@ class TestCv2ReflectionBorderParity:
         )
 
         mtx_fwd = np.array([[1.0, 0.0, shift], [0.0, 1.0, 0.0]], dtype=np.float64)
-        out_cv2 = segment_mod._cv2.warpAffine(
+        out_cv2 = segment_mod._require_cv2().warpAffine(
             image[0, 0].numpy(),
             mtx_fwd,
             (width, height),
-            flags=segment_mod._cv2.INTER_LINEAR,
+            flags=segment_mod._require_cv2().INTER_LINEAR,
             borderMode=segment_mod._CV2_BORDER["reflection"],
         )
 

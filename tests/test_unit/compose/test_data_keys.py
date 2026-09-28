@@ -11,8 +11,6 @@ Tests cover the v0.3 data_keys contract:
 
 from __future__ import annotations
 
-import warnings
-
 import pytest
 import torch
 
@@ -115,36 +113,17 @@ class TestDataKeysMultipleKeys:
 
 
 class TestDataKeysUnknownKey:
-    """Unknown keys in data_keys emit UserWarning and pass through unchanged."""
+    """Unknown keys in data_keys fail closed at construction."""
 
-    def test_unknown_key_warns(self):
-        """Unknown data_key emits a UserWarning at construction time."""
-        img = torch.rand(1, 3, 4, 4)
-        custom = torch.rand(1, 1, 4, 4)
-        with warnings.catch_warnings(record=True) as recorded_warnings:
-            warnings.simplefilter("always")
-            pipe = Compose([], data_keys=["input", "custom_field"])
-            pipe(img, custom)
-        user_warnings = [warning for warning in recorded_warnings if issubclass(warning.category, UserWarning)]
-        assert len(user_warnings) >= 1, "Expected at least one UserWarning for unknown key"
-        assert any("custom_field" in str(warning.message) for warning in user_warnings), (
-            "Warning should mention the unknown key name"
-        )
+    def test_unknown_key_raises(self):
+        """An unknown data_key raises ``ValueError`` naming the key, even for an empty pipeline.
 
-    def test_unknown_key_passes_through_unchanged(self):
-        """Unknown key value is returned unchanged (passthrough), not dropped or transformed.
-
-        The contract for unknown keys is warn-then-passthrough so callers using custom keys see a deprecation-style
-        warning at construction yet still receive their data back intact — failing closed would break user pipelines.
+        Passing an unsupported target through untransformed would silently misalign it with the augmented image, which
+        is the failure the documented fail-closed target contract exists to prevent.
 
         """
-        img = torch.rand(1, 3, 4, 4)
-        custom = torch.rand(1, 2, 4, 4)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", UserWarning)
-            pipe = Compose([], data_keys=["input", "custom_field"])
-            _out_img, out_custom = pipe(img, custom)
-        torch.testing.assert_close(out_custom, custom)
+        with pytest.raises(ValueError, match="custom_field"):
+            Compose([], data_keys=["input", "custom_field"])
 
 
 class TestDataKeysArgCountMismatch:

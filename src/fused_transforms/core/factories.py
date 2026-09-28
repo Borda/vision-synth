@@ -363,8 +363,8 @@ class FactoriesMixin:
         translate_y: tuple[float, float] | None = None,
         hflip_p: float = 0.0,
         vflip_p: float = 0.0,
-        brightness: float | None = None,
-        contrast: float | None = None,
+        brightness: float | tuple[float, float] | None = None,
+        contrast: float | tuple[float, float] | None = None,
         interpolation: InterpolationStr = "bilinear",
         padding_mode: ComposePaddingModeStr = "zeros",
         reorder: ReorderPolicy = ReorderPolicy.POINTWISE,
@@ -424,17 +424,16 @@ class FactoriesMixin:
             hflip_p: Probability of horizontal flip per sample. Default 0.0.
             vflip_p: Probability of vertical flip per sample. Default 0.0.
             rotation_p: Probability of applying ``rotation`` per sample, keyword-only.
-                Default ``1.0``, which applies it to every sample — the historical
-                behaviour, so an existing call is unchanged. Ignored when
+                Default ``1.0``, which applies it to every sample. Ignored when
                 ``rotation`` is ``None``.
             scale_p: Probability of applying the scale family (``scale``,
                 ``scale_x``, ``scale_y``) per sample, keyword-only. The three share
                 one probability because they describe one scaling of the same
                 sample; use ``specs=`` or :meth:`from_config` for finer control.
                 Default ``1.0``. Ignored when no scale range is set.
-            brightness: Maximum multiplicative brightness deviation. A value
+            brightness: Maximum brightness deviation, or a ``(low, high)`` factor range. A value
                 of ``0.1`` samples factors in ``[0.9, 1.1]``.
-            contrast: Maximum multiplicative contrast deviation. A value of
+            contrast: Maximum contrast deviation, or a ``(low, high)`` factor range. A value of
                 ``0.1`` samples factors in ``[0.9, 1.1]`` around midpoint 0.5.
             interpolation: Interpolation mode for the ``grid_sample`` warp.
                 One of ``"bilinear"`` (default), ``"nearest"``, ``"bicubic"``.
@@ -922,17 +921,30 @@ class FactoriesMixin:
 
     @staticmethod
     def _native_color_specs(
-        brightness: float | None,
-        contrast: float | None,
+        brightness: float | tuple[float, float] | None,
+        contrast: float | tuple[float, float] | None,
     ) -> list[tuple[str, tuple[float, float]]]:
-        """Convert brightness/contrast deviations into native factor ranges."""
+        """Convert brightness/contrast settings into native factor ranges.
+
+        A number ``d`` is a maximum deviation, sampling factors in ``[1 - d, 1 + d]``; a ``(low, high)`` pair is the
+        factor range itself (TorchVision's ``ColorJitter`` convention), so ``0.2`` and ``(0.8, 1.2)`` agree.
+
+        """
         specs: list[tuple[str, tuple[float, float]]] = []
-        for name, deviation in (("brightness", brightness), ("contrast", contrast)):
-            if deviation is None:
+        for name, setting in (("brightness", brightness), ("contrast", contrast)):
+            if setting is None:
                 continue
-            if deviation < 0.0:
-                raise ValueError(f"{name} must be non-negative, got {deviation!r}")
-            specs.append((name, (1.0 - deviation, 1.0 + deviation)))
+            if isinstance(setting, (int, float)):
+                if setting < 0.0:
+                    raise ValueError(f"{name} must be non-negative, got {setting!r}")
+                specs.append((name, (1.0 - setting, 1.0 + setting)))
+                continue
+            if len(setting) != 2:
+                raise ValueError(f"{name} range must be a (low, high) pair, got {setting!r}")
+            low, high = float(setting[0]), float(setting[1])
+            if not 0.0 <= low <= high:
+                raise ValueError(f"{name} range must satisfy 0 <= low <= high, got {setting!r}")
+            specs.append((name, (low, high)))
         return specs
 
     @staticmethod
@@ -1067,23 +1079,24 @@ def _geometric_param_transforms(
     if rotation_p == 1.0 and scale_p == 1.0:
         return [_DirectParamTransform(param_specs, prob=1.0)]
 
-    gated: list[tuple[dict[str, tuple[float, float]], float]] = []
-    always: dict[str, tuple[float, float]] = {}
+    # One transform per contiguous run of ranges sharing a gate, walking them in canonical order
+    # (rotation -> scale -> shear -> translate). A gate is an op family, not a probability value: rotation and the
+    # scale family draw independently even at equal probabilities, the scale family stays under one draw, and the
+    # ungated ops keep their place after the gated ones instead of being hoisted ahead of them.
+    transforms: list[_DirectParamTransform] = []
+    current_gate: str | None = None
     for key, value in param_specs.items():
-        probability = rotation_p if key == "rotation" else scale_p if key in _SCALE_PARAM_KEYS else 1.0
-        if probability == 1.0:
-            always[key] = value
+        if key == "rotation":
+            family, probability = "rotation", rotation_p
+        elif key in _SCALE_PARAM_KEYS:
+            family, probability = "scale", scale_p
         else:
-            gated.append(({key: value}, probability))
-
-    # One transform per distinct gated probability keeps the scale family under a single draw
-    # rather than sampling scale_x and scale_y against the same probability independently.
-    merged: dict[float, dict[str, tuple[float, float]]] = {}
-    for params, probability in gated:
-        merged.setdefault(probability, {}).update(params)
-
-    transforms = [_DirectParamTransform(always, prob=1.0)] if always else []
-    transforms.extend(_DirectParamTransform(params, prob=probability) for probability, params in merged.items())
+            family, probability = "always", 1.0
+        gate = family if probability < 1.0 else "always"
+        if gate != current_gate:
+            transforms.append(_DirectParamTransform({}, prob=probability))
+            current_gate = gate
+        transforms[-1].param_specs[key] = value
     return transforms
 
 
@@ -1365,6 +1378,10 @@ class _DirectParamAdapter:
         del params, values
         msg = f"build_lut not supported for native transform {type(transform).__name__!r}"
         raise NotImplementedError(msg)
+
+    #: Native brightness/contrast scale every channel by one factor about one midpoint, so
+    #: ``FusedColorSegment`` applies them per channel to non-RGB images instead of skipping them.
+    channel_uniform_color: bool = True
 
     @staticmethod
     def exact_flip_dims(transform: object) -> list[int]:

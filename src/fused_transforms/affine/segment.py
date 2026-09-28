@@ -27,6 +27,7 @@ import warnings
 from collections.abc import Callable, Sequence
 from contextvars import ContextVar
 from dataclasses import dataclass
+from types import ModuleType
 from typing import Any, cast
 
 import numpy as np
@@ -35,7 +36,8 @@ import torch.nn.functional as F  # noqa: N812
 from numpy.typing import NDArray
 from torch import Tensor, nn
 
-from fused_transforms._compat import _ALBUMENTATIONS_AVAILABLE, _KORNIA_AVAILABLE
+from fused_transforms._backend import Backend, is_builtin_adapter
+from fused_transforms._compat import _ALBUMENTATIONS_AVAILABLE, _KORNIA_AVAILABLE, backend_available, import_backend
 from fused_transforms._random import GeneratorPicklingMixin, reject_backend_randomness
 from fused_transforms._random import rand as _rand
 from fused_transforms.affine.matrix import (
@@ -61,30 +63,63 @@ from fused_transforms.types import (
     TransformCategory,
 )
 
-# cv2 optional import — used by both FusedAffineSegment (B=1 CPU fast path)
-# and AlbuFusedAffineSegment (Albumentations cv2 backend).
-try:
-    import cv2 as _cv2
+# OpenCV flag values for the cv2 warp paths used by FusedAffineSegment (B=1 CPU fast path) and
+# AlbuFusedAffineSegment (Albumentations cv2 backend). They are fixed constants of OpenCV's C API, spelled
+# out here because reading them from the module would import OpenCV whenever this package is imported;
+# ``test_cv2_flag_literals_match_opencv`` pins them to the installed module.
+_CV2_INTERP: dict[str, int] = {
+    "bilinear": 1,  # cv2.INTER_LINEAR
+    "nearest": 0,  # cv2.INTER_NEAREST
+    "bicubic": 2,  # cv2.INTER_CUBIC
+}
+_CV2_BORDER: dict[str, int] = {
+    "zeros": 0,  # cv2.BORDER_CONSTANT
+    "border": 1,  # cv2.BORDER_REPLICATE
+    # torch grid_sample(padding_mode="reflection", align_corners=True) reflects
+    # about the edge sample without duplicating it — cv2.BORDER_REFLECT_101,
+    # not cv2.BORDER_REFLECT (which duplicates the edge pixel).
+    "reflection": 4,  # cv2.BORDER_REFLECT_101
+}
+_CV2_WARP_INVERSE_MAP: int = 16  # cv2.WARP_INVERSE_MAP
 
-    _CV2_INTERP: dict[str, int] = {
-        "bilinear": _cv2.INTER_LINEAR,
-        "nearest": _cv2.INTER_NEAREST,
-        "bicubic": _cv2.INTER_CUBIC,
-    }
-    _CV2_BORDER: dict[str, int] = {
-        "zeros": _cv2.BORDER_CONSTANT,
-        "border": _cv2.BORDER_REPLICATE,
-        # torch grid_sample(padding_mode="reflection", align_corners=True) reflects
-        # about the edge sample without duplicating it — cv2.BORDER_REFLECT_101,
-        # not cv2.BORDER_REFLECT (which duplicates the edge pixel).
-        "reflection": _cv2.BORDER_REFLECT_101,
-    }
-    _CV2_WARP_INVERSE_MAP: int = _cv2.WARP_INVERSE_MAP
-except ImportError:
-    _cv2 = None  # type: ignore[assignment]
-    _CV2_INTERP = {}
-    _CV2_BORDER = {}
-    _CV2_WARP_INVERSE_MAP = 16  # cv2.WARP_INVERSE_MAP = 16
+
+def _cv2_module() -> ModuleType | None:
+    """Return OpenCV, imported on first use, or ``None`` when it is not installed or fails to import."""
+    return import_backend("cv2")
+
+
+#: Base of the two planes a pixel index rides an exact D4 draw in, ``index // base`` and ``index % base``. Each plane
+#: stays below ``2**24``, which float32 — the widest float MPS has — represents exactly, so the index is rebuilt as an
+#: integer on every device; a canvas past ``base**2`` pixels is refused rather than routed inexactly.
+_INDEX_PLANE_BASE = 2**24
+
+
+def _index_planes(image: Tensor) -> Tensor:
+    """Return ``(B, 2, H, W)`` planes encoding each pixel's integer index exactly in the image's stacking dtype.
+
+    Raises:
+        ValueError: If the canvas has more pixels than two planes can index exactly.
+
+    """
+    batch, _, height, width = image.shape
+    base = _INDEX_PLANE_BASE
+    if height * width > base * base:
+        raise ValueError(
+            f"a {height}x{width} canvas is too large to route a mask through an exact transform: its pixel indices "
+            f"exceed the {base * base} two index planes can hold exactly"
+        )
+    index = torch.arange(height * width, device=image.device, dtype=torch.int64).reshape(1, 1, height, width)
+    planes = torch.cat([index // base, index % base], dim=1).to(torch.promote_types(image.dtype, torch.float32))
+    return planes.expand(batch, 2, height, width)
+
+
+def _require_cv2() -> ModuleType:
+    """Return OpenCV for a cv2 warp path, raising an actionable error when it is unavailable."""
+    module = import_backend("cv2")
+    if module is None:
+        raise ImportError("This cv2 warp path requires opencv-python; install it or use execution='torch'.")
+    return module
+
 
 __doctest_skip__: list[str] = []
 if not _KORNIA_AVAILABLE:
@@ -817,7 +852,7 @@ def _kornia_gaussian_blur(image: Tensor, sigma_x: float | Tensor, sigma_y: float
         raise ValueError(msg)
     if bool(((sig_x <= 0.0) & (sig_y <= 0.0)).all()):
         return image
-    if not _KORNIA_AVAILABLE:
+    if not backend_available("kornia"):
         return None
     from kornia.filters import gaussian_blur2d
 
@@ -1026,7 +1061,14 @@ class ExactAffineSegment(GeneratorPicklingMixin, nn.Module):
         # afterwards via exact_flip_dims, so the image-only path is kept unchanged.
         stack_mask = mask is not None and flip_dims is None
         num_channels = image.shape[1]
-        stack = torch.cat([image, mask], dim=1) if mask is not None and stack_mask else image
+        stack = image
+        if mask is not None and stack_mask:
+            # Route the mask by where its pixels go, not by its values: two planes encoding each pixel's integer
+            # index ride the image through the same single draw, and the mask is gathered from them below. A D4 op
+            # only moves pixels, so this is exact for any label in any dtype on any device; stacking the labels
+            # themselves rounded those above 2**53, and one float32 index plane rounded indices above 2**24.
+            planes = _index_planes(image)
+            stack = torch.cat([image.to(planes.dtype), planes], dim=1)
 
         active_idx = active.nonzero(as_tuple=True)[0]
         if image.shape[0] == 1 or bool(active.all().item()):
@@ -1049,10 +1091,16 @@ class ExactAffineSegment(GeneratorPicklingMixin, nn.Module):
             stack_out = stack.clone()
             stack_out[active_idx] = transformed
 
-        if not stack_mask:
+        if not stack_mask or mask is None:
             return stack_out
-        aux_targets["mask"] = stack_out[:, num_channels:]
-        return stack_out[:, :num_channels]
+        planes_out = stack_out[:, num_channels:].round().long()
+        index_out = planes_out[:, :1] * _INDEX_PLANE_BASE + planes_out[:, 1:]
+        batch, mask_channels = mask.shape[:2]
+        gathered = mask.reshape(batch, mask_channels, -1).gather(
+            2, index_out.reshape(batch, 1, -1).expand(-1, mask_channels, -1)
+        )
+        aux_targets["mask"] = gathered.reshape(batch, mask_channels, *index_out.shape[-2:])
+        return stack_out[:, :num_channels].to(image.dtype)
 
     def _route_exact_coord_aux(
         self,
@@ -1435,6 +1483,12 @@ class FusedAffineSegment(_BaseAffineSegment):
             ``"zeros"`` when ``None``.
         mask_interpolation: Sampling mode for auxiliary masks. ``"nearest"``
             preserves hard labels; ``"bilinear"`` supports float soft masks.
+        render_overridden: Whether the caller overrode how warps render (``fill``, ``interpolation`` or
+            ``padding_mode``). When ``True``, a one-transform segment skips its native fast path, which would render
+            with the transform's own settings, and warps through the matrix path that honours the override.
+            ``None`` (default) derives it from this segment's own ``fill``/``interpolation``/``padding_mode``
+            arguments; :func:`build_segments` passes it explicitly because under ``padding_mode="per_transform"``
+            the segment's ``padding_mode`` is the transform's own mode, not an override.
 
     """
 
@@ -1452,6 +1506,7 @@ class FusedAffineSegment(_BaseAffineSegment):
         generator: torch.Generator | None = None,
         fill: tuple[float, ...] | None = None,
         keypoint_flip_index: tuple[int, ...] | None = None,
+        render_overridden: bool | None = None,
     ) -> None:
         """Initialize ``FusedAffineSegment``."""
         super().__init__(
@@ -1467,26 +1522,29 @@ class FusedAffineSegment(_BaseAffineSegment):
             fill=fill,
             keypoint_flip_index=keypoint_flip_index,
         )
+        # Whether the caller overrode how warps render (fill / interpolation / border). Resolved by the caller
+        # because only it knows: under ``padding_mode="per_transform"`` the segment's own ``padding_mode`` is the
+        # transform's mode, not an override. Standalone construction treats every explicit argument as one.
+        self._render_overridden: bool = (
+            render_overridden
+            if render_overridden is not None
+            else fill is not None or interpolation is not None or padding_mode is not None
+        )
         # Pre-compute fast-path selector once at construction to avoid repeated
         # isinstance checks on every forward call.
+        # Non-importing checks: a Kornia segment must not import TorchVision (or vice versa) to classify its adapter.
         self._fast_path: str | None = None
-        try:
-            from fused_transforms.adapters.kornia import KorniaAdapter
-            from fused_transforms.adapters.torchvision import TorchVisionAdapter
-
-            if isinstance(adapter, KorniaAdapter):
-                self._fast_path = "kornia"
-            elif isinstance(adapter, TorchVisionAdapter):
-                self._fast_path = "torchvision"
-        except ImportError:
-            pass
+        if is_builtin_adapter(adapter, Backend.KORNIA):
+            self._fast_path = "kornia"
+        elif is_builtin_adapter(adapter, Backend.TORCHVISION):
+            self._fast_path = "torchvision"
         # Single-transform fast paths still reconstruct _last_matrix because
         # Compose.transform_matrix is a public API used for coordinate warping.
         self._skip_matrix_recon: bool = False
         # cv2 warp fast path: for B=1 CPU multi-transform segments, cv2.warpAffine is
         # ~2x faster than PyTorch's affine_grid + grid_sample because it avoids
         # the grid construction overhead entirely.
-        self._cv2_warp: bool = _cv2 is not None and len(transforms) > 1
+        self._cv2_warp: bool = len(transforms) > 1 and _cv2_module() is not None
         # Pre-compute cv2 flags once (used by the cv2 fast path every call).
         _interp_str = self.interpolation or "bilinear"
         _pad_str = self.padding_mode or "zeros"
@@ -1533,6 +1591,25 @@ class FusedAffineSegment(_BaseAffineSegment):
         # when device and dtype match.
         self._eye_1x3x3_f32: Tensor = torch.eye(3, dtype=torch.float32).unsqueeze(0)
 
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """Restore a pickled segment, defaulting ``_render_overridden`` for one written before the flag existed.
+
+        Such a segment gets ``False``: its fast path ran unconditionally then, so it keeps rendering exactly as it did.
+        Deriving the flag from its own ``fill``/``interpolation``/``padding_mode`` would not — under
+        ``padding_mode="per_transform"`` the segment stores the transform's own mode, which is no override, and the
+        guess moved such a pickle onto the matrix path. ``_render_overridden_derived`` marks the default, so an
+        enclosing ``FusedCompose`` replaces it with the Compose-level answer that only it knows.
+
+        Args:
+            state: The pickled ``__dict__``.
+
+        """
+        super().__setstate__(state)
+        if "_render_overridden" not in state:
+            # The fast path was unconditional before the flag, so a restored pickle keeps rendering as it did.
+            self._render_overridden = False
+            self._render_overridden_derived = True
+
     def forward(
         self,
         image: Tensor,
@@ -1573,6 +1650,9 @@ class FusedAffineSegment(_BaseAffineSegment):
             and self._fast_path is not None
             and self.randomness is RandomnessPolicy.BACKEND
             and image.dtype not in (torch.float16, torch.bfloat16)
+            # The native call renders with the transform's own fill, border and interpolation, so a
+            # caller-level override sends the op down the matrix path, which honours it.
+            and not self._render_overridden
         ):
             _tfm = self.transforms[0]
 
@@ -2269,7 +2349,7 @@ class FusedGaussianBlurSegment(nn.Module):
             RuntimeError: If a geometric run or OpenCV is unavailable on this path.
 
         """
-        if self.geometric_transforms or _cv2 is None:
+        if self.geometric_transforms or _cv2_module() is None:
             msg = "NumPy Gaussian blur fusion requires OpenCV and no adjoining geometric transforms"
             raise RuntimeError(msg)
         variance = 0.0
@@ -2285,7 +2365,10 @@ class FusedGaussianBlurSegment(nn.Module):
         if variance == 0.0:
             return image_hwc
         sigma = math.sqrt(variance)
-        return _cv2.GaussianBlur(image_hwc, (0, 0), sigmaX=sigma, sigmaY=sigma, borderType=_cv2.BORDER_REFLECT_101)
+        blurred: NDArray[Any] = _require_cv2().GaussianBlur(
+            image_hwc, (0, 0), sigmaX=sigma, sigmaY=sigma, borderType=_CV2_BORDER["reflection"]
+        )
+        return blurred
 
 
 def _sample_folded_gaussian_sigma(transforms: list[object], image: Tensor, randomness: RandomnessPolicy) -> Tensor:
@@ -2427,7 +2510,7 @@ def _warp(
         interp_flag: cv2 interpolation constant (e.g. ``1`` for ``INTER_LINEAR``).
         border_flag: cv2 border mode constant (e.g. ``0`` for ``BORDER_CONSTANT``).
         fill: Optional validated constant border value in the image's own value range;
-            ``None`` keeps the historical all-zero border.
+            ``None`` means an all-zero border.
 
     Returns:
         Warped image array with the same dtype and channel count as ``img``.
@@ -3320,7 +3403,7 @@ class AlbuProjectiveSegment(nn.Module):
         self._last_execution: ExecutionStr | None = None
         # cv2 is only required for the default cv2 warp strategy; the torch
         # strategy warps with grid_sample and needs no OpenCV.
-        if _cv2 is None and self.execution in ("cv2", "auto"):
+        if self.execution in ("cv2", "auto") and _cv2_module() is None:
             raise ImportError(
                 "AlbuProjectiveSegment requires opencv-python because it uses cv2.warpPerspective under the hood."
             )
@@ -3545,7 +3628,7 @@ class AlbuProjectiveSegment(nn.Module):
                 continue
             # acc is the composed forward (src->dst) matrix; invert to get dst->src
             mtx_inv = np.linalg.inv(accs[b_idx])
-            warped: ImageArray = _cv2.warpPerspective(
+            warped: ImageArray = _require_cv2().warpPerspective(
                 img_np,
                 mtx_inv,  # dst->src inverse map
                 (width, height),  # dsize = (W, H)
@@ -3692,8 +3775,10 @@ class FusedColorSegment(GeneratorPicklingMixin, nn.Module):
         """
         batch_size, channels, height, width = image.shape
 
-        # The 4x4 color matrix is defined for 3-channel RGB images only.
-        # For non-RGB inputs, fall back to sequential passthrough application.
+        # The 4x4 color matrix is defined for 3-channel RGB images only. For non-RGB inputs, an adapter whose
+        # colour ops treat every channel alike applies them per channel; others fall back to passthrough.
+        if channels != 3 and getattr(self._adapter, "channel_uniform_color", False):
+            return self._forward_channel_uniform(image, aux_targets)
         if channels != 3:
             for tfm in self._transforms:
                 image = self._adapter.call_nonfused(tfm, image)
@@ -3791,6 +3876,58 @@ class FusedColorSegment(GeneratorPicklingMixin, nn.Module):
         if aux_targets is None:
             return image_out
         return image_out, aux_targets
+
+    def _forward_channel_uniform(
+        self,
+        image: Tensor,
+        aux_targets: dict[str, Any] | None,
+    ) -> Tensor | tuple[Tensor, dict[str, Any]]:
+        """Apply channel-uniform colour ops to an image of any channel count.
+
+        Used for non-RGB input when the adapter declares ``channel_uniform_color``: each op's RGB matrix scales
+        every channel by one factor about one midpoint, so it reduces to a per-image ``gain * x + bias``. Gates and
+        parameters are drawn in the same order as the RGB path, so one seed gives the same factors for any channel
+        count.
+
+        Args:
+            image: ``(batch_size, channels, height, width)`` float input tensor with values in ``[0, 1]``.
+            aux_targets: Optional auxiliary targets, returned unchanged.
+
+        Returns:
+            Bare ``image`` tensor when ``aux_targets`` is ``None``; ``(image, aux_targets)`` tuple otherwise.
+
+        """
+        batch_size, channels, height, width = image.shape
+        input_shape = (batch_size, channels, height, width)
+        device = image.device
+        out = image
+        for tfm in self._transforms:
+            prob = _transform_prob(tfm)
+            if _shares_randomness_across_batch(self._adapter, tfm, self.randomness):
+                active = (_rand((), device=device, generator=self.generator) < prob).expand(batch_size)
+            else:
+                active = _rand(batch_size, device=device, generator=self.generator) < prob
+            params = _sample_transform_params(
+                self._adapter,
+                tfm,
+                input_shape,
+                device,
+                self.randomness,
+                generator=self.generator,
+            )
+            mat = self._adapter.build_color_matrix(tfm, params).to(device=device, dtype=image.dtype)
+            if mat.shape[0] == 1 and batch_size > 1:
+                mat = mat.expand(batch_size, -1, -1)
+            gain = torch.where(active, mat[:, 0, 0], torch.ones_like(mat[:, 0, 0]))
+            bias = torch.where(active, mat[:, 0, 3], torch.zeros_like(mat[:, 0, 3]))
+            out = out * gain.view(-1, 1, 1, 1) + bias.view(-1, 1, 1, 1)
+            if self.clip_policy == "per_op_parity":
+                out = out.clamp(0.0, 1.0)
+        if self.clip_output:
+            out = out.clamp(0.0, 1.0)
+        if aux_targets is None:
+            return out
+        return out, aux_targets
 
     def _apply_color_matrices(self, image: Tensor, matrices: list[Tensor], eye: Tensor) -> Tensor:
         """Apply the per-op color matrices, splitting for clamp parity when requested.
@@ -4964,12 +5101,12 @@ def build_segments(
         clip_policy: Clamp policy forwarded to each :class:`FusedColorSegment`.
             ``"final"`` (default) fuses the color chain into one matmul and clamps once;
             ``"per_op_parity"`` clamps at each op that could leave ``[0, 1]``.
-        mask_interpolation: Sampling mode for routed masks. ``"nearest"`` preserves
-            the historical hard-label behavior; ``"bilinear"`` supports float soft masks.
+        mask_interpolation: Sampling mode for routed masks. ``"nearest"`` keeps
+            hard integer labels; ``"bilinear"`` supports float soft masks.
         mask_fill: Scalar border value for routed masks, independent of image ``fill``.
         fill: Validated constant border value written outside the source canvas of every
             resampling segment (image only; routed masks keep zero padding), or ``None``
-            for the historical zero border.
+            for a zero border.
         keypoint_flip_index: Validated keypoint pair permutation applied wherever a segment's
             composed transform reverses orientation, or ``None`` to leave the keypoint axis
             in input order.
@@ -4990,8 +5127,8 @@ def build_segments(
         unsupported ``POINTWISE_LINEAR`` transforms).
 
     """
-    if antialias and not _KORNIA_AVAILABLE:
-        raise ImportError("antialias=True requires the optional kornia dependency")
+    if antialias and not backend_available("kornia"):
+        raise ImportError("antialias=True requires the optional kornia dependency, installed and importable")
 
     fusible = {TransformCategory.GEOMETRIC_INTERP, TransformCategory.GEOMETRIC_EXACT}
     projective_cat = TransformCategory.PROJECTIVE
@@ -5057,6 +5194,9 @@ def build_segments(
                     adapter=adapter,
                     interpolation=interpolation,
                     padding_mode=geo_padding_mode,
+                    # geo_padding_mode may be the transform's own mode (per-transform policy); the caller's
+                    # override is build_segments' padding_mode, which that policy passes as None.
+                    render_overridden=fill is not None or interpolation is not None or padding_mode is not None,
                     randomness=randomness,
                     compile_warp=compile_warp,
                     mask_interpolation=mask_interpolation,

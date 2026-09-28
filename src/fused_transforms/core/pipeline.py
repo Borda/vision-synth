@@ -30,8 +30,8 @@ Examples:
 from __future__ import annotations
 
 import contextlib
+import difflib
 import math
-import warnings
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, Literal, NamedTuple, cast
 
@@ -40,8 +40,8 @@ import torch
 import torch.nn.functional as F  # noqa: N812
 from torch import Tensor, nn
 
-from fused_transforms._backend import Backend, detect_backends_per_transform
-from fused_transforms._compat import _ALBUMENTATIONS_AVAILABLE, _KORNIA_AVAILABLE
+from fused_transforms._backend import Backend, detect_backends_per_transform, is_builtin_adapter
+from fused_transforms._compat import _ALBUMENTATIONS_AVAILABLE, _KORNIA_AVAILABLE, backend_available
 from fused_transforms._random import GeneratorPicklingMixin, reject_backend_randomness
 from fused_transforms.affine.matrix import (
     hflip_matrix,
@@ -310,8 +310,9 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
         data_keys: List of key names describing positional arguments to
             :meth:`forward`. The first key should be ``"input"`` (the image).
             Auxiliary keys (``"mask"``, ``"bbox_xyxy"``, ``"bbox_xywh"``, ``"rboxes"``,
-            ``"keypoints"``) are routed through segments and transformed alongside the image. Unknown keys are passed
-            through unchanged with a ``UserWarning``. ``None`` preserves backward-compatible single-tensor input/output.
+            ``"keypoints"``) are routed through segments and transformed alongside the image. Unknown keys raise
+            ``ValueError`` naming the supported keys and the closest match. ``None`` preserves backward-compatible
+            single-tensor input/output.
             Albumentations fused segments route auxiliary targets through the composed pixel matrix, matching the
             Kornia/TorchVision coordinate convention, so multi-target ``data_keys`` are supported for every backend.
         output_backend: Target output format. ``"numpy"`` (or its alias
@@ -452,8 +453,9 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
         clip_policy = _validate_clip_policy(clip_policy)
         mask_interpolation = _validate_mask_interpolation(mask_interpolation)
         pipeline_dtype = _validate_pipeline_dtype(pipeline_dtype)
-        if antialias and not _KORNIA_AVAILABLE:
-            raise ImportError("antialias=True requires the optional kornia dependency")
+        if antialias and not backend_available("kornia"):
+            # Installed is not enough: a Kornia that fails to import would only fail later, on the first downscale.
+            raise ImportError("antialias=True requires the optional kornia dependency, installed and importable")
 
         if reorder not in (ReorderPolicy.NONE, ReorderPolicy.POINTWISE, ReorderPolicy.AGGRESSIVE):
             msg = f"ReorderPolicy.{reorder.name} not yet supported"
@@ -655,14 +657,9 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
                     f"{data_keys[0]!r}. This prevents silent misrouting of positional arguments "
                     "in multi-target mode."
                 )
-            for key in data_keys:
-                if key not in _KNOWN_DATA_KEYS:
-                    warnings.warn(
-                        f"Unknown data_key {key!r}; it will be passed through unchanged. "
-                        f"Known keys: {sorted(_KNOWN_DATA_KEYS)}",
-                        UserWarning,
-                        stacklevel=3,
-                    )
+            unknown = [key for key in data_keys if key not in _KNOWN_DATA_KEYS]
+            if unknown:
+                raise ValueError(self._unknown_data_keys_message(unknown))
 
         # Albumentations fused segments route aux targets through the composed pixel
         # matrix (same coordinate convention as the torch path), so multi-target
@@ -689,6 +686,14 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
         # tracks the module's device.
         if not hasattr(self, "_device_tracker"):
             self.register_buffer("_device_tracker", torch.empty(0), persistent=False)
+
+        # Register nn.Module transforms (backend ops, learnable or stateful custom ops) as submodules so
+        # parameters(), state_dict(), .to() and .eval()/.train() reach them. Dispatch still runs through
+        # ``_segments`` in plan order; this list only exposes the modules. A pickle predating it gets it here.
+        if "_module_transforms" not in self._modules:
+            self._module_transforms = nn.ModuleList([
+                tfm for tfm in getattr(self, "original_transforms", []) if isinstance(tfm, nn.Module)
+            ])
 
         # Plan-time dispatch: precompute one integer tag per segment so forward()
         # loops without an isinstance chain. data_keys is constructor state, so the
@@ -752,14 +757,8 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
         # per-call lazy import + isinstance check in __call__ for Albu pipelines.
         _is_albu: bool = False
         if adapter is not None and not isinstance(adapter, _DirectParamAdapter):
-            try:
-                from fused_transforms.adapters.albumentations import (
-                    AlbumentationsAdapter as _AlbuAdapterCls,
-                )
-
-                _is_albu = isinstance(adapter, _AlbuAdapterCls)
-            except ImportError:
-                pass
+            # Non-importing check: a Kornia/TorchVision pipeline must not import Albumentations to learn it is not one.
+            _is_albu = is_builtin_adapter(adapter, Backend.ALBUMENTATIONS)
         self._is_albu_native: bool = _is_albu or (adapter is None and not self._segments)
 
         # Pre-classify segments for the _forward_albu_native hot path: replace
@@ -785,17 +784,7 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
                 elif isinstance(seg, CropResizeSegment):
                     tags.append(3)
                 elif isinstance(seg, _PassthroughSegment):
-                    try:
-                        from fused_transforms.adapters.albumentations import (
-                            AlbumentationsAdapter as _AlbuAdapterCheck,
-                        )
-
-                        if isinstance(seg.adapter, _AlbuAdapterCheck):
-                            tags.append(4)
-                        else:
-                            tags.append(5)
-                    except ImportError:
-                        tags.append(5)
+                    tags.append(4 if is_builtin_adapter(seg.adapter, Backend.ALBUMENTATIONS) else 5)
                 else:
                     tags.append(-1)
             self._albu_seg_tags = tags
@@ -827,6 +816,53 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
             self._output_converter = self._resolve_output_converter(self._output_backend)
         elif not hasattr(self, "_output_converter"):
             self._output_converter = None
+
+    @staticmethod
+    def _unknown_data_keys_message(unknown: list[str]) -> str:
+        """Build the error for unsupported ``data_keys`` entries, with a did-you-mean hint per key."""
+        # Spellings other libraries use for the supported targets, which difflib alone would not map.
+        aliases = {
+            "image": "input",
+            "images": "input",
+            "boxes": "bbox_xyxy",
+            "bboxes": "bbox_xyxy",
+            "bbox": "bbox_xyxy",
+            "masks": "mask",
+            "segmentation": "mask",
+            "keypoint": "keypoints",
+            "kpts": "keypoints",
+            "rbox": "rboxes",
+            "obb": "rboxes",
+        }
+        known = sorted(_KNOWN_DATA_KEYS)
+        parts = []
+        for key in unknown:
+            guess = aliases.get(key.lower()) or next(iter(difflib.get_close_matches(key, known, n=1)), None)
+            parts.append(f"{key!r} (did you mean {guess!r}?)" if guess else repr(key))
+        return (
+            f"Unknown data_keys {', '.join(parts)}. Supported keys: {known}. An unsupported target would skip the "
+            "geometric transform and silently misalign with the augmented image."
+        )
+
+    def _check_batched(self, image: object) -> None:
+        """Refuse a non-``(B, C, H, W)`` tensor before a fused segment fails on it with an unpacking error."""
+        if not isinstance(image, Tensor) or image.ndim == 4:
+            return
+        if not any(tag in (_TAG_MATRIX, _TAG_PLAIN) for tag in self._dispatch_tags()):
+            return  # passthrough-only pipelines hand the tensor to the backend unchanged
+        hint = " For a single (C, H, W) image, add the batch axis with x[None] (or x.unsqueeze(0))." * (image.ndim == 3)
+        raise ValueError(f"Expected a batched (B, C, H, W) image tensor, got shape {tuple(image.shape)}.{hint}")
+
+    def _inverse_padding_mode(self) -> str:
+        """Return the concrete ``grid_sample`` padding mode :meth:`inverse` samples with."""
+        if self.padding_mode != "per_transform":
+            return self.padding_mode or "zeros"
+        # The per-transform policy resolved a concrete mode on the (single, invertible) geometric segment.
+        return getattr(self._segments[0], "padding_mode", None) or "zeros"
+
+    def extra_repr(self) -> str:
+        """Show the fusion plan and the legacy saved-warp count in ``repr()``."""
+        return f"plan={self.fusion_plan!r}, n_warps_saved={self.n_warps_saved}"
 
     def _resolve_output_converter(
         self,
@@ -924,6 +960,16 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
                 ),
             ) and not hasattr(segment, "mask_fill"):
                 segment.mask_fill = self.mask_fill
+            if isinstance(segment, FusedAffineSegment) and (
+                segment.__dict__.pop("_render_overridden_derived", False) or not hasattr(segment, "_render_overridden")
+            ):
+                # Pickles predating the flag: the Compose-level overrides decide, exactly as build_segments does,
+                # replacing the guess the segment's own __setstate__ made from its arguments.
+                segment._render_overridden = (
+                    getattr(self, "fill", None) is not None
+                    or self.interpolation is not None
+                    or self.padding_mode not in (None, "per_transform")
+                )
             if isinstance(segment, AlbuProjectiveSegment) and not hasattr(segment, "_tfm_tags"):
                 segment._tfm_tags = AlbuFusedAffineSegment._classify_transforms(segment.transforms, segment.adapter)
         if not hasattr(self, "pipeline_dtype"):
@@ -1426,6 +1472,7 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
 
     def _forward_single(self, image: torch.Tensor, *, return_matrix: bool = False) -> object:
         """Run the pipeline in single-tensor mode (``data_keys is None``)."""
+        self._check_batched(image)
         # Reset per-call state so transform_matrix returns None when only
         # unsupported segments run (no stale matrix from a previous call).
         self._last_transform_matrix = None
@@ -1640,6 +1687,7 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
             msg = f"Expected {len(data_keys)} arguments for data_keys={self.data_keys}, got {len(args)}"
             raise TypeError(msg)
         args, numpy_round_trip = self._normalize_multi_inputs(args)
+        self._check_batched(args[0])
         image = args[0]
         aux_targets = self._build_aux_targets(args)
         # Refuse the entire unsafe chain before a preceding transform can mutate inputs or consume RNG.
@@ -1896,7 +1944,7 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
             image,
             grid.to(dtype=image.dtype),
             mode=self.interpolation or "bilinear",
-            padding_mode=self.padding_mode or "zeros",
+            padding_mode=self._inverse_padding_mode(),
             align_corners=True,
         )
         if self.data_keys is None:

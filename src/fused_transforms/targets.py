@@ -10,8 +10,8 @@ for callers that want to apply the same math outside of the pipeline
 (e.g. to transform a stored transform matrix after the fact).
 
 All functions are stateless and operate on PyTorch tensors with a leading batch
-dimension ``batch_size``. Nearest-neighbour mask sampling preserves the historical
-non-differentiable behavior; bilinear sampling is available for float soft masks.
+dimension ``batch_size``. Nearest-neighbour mask sampling is
+non-differentiable; bilinear sampling is available for float soft masks.
 The other three functions are differentiable.
 
 Examples:
@@ -106,10 +106,10 @@ def transform_mask(
     """Apply a precomputed affine grid to a segmentation mask.
 
     The default ``mode='nearest'`` preserves integer class labels without
-    fractional mixing and retains the historical no-gradient behavior. Use
+    fractional mixing and carries no gradient. Use
     ``mode='bilinear'`` for differentiable float soft masks; labels may mix at
     boundaries. Out-of-bounds samples use the scalar ``fill`` value, which
-    defaults to the historical value 0.
+    defaults to 0.
 
     Args:
         mask: Segmentation mask. Shape ``(batch_size, channels, height, width)``, typically ``channels=1``.

@@ -143,7 +143,7 @@ class TestNumpyB1FastPathAffineRuntimeDispatch:
         image = _smooth_image()
 
         with monkeypatch.context() as ctx:
-            ctx.setattr(_segment_mod, "_cv2", None)
+            ctx.setattr(_segment_mod, "_cv2_module", lambda: None)
             pipe_torch = Compose(self._pinned_chain(), reorder=ReorderPolicy.NONE)
             out_torch = pipe_torch(image.clone())
 
