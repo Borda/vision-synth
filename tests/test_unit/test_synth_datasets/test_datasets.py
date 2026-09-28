@@ -7,9 +7,10 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
-torch = pytest.importorskip("torch")
+torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
 import torch.distributed as dist  # noqa: E402 - after the importorskip guard above, by design
 import torch.multiprocessing as torch_mp  # noqa: E402
 from torch.utils.data import DataLoader  # noqa: E402
@@ -121,14 +122,48 @@ def test_rank_epoch_inputs_are_read_only():
         ds.epoch = 4
 
 
-def test_rank_zero_epoch_zero_worker_seeds_preserve_legacy_streams(monkeypatch):
+def test_every_stream_is_seeded_by_rank_epoch_and_worker(monkeypatch):
+    """Rank 0 / epoch 0 is no longer special-cased to ``seed + worker_id``; every stream uses one scheme."""
     monkeypatch.setattr(
         "synth_datasets.export.datasets.get_worker_info",
         lambda: _worker_info(worker_id=1, num_workers=2),
     )
     ds = SyntheticIterableDataset(num_images=3, img_size=32, seed=7, rank=0, world_size=2, epoch=0)
 
-    assert _images(ds) == _images(SyntheticGenerator(ds.config).generate(1, seed=8))
+    expected = SyntheticGenerator(ds.config).generate(1, seed=np.random.SeedSequence(7, spawn_key=(0, 0, 1)))
+    assert _images(ds) == _images(expected)
+
+
+def test_worker_streams_of_adjacent_seeds_do_not_overlap(monkeypatch):
+    """Worker 1 at seed ``s`` used to replay worker 0 at seed ``s + 1`` exactly: both drew plain seed ``s + 1``."""
+
+    def stream(seed: int, worker_id: int) -> list[bytes]:
+        monkeypatch.setattr(
+            "synth_datasets.export.datasets.get_worker_info",
+            lambda: _worker_info(worker_id=worker_id, num_workers=2),
+        )
+        return _images(SyntheticIterableDataset(num_images=4, img_size=32, seed=seed))
+
+    assert set(stream(7, worker_id=1)).isdisjoint(stream(8, worker_id=0))
+
+
+def test_rank_and_world_size_default_from_an_initialized_process_group(monkeypatch):
+    monkeypatch.setattr(dist, "is_available", lambda: True)
+    monkeypatch.setattr(dist, "is_initialized", lambda: True)
+    monkeypatch.setattr(dist, "get_rank", lambda: 1)
+    monkeypatch.setattr(dist, "get_world_size", lambda: 3)
+
+    inferred = SyntheticIterableDataset(num_images=1, img_size=32, seed=0)
+    explicit = SyntheticIterableDataset(num_images=1, img_size=32, seed=0, rank=0, world_size=1)
+
+    assert (inferred.rank, inferred.world_size) == (1, 3)
+    assert (explicit.rank, explicit.world_size) == (0, 1)
+
+
+def test_rank_and_world_size_default_to_one_process_without_a_process_group():
+    assert not (dist.is_available() and dist.is_initialized())
+    ds = SyntheticIterableDataset(num_images=1, img_size=32, seed=0)
+    assert (ds.rank, ds.world_size) == (0, 1)
 
 
 def test_rank_and_epoch_make_seeded_streams_distinct_and_repeatable():

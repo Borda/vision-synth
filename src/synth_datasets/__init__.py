@@ -41,6 +41,8 @@ import itertools
 from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING, Any
 
+import numpy as np
+
 from synth_datasets.content.backgrounds import (
     Background,
     GradientBackground,
@@ -91,6 +93,10 @@ from synth_datasets.families import (
     keypoint_schema_for,
     shape_outline,
 )
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SymbolShape
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -114,6 +120,7 @@ __all__ = [
     "DISTRACTOR_PALETTE",
     "JPEG",
     "SHAPE_FAMILIES",
+    "AnimalShape",
     "Annotation",
     "Background",
     "ClassEntry",
@@ -132,8 +139,10 @@ __all__ = [
     "ImageBackground",
     "ImpulseNoiseBackground",
     "KeypointSchema",
+    "LetterShape",
     "NoiseBackground",
     "OutputFormat",
+    "PrimitiveShape",
     "Quantize",
     "Sample",
     "SceneRecord",
@@ -141,6 +150,7 @@ __all__ = [
     "ShapeFamily",
     "SolidBackground",
     "SplitRatios",
+    "SymbolShape",
     "SyntheticConfig",
     "SyntheticGenerator",
     "Task",
@@ -244,6 +254,8 @@ def generate_dataset(
     split_ratios: SplitRatios | None = None,
     seed: int | None = None,
     config: SyntheticConfig | None = None,
+    *,
+    overwrite: bool = False,
     **config_kwargs: Any,  # noqa: ANN401 - forwarded verbatim to SyntheticConfig
 ) -> dict[str, int]:
     """Generate a synthetic dataset on disk and return per-split image counts.
@@ -253,20 +265,28 @@ def generate_dataset(
     Only ``fmt`` and ``split_ratios``, which describe the on-disk layout rather than the pixels, are
     parameters here.
 
-    ``task`` and ``class_mode`` used to be parameters *as well as* config fields. The task in
-    particular had two owners — the generator read it off the config, the writer off the argument —
-    so passing both meant a cross-check, a ``None`` sentinel to distinguish "not supplied" from a
-    default, and a paragraph of documentation about which won. Giving the config sole ownership
-    deleted all three; ``task="keypoints"`` still works, it simply arrives as a config field.
+    ``task`` and ``class_mode`` are config fields with a single owner: ``task="keypoints"`` passed
+    here arrives as a config field, so the generator and the writer always read the same task.
 
     Args:
         output_dir: Destination directory (created if absent).
         num_images: Total number of images to generate across all splits.
-        fmt: Output layout, ``"coco"`` or ``"yolo"`` (or an :class:`OutputFormat`).
+        fmt: Output layout: ``"coco"``, ``"yolo"`` (or an :class:`OutputFormat`), or any key
+            registered with :func:`register_writer`.
         split_ratios: Train/val/test fractions; defaults to 70/20/10.
         seed: Seed for reproducible generation; ``None`` uses fresh entropy.
         config: Full :class:`SyntheticConfig`. When given, ``config_kwargs`` must be empty — a
             config already says everything they would.
+        overwrite: Replace an earlier dataset's files instead of refusing. The writer deletes
+            the paths this run writes (for COCO, each ``<split>/``; for YOLO, ``images/<split>``,
+            ``labels/<split>`` and ``data.yaml``) plus every path an earlier run recorded in the
+            ``.vision-synth.json`` manifest, so a split an earlier run wrote and this run does not
+            (say, ``test`` when this run's ratios leave it empty) is removed too. Nothing else
+            under ``output_dir`` is touched, and nothing is deleted through a symlink or outside
+            ``output_dir``. The new dataset is written into a staging directory first and the
+            earlier one is replaced only once it is complete, so a failure while generating
+            leaves the earlier dataset as it was (see :meth:`DatasetWriter.write_replacing`). Without it, a
+            populated destination is refused, since writing into it would mix the two datasets.
         **config_kwargs: :class:`SyntheticConfig` fields (``task``, ``class_mode``, ``img_size``,
             ``shapes``, ``colors``, …) used to build the config when ``config`` is not supplied.
 
@@ -274,8 +294,17 @@ def generate_dataset(
         Ordered mapping of split name to the number of images written.
 
     Raises:
-        ValueError: If ``num_images`` is not a positive integer, or if both a ``config`` and
-            ``config_kwargs`` were supplied.
+        ValueError: If ``output_dir`` holds a staging or backup directory an interrupted overwrite left,
+            if ``num_images`` is not a positive integer, if both a ``config`` and
+            ``config_kwargs`` were supplied, if ``seed`` is negative, if no writer is registered
+            for ``fmt``, or if ``overwrite`` would delete outside ``output_dir`` or through a
+            symlink.
+        FileExistsError: If ``overwrite`` is false and a path the writer would write is already
+            populated. Raised before any sample is generated or any file written.
+        RuntimeError: If ``overwrite`` is true and the swap of the new dataset into place fails.
+            It is rolled back first, by renaming only. When the earlier dataset is fully back, the
+            emptied ``.vision-synth-backup-*`` directory is removed; otherwise it is kept and named.
+            A ``KeyboardInterrupt`` during the swap is rolled back the same way and re-raised.
 
     Examples:
         ```pycon
@@ -295,11 +324,23 @@ def generate_dataset(
         raise ValueError(
             f"pass either a config or its fields as keywords, not both; got config plus {sorted(config_kwargs)}"
         )
-    fmt = OutputFormat(fmt)
     split_ratios = split_ratios or SplitRatios()
     config = config if config is not None else SyntheticConfig(**config_kwargs)
 
+    # ``get_writer`` resolves an OutputFormat member, its value, or any registered key; coercing
+    # through ``OutputFormat(fmt)`` first used to reject every custom format register_writer allows.
+    # ``SyntheticConfig`` already guarantees a single keypoint-bearing family under Task.KEYPOINTS,
+    # so the schema is None only for tasks that never read it.
+    writer: DatasetWriter = get_writer(
+        fmt,
+        config.task,
+        class_vocabulary(config.class_mode, config.shapes, config.colors),
+        keypoint_schema=keypoint_schema_for(config.shapes),
+    )
     counts = _assign_splits(num_images, split_ratios)
+    # ``generate`` is lazy, so a bad seed would otherwise surface only on the first sample — after
+    # ``overwrite`` had already deleted the earlier dataset. Seeding a throwaway generator checks it now.
+    np.random.default_rng(seed)
 
     # Stream a single lazy sample source through per-split islice views so only one Sample is
     # materialized at a time. The writer must consume the splits in insertion order and exactly once
@@ -309,14 +350,12 @@ def generate_dataset(
     splits: dict[str, Iterable[Sample]] = {
         split: itertools.islice(sample_stream, count) for split, count in counts.items()
     }
-
-    # ``SyntheticConfig`` already guarantees a single keypoint-bearing family under Task.KEYPOINTS,
-    # so this is None only for tasks that never read it.
-    writer: DatasetWriter = get_writer(
-        fmt,
-        config.task,
-        class_vocabulary(config.class_mode, config.shapes, config.colors),
-        keypoint_schema=keypoint_schema_for(config.shapes),
-    )
-    writer.write(splits, output_dir)
+    if overwrite:
+        # Staged: the earlier dataset is replaced only once the new one is completely written, so a
+        # failure while generating (a bad value that surfaces only on the first sample) loses nothing.
+        writer.write_replacing(splits, output_dir)
+    else:
+        # Refuse before a single sample is generated or file written.
+        writer.prepare_output(counts, output_dir)
+        writer.write(splits, output_dir)
     return counts

@@ -114,11 +114,9 @@ class Annotation:
         the minimum-area rectangle's hull-edge direction (see
         :func:`~synth_datasets.families.geometry.polygon_to_obb`).
 
-        Derived from :attr:`polygon` on first access rather than stored. It used to be computed for
-        every object at generation time, which meant every detection, segmentation and keypoint run
-        paid for a convex hull plus a rotating-calipers scan per object and then never read the
-        result — measured at **75% of generation time** on a mixed-family run. Deriving it here costs
-        exactly the same for an OBB run, and nothing for the three tasks that do not want it.
+        Derived from :attr:`polygon` on first access rather than stored, so only runs that read it
+        pay for the convex hull and rotating-calipers scan; detection, segmentation and keypoint
+        runs skip that cost entirely.
 
         Returns:
             The eight corner coordinates, or an empty list when :attr:`polygon` holds fewer than
@@ -149,10 +147,8 @@ class Annotation:
         failing. Catching it at construction turns that into an error at the point the bad table was
         built.
 
-        The schema is carried rather than inferred. It used to be looked up by *table length* —
-        which worked only because the registered families happened to have distinct landmark counts,
-        and left an annotation unable to say which family it belonged to, so a writer had to be told
-        separately and the two could disagree.
+        The schema is carried rather than inferred from the table length, so an annotation always
+        names its own keypoint family and a writer cannot disagree with it.
 
         Raises:
             ValueError: If ``keypoints`` is given without a ``keypoint_schema``, if it holds a

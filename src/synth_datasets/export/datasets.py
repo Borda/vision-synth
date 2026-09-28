@@ -29,6 +29,7 @@ from operator import index
 from typing import TYPE_CHECKING, Any, SupportsIndex
 
 import numpy as np
+import torch.distributed as dist
 from torch.utils.data import IterableDataset, get_worker_info
 
 from synth_datasets.core.config import SyntheticConfig
@@ -53,15 +54,31 @@ def _non_negative_int(value: object, name: str, minimum: int = 0) -> int:
     return integer
 
 
+def _process_group_topology() -> tuple[int, int]:
+    """Return ``(rank, world_size)`` of the initialized default process group, or ``(0, 1)`` without one."""
+    if dist.is_available() and dist.is_initialized():
+        return dist.get_rank(), dist.get_world_size()
+    return 0, 1
+
+
 class SyntheticIterableDataset(IterableDataset["Sample"]):
     """Stream synthetic :class:`Sample` objects into a PyTorch training loop.
 
     Args:
         num_images: Number of samples yielded by each rank for this epoch.
         config: Full :class:`SyntheticConfig`; when given, ``config_kwargs`` are ignored.
-        seed: Base seed for reproducible streams; ``None`` uses fresh entropy.
-        rank: Distributed-process rank supplied by the training process.
-        world_size: Number of distributed processes supplied by the training process.
+        seed: Base seed for reproducible streams; ``None`` uses fresh entropy. Every stream — each
+            rank, epoch, and ``DataLoader`` worker — draws from
+            ``numpy.random.SeedSequence(seed, spawn_key=(rank, epoch, worker_id))``, so streams of
+            one seed never collide and neither do streams of adjacent seeds. A single-process
+            stream is therefore not the one :meth:`SyntheticGenerator.generate` yields for the same
+            ``seed``.
+        rank: Distributed-process rank. ``None`` (the default) reads it from the default
+            ``torch.distributed`` process group when one is initialized at construction, and
+            means ``0`` otherwise.
+        world_size: Number of distributed processes. ``None`` (the default) reads it from the
+            default ``torch.distributed`` process group when one is initialized at construction,
+            and means ``1`` otherwise.
         epoch: Immutable epoch identity for this dataset instance.
         **config_kwargs: Extra :class:`SyntheticConfig` fields (e.g. ``img_size``,
             ``class_mode``) used only when ``config`` is not supplied.
@@ -84,16 +101,19 @@ class SyntheticIterableDataset(IterableDataset["Sample"]):
         config: SyntheticConfig | None = None,
         seed: int | None = None,
         *,
-        rank: int = 0,
-        world_size: int = 1,
+        rank: int | None = None,
+        world_size: int | None = None,
         epoch: int = 0,
         **config_kwargs: Any,  # noqa: ANN401 - forwarded verbatim to SyntheticConfig
     ) -> None:
         """Store immutable stream identity and build the underlying generator."""
         super().__init__()
         self.num_images = _non_negative_int(num_images, "num_images")
-        self._world_size = _non_negative_int(world_size, "world_size", minimum=1)
-        self._rank = _non_negative_int(rank, "rank")
+        group_rank, group_world_size = _process_group_topology()
+        self._world_size = _non_negative_int(
+            group_world_size if world_size is None else world_size, "world_size", minimum=1
+        )
+        self._rank = _non_negative_int(group_rank if rank is None else rank, "rank")
         if self._rank >= self._world_size:
             raise ValueError(f"rank must be < world_size, got rank={self._rank}, world_size={self._world_size}")
         self._epoch = _non_negative_int(epoch, "epoch")
@@ -129,10 +149,7 @@ class SyntheticIterableDataset(IterableDataset["Sample"]):
         count = per + (1 if worker_id < remainder else 0)
         if self.seed is None:
             return count, None
-        if self.rank == 0 and self.epoch == 0:
-            return count, self.seed + worker_id
-        seed = np.random.SeedSequence(self.seed, spawn_key=(self.rank, self.epoch, worker_id))
-        return count, seed
+        return count, np.random.SeedSequence(self.seed, spawn_key=(self.rank, self.epoch, worker_id))
 
     def __iter__(self) -> Iterator[Sample]:
         """Yield this worker's deterministically-seeded slice of samples."""

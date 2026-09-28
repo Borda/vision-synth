@@ -45,7 +45,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from PIL import Image, ImageDraw
 
-from synth_datasets.core.config import Fill, Task, class_vocabulary
+from synth_datasets.core.config import Fill, Task, as_canvas_size, class_vocabulary
 from synth_datasets.core.sample import _EMPTY_SCENE, Annotation, Sample, SceneRecord
 from synth_datasets.families import keypoint_schema_for, place_keypoints, shape_outline
 from synth_datasets.families.geometry import bbox_iou, polygon_to_bbox_xyxy, to_pixel_centre
@@ -79,14 +79,14 @@ _KEYPOINT_HIDDEN = 0
 
 
 def _visible_keypoints(
-    points: NDArray[np.float64], img_size: int, occluder_mask: NDArray[np.bool_] | None = None
+    points: NDArray[np.float64], img_size: int | tuple[int, int], occluder_mask: NDArray[np.bool_] | None = None
 ) -> tuple[tuple[float, float, int], ...]:
     """Tag each landmark with its COCO visibility flag, zeroing the ones off the canvas.
 
     Args:
         points: ``(num_keypoints, 2)`` landmark coordinates in image pixels.
-        img_size: Canvas side length in pixels.
-        occluder_mask: ``(img_size, img_size)`` raster of what an occluder covers, or ``None``. A
+        img_size: Canvas side length, or ``(width, height)``, in pixels.
+        occluder_mask: ``(height, width)`` raster of what an occluder covers, or ``None``. A
             landmark inside the canvas but under the mask is demoted from :data:`_KEYPOINT_VISIBLE`
             to :data:`_KEYPOINT_OCCLUDED`, keeping its coordinates — COCO's "labeled but not
             visible". An already-hidden point is never promoted: it is off the canvas, so the mask
@@ -95,19 +95,20 @@ def _visible_keypoints(
     Returns:
         One ``(x, y, visibility)`` triple per landmark, in input order: the coordinates converted to
         pixel-centre space with :data:`_KEYPOINT_VISIBLE` while the point lies inside
-        ``[0, img_size)`` on both axes, and ``(0.0, 0.0)`` with :data:`_KEYPOINT_HIDDEN` otherwise.
+        ``[0, width)`` by ``[0, height)``, and ``(0.0, 0.0)`` with :data:`_KEYPOINT_HIDDEN` otherwise.
         Zeroing a clipped point (rather than keeping its off-canvas coordinates) is COCO's
         "not labeled" convention, and the zeroed placeholder is *not* shifted -- it is a flag value,
         not a position. An absent hind limb lands here as ``(nan, nan)``; both comparisons in
-        ``0.0 <= nan < img_size`` are false, so it falls to the hidden branch with no special-casing.
+        ``0.0 <= nan < width`` are false, so it falls to the hidden branch with no special-casing.
 
         Visibility is decided on the *incoming* edge-space coordinates, so which landmarks the frame
         hides does not depend on the convention the surviving ones are reported in.
 
     """
+    width, height = as_canvas_size(img_size)
     triples: list[tuple[float, float, int]] = []
     for x, y in points:
-        inside = 0.0 <= x < img_size and 0.0 <= y < img_size
+        inside = 0.0 <= x < width and 0.0 <= y < height
         if not inside:
             triples.append((0.0, 0.0, _KEYPOINT_HIDDEN))
             continue
@@ -139,12 +140,12 @@ def _scene(occluder_mask: NDArray[np.bool_] | None, background_source: str | Non
     return SceneRecord(occluder_mask=occluder_mask, background_source=background_source)
 
 
-def _boundary_overlap(bbox: _BBox, img_size: int) -> float:
-    """Return the fraction of ``bbox`` area lying outside a square canvas.
+def _boundary_overlap(bbox: _BBox, img_size: int | tuple[int, int]) -> float:
+    """Return the fraction of ``bbox`` area lying outside the canvas.
 
     Args:
         bbox: Candidate box ``(x_min, y_min, x_max, y_max)``.
-        img_size: Canvas side length in pixels.
+        img_size: Canvas side length, or ``(width, height)``, in pixels.
 
     Returns:
         ``0.0`` when fully inside, up to ``1.0`` when fully outside.
@@ -154,8 +155,9 @@ def _boundary_overlap(bbox: _BBox, img_size: int) -> float:
     area = (x2 - x1) * (y2 - y1)
     if area <= 0:
         return 1.0
-    inside_w = max(0.0, min(img_size, x2) - max(0.0, x1))
-    inside_h = max(0.0, min(img_size, y2) - max(0.0, y1))
+    width, height = as_canvas_size(img_size)
+    inside_w = max(0.0, min(width, x2) - max(0.0, x1))
+    inside_h = max(0.0, min(height, y2) - max(0.0, y1))
     return 1.0 - (inside_w * inside_h) / area
 
 
@@ -279,8 +281,10 @@ class SyntheticGenerator:
         colors = cfg.colors if colors is None else colors
         shape = shapes[int(rng.integers(len(shapes)))]
         color = colors[int(rng.integers(len(colors)))]
-        size_px = float(rng.uniform(cfg.min_size_ratio, cfg.max_size_ratio)) * cfg.img_size
-        center = (float(rng.uniform(0, cfg.img_size)), float(rng.uniform(0, cfg.img_size)))
+        width, height = cfg.canvas_size
+        # Draw order is fixed -- size, then x, then y -- so a square canvas replays its stream exactly.
+        size_px = float(rng.uniform(cfg.min_size_ratio, cfg.max_size_ratio)) * min(width, height)
+        center = (float(rng.uniform(0, width)), float(rng.uniform(0, height)))
         angle = float(rng.uniform(0, 2 * np.pi)) if cfg.rotate and shape is not PrimitiveShape.CIRCLE else 0.0
         skew = (
             float(rng.uniform(-cfg.asymmetry_jitter, cfg.asymmetry_jitter))
@@ -289,7 +293,7 @@ class SyntheticGenerator:
         )
         poly = shape_outline(shape.value, center, size_px, angle, skew)
         bbox = polygon_to_bbox_xyxy(poly)
-        if respect_boundary and _boundary_overlap(bbox, cfg.img_size) > cfg.boundary_tolerance:
+        if respect_boundary and _boundary_overlap(bbox, (width, height)) > cfg.boundary_tolerance:
             return None
         if any(bbox_iou(bbox, other) > cfg.overlap_iou for other in kept):
             return None
@@ -384,8 +388,11 @@ class SyntheticGenerator:
         cfg = self.config
         canvas_stream, clutter_stream, occluder_stream, degrade_stream = self._side_streams(rng)
         background = cfg.resolved_background
+        width, height = cfg.canvas_size
+        # A square canvas is passed as a plain int, so a Background subclass written for the int
+        # signature keeps working whichever way the config spells a square; only a rectangle is a pair.
         pixels, background_source = background.render_with_source(
-            canvas_stream if background.consumes_randomness else None, cfg.img_size
+            canvas_stream if background.consumes_randomness else None, width if width == height else (width, height)
         )
         canvas = Image.fromarray(pixels)
         draw = ImageDraw.Draw(canvas)
@@ -432,8 +439,8 @@ class SyntheticGenerator:
         return Sample(
             image=image,
             annotations=annotations,
-            width=cfg.img_size,
-            height=cfg.img_size,
+            width=width,
+            height=height,
             scene=_scene(occluder_mask, background_source),
         )
 
@@ -463,7 +470,7 @@ class SyntheticGenerator:
             polygon=[float(v) for v in to_pixel_centre(poly).reshape(-1)],
             bbox_xyxy=bbox,
             angle=angle,
-            keypoints=None if points is None else _visible_keypoints(points, self.config.img_size, occluder_mask),
+            keypoints=None if points is None else _visible_keypoints(points, self.config.canvas_size, occluder_mask),
             keypoint_schema=None if points is None else self.keypoint_schema,
         )
 
@@ -475,7 +482,7 @@ class SyntheticGenerator:
             rng: The side stream, so an occluder never moves the object it covers.
 
         Returns:
-            An ``(img_size, img_size)`` read-only boolean raster, ``True`` where an occluder covers
+            A ``(height, width)`` read-only boolean raster, ``True`` where an occluder covers
             the pixel.
 
         The mask is rasterized from the same outlines into a parallel one-bit image rather than
@@ -487,7 +494,7 @@ class SyntheticGenerator:
 
         """
         cfg = self.config
-        stencil = Image.new("1", (cfg.img_size, cfg.img_size), 0)
+        stencil = Image.new("1", cfg.canvas_size, 0)  # Pillow takes (width, height)
         self._draw_clutter(draw, rng, cfg.occluders, respect_boundary=False, stencil=ImageDraw.Draw(stencil))
         mask = np.asarray(stencil, dtype=bool).copy()
         mask.flags.writeable = False

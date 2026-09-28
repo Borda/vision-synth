@@ -20,6 +20,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from enum import Enum
 from functools import lru_cache
+from numbers import Integral
 from typing import TYPE_CHECKING
 
 from synth_datasets.families import (
@@ -27,6 +28,7 @@ from synth_datasets.families import (
     Shape,
     describe_keypoint_mismatch,
     keypoint_schema_for,
+    resolve_shape,
 )
 
 if TYPE_CHECKING:
@@ -47,8 +49,7 @@ class Color(str, Enum):
     A closed set of three, which is what :attr:`ClassMode.COLOR` numbers its classes from. A run is
     not limited to them: a fill may equally be a raw ``(r, g, b)`` triple, so a yellow object needs
     no change here. Both spellings normalize to a :class:`Fill` at the boundary, and that is the
-    single type everything downstream holds. The asymmetry that used to sit here (``background``
-    took any RGB while object fills took only these three) is gone.
+    single type everything downstream holds; ``background`` and object fills accept the same spellings.
 
     The RGB triple is stored on the member itself, through ``__new__``, rather than looked up in a
     table rebuilt on every access. Members stay ordinary strings either way: ``Color.RED == "red"``
@@ -94,16 +95,28 @@ class Color(str, Enum):
         return self._rgb
 
 
+def _color_by_name(name: str) -> Color:
+    """Return the :class:`Color` a case-insensitive name spells.
+
+    Raises:
+        ValueError: If ``name`` names no :class:`Color`; the message lists every valid name.
+
+    """
+    key = name.strip().lower()
+    for color in Color:
+        if color.value == key:
+            return color
+    valid = ", ".join(color.value for color in Color)
+    raise ValueError(f"unknown colour name {name!r}; valid names are {valid}")
+
+
 @dataclass(frozen=True)
 class Fill:
     """One object fill: the RGB triple to draw with, plus the name it came from when it had one.
 
-    The single fill type everything past the config boundary holds. ``colors`` used to be a
-    ``tuple[Color, ...]``, so a yellow object had no path at all while ``background`` took any RGB —
-    an asymmetry with no defensible reason, since both end up as one Pillow fill. Widening the field
-    to accept raw triples could have been done with a ``Color | tuple[int, int, int]`` union, at the
-    cost of every signature spelling it out and every consumer taking it apart again for an RGB or a
-    label. Normalizing to one type instead keeps both as plain attributes.
+    The single fill type everything past the config boundary holds. Every accepted spelling — a
+    :class:`Color`, its name, or a raw ``(r, g, b)`` triple — normalizes to this one type, so no
+    consumer takes a union apart again for an RGB or a label.
 
     Args:
         rgb: The ``(r, g, b)`` triple to draw with; three integers in ``[0, 255]``.
@@ -167,15 +180,15 @@ class Fill:
         caller-supplied fill runs it through here once and holds the result.
 
         Args:
-            color: A :class:`Color` member, an ``(r, g, b)`` tuple, or an existing :class:`Fill`.
+            color: A :class:`Color` member, its name in any case (``"red"``, ``"Blue"``), an
+                ``(r, g, b)`` tuple, or an existing :class:`Fill`.
 
         Returns:
             The normalized fill — ``color`` itself when it already is one.
 
         Raises:
-            ValueError: If ``color`` is neither a :class:`Color` nor a valid RGB triple. A bare
-                ``"red"`` string lands here: it compares equal to :attr:`Color.RED` under the
-                :class:`str` mixin, so nothing earlier would have caught it.
+            ValueError: If ``color`` is a string naming no :class:`Color` (the message lists the
+                valid names), or is neither a name, a :class:`Color`, nor a valid RGB triple.
 
         Examples:
             ```pycon
@@ -184,6 +197,8 @@ class Fill:
             Fill(rgb=(0, 0, 255), name='blue')
             >>> Fill.parse((255, 215, 0))
             Fill(rgb=(255, 215, 0), name=None)
+            >>> Fill.parse("Blue") == Fill.parse(Color.BLUE)
+            True
 
             ```
 
@@ -192,13 +207,15 @@ class Fill:
             return color
         if isinstance(color, Color):
             return cls(rgb=color.rgb, name=color.value)
+        if isinstance(color, str):
+            return cls.parse(_color_by_name(color))
         return cls(rgb=color)
 
 
-#: A fill as a *caller* may spell it: a named :class:`Color`, a raw 8-bit ``(r, g, b)`` triple, or
-#: an already-normalized :class:`Fill`. Only :meth:`Fill.parse` and the public signatures that feed
+#: A fill as a *caller* may spell it: a named :class:`Color` or its name, a raw 8-bit ``(r, g, b)``
+#: triple, or an already-normalized :class:`Fill`. Only :meth:`Fill.parse` and the public signatures that feed
 #: it accept the union — everything past that boundary holds a :class:`Fill`.
-ColorLike = Color | tuple[int, int, int] | Fill
+ColorLike = Color | str | tuple[int, int, int] | Fill
 
 #: Fills drawn when :attr:`SyntheticConfig.colors` is not overridden — the full :class:`Color`
 #: vocabulary, normalized, i.e. the behavior that predated the field existing.
@@ -555,6 +572,139 @@ def _class_key(shape: Shape, color: Fill, class_mode: ClassMode) -> str:
     return _render_name(shape, color, class_mode)
 
 
+def _resolve_shape_names(values: Iterable[object] | str) -> tuple[object, ...]:
+    """Return ``values`` as a tuple with every shape name replaced by its member; see ``SyntheticConfig``."""
+    items = (values,) if isinstance(values, str) else tuple(values)
+    return tuple(resolve_shape(item) if isinstance(item, str) else item for item in items)
+
+
+#: Characters that would let a split name reach outside ``output_dir`` or change meaning across platforms: both path
+#: separators (a config file must mean the same on POSIX and Windows), the Windows drive separator, and NUL.
+_UNSAFE_SPLIT_CHARS = frozenset("/\\:\x00")
+
+#: Characters Windows forbids in a file name beyond :data:`_UNSAFE_SPLIT_CHARS`: ``< > " | ? *`` and every control
+#: character.
+_WINDOWS_INVALID_CHARS = frozenset('<>"|?*' + "".join(chr(code) for code in range(1, 32)))
+
+#: Prefix the writers keep for their own entries in ``output_dir`` — the ``.vision-synth.json`` manifest and the
+#: ``.vision-synth-staging-*`` directory a replacing write stages in — so no split may start with it.
+_RESERVED_SPLIT_PREFIX = ".vision-synth"
+
+#: Device names Windows reserves in every directory, whatever the case and whatever follows the first dot
+#: (``aux.txt`` and ``nul.tar.gz`` are reserved too): a split directory named after one cannot be created there.
+_WINDOWS_RESERVED_NAMES = frozenset({
+    "con",
+    "prn",
+    "aux",
+    "nul",
+    *(f"{device}{digit}" for device in ("com", "lpt") for digit in "123456789\u00b9\u00b2\u00b3"),
+})
+
+
+def as_canvas_size(img_size: int | tuple[int, int]) -> tuple[int, int]:
+    """Return a canvas size as ``(width, height)``, validating it.
+
+    The one place the two spellings of :attr:`SyntheticConfig.img_size` are unpacked: a plain ``int`` is a square
+    side, a pair is ``(width, height)`` — Pillow's order, not numpy's ``(rows, columns)``. Every built-in
+    :class:`~synth_datasets.content.backgrounds.Background` normalizes its ``img_size`` argument through here.
+
+    Args:
+        img_size: A positive ``int``, or a pair of positive ``int`` values ``(width, height)``.
+
+    Returns:
+        ``(width, height)``.
+
+    Raises:
+        ValueError: If ``img_size`` is not a positive ``int`` or a pair of them. ``bool`` is refused though it
+            subclasses ``int``: ``img_size=True`` is a mistake, not a one-pixel canvas.
+
+    Examples:
+        ```pycon
+        >>> from synth_datasets.core.config import as_canvas_size
+        >>> as_canvas_size(64), as_canvas_size((96, 48))
+        ((64, 64), (96, 48))
+
+        ```
+
+    """
+    if _is_int(img_size):
+        values: tuple[object, ...] = (img_size, img_size)
+    elif isinstance(img_size, (tuple, list)):
+        values = tuple(img_size)
+        if len(values) != 2:
+            raise ValueError(f"img_size as a sequence must hold two values (width, height), got {img_size!r}")
+    else:
+        raise ValueError(f"img_size must be an int or a (width, height) pair of ints, got {img_size!r}")
+    if not all(_is_int(value) for value in values):
+        raise ValueError(f"img_size must be an int or a (width, height) pair of ints, got {img_size!r}")
+    width, height = (int(value) for value in values)  # type: ignore[call-overload]
+    if width <= 0 or height <= 0:
+        raise ValueError(f"img_size must be positive, got {img_size!r}")
+    return width, height
+
+
+def _is_int(value: object) -> bool:
+    """Return whether ``value`` is an integer and not a ``bool`` (numpy integers included)."""
+    return isinstance(value, Integral) and not isinstance(value, bool)
+
+
+def validate_split_name(name: object) -> str:
+    r"""Return ``name`` unchanged if it can name a split directory, i.e. is one plain path component.
+
+    Every writer turns a split name into a directory under ``output_dir``, so a name such as ``"../escaped"`` used to
+    create ``escaped/`` beside the output directory rather than inside it. :class:`SplitRatios` checks its names here
+    at construction, and the built-in writers check again before writing, for a caller who builds ``splits`` by hand.
+
+    Args:
+        name: The candidate split name.
+
+    Returns:
+        ``name``, known to be a non-empty string that is not ``.`` or ``..``, holds no ``/``, ``\\``, ``:`` or NUL, does
+        not end in a dot or a space, holds none of ``< > " | ? *`` or a control character, is not a Windows device
+        name (``CON``, ``NUL``, ``aux.txt``, ``COM1``, ``LPT¹``…), and does not start with ``.vision-synth``.
+
+    Raises:
+        ValueError: If ``name`` is not such a string.
+
+    Examples:
+        ```pycon
+        >>> from synth_datasets.core.config import validate_split_name
+        >>> validate_split_name("holdout")
+        'holdout'
+        >>> validate_split_name("../escaped")
+        Traceback (most recent call last):
+        ...
+        ValueError: split name '../escaped' is not one plain path component; ...
+
+        ```
+
+    """
+    if not isinstance(name, str):
+        raise ValueError(f"split name must be a string, got {type(name).__name__} {name!r}")
+    if name in ("", ".", "..") or not _UNSAFE_SPLIT_CHARS.isdisjoint(name):
+        raise ValueError(
+            f"split name {name!r} is not one plain path component; each split is written to its own directory under "
+            "output_dir, so use a name such as 'train' or 'holdout' (not empty, '.', '..', or holding '/', '\\', ':')"
+        )
+    if (
+        name.endswith((".", " "))
+        or not _WINDOWS_INVALID_CHARS.isdisjoint(name)
+        or name.partition(".")[0].rstrip(" ").lower() in _WINDOWS_RESERVED_NAMES
+    ):
+        raise ValueError(
+            f"split name {name!r} cannot name a directory on Windows, which reserves device names such as 'CON', "
+            "'NUL', 'COM1', 'LPT\u00b9' or 'aux.txt', forbids the characters < > \" | ? * and control characters, and "
+            "strips a trailing dot or space; use a name such as 'train' or 'holdout'"
+        )
+    # casefold: on a case-insensitive filesystem '.VISION-SYNTH.JSON' is the manifest.
+    if name.casefold().startswith(_RESERVED_SPLIT_PREFIX):
+        raise ValueError(
+            f"split name {name!r} starts with {_RESERVED_SPLIT_PREFIX!r} (in any case), which the writers keep for "
+            "their manifest and their staging and backup directories; use a name such as 'train' or 'holdout'"
+        )
+    return name
+
+
 @dataclass(frozen=True)
 class SplitRatios:
     """Dataset split fractions; must be non-negative and sum to ~1.
@@ -595,7 +745,9 @@ class SplitRatios:
     named: Mapping[str, float] | None = None
 
     def __post_init__(self) -> None:
-        """Validate non-negativity and unit sum across whichever splits are in play."""
+        """Validate split names, non-negativity, and unit sum across whichever splits are in play."""
+        for name in self.named or ():
+            validate_split_name(name)
         for name, value in self._items():
             if value < 0:
                 raise ValueError(f"split ratio {name!r} must be non-negative, got {value}")
@@ -615,7 +767,8 @@ class SplitRatios:
             The :class:`SplitRatios` carrying those splits.
 
         Raises:
-            ValueError: If ``splits`` is empty, or its fractions are negative or do not sum to 1.
+            ValueError: If ``splits`` is empty, a name is not one plain path component (see
+                :func:`validate_split_name`), or its fractions are negative or do not sum to 1.
 
         Examples:
             ```pycon
@@ -646,25 +799,26 @@ class SyntheticConfig:
     """Knobs controlling one synthetic image's content.
 
     Args:
-        img_size: Square canvas side length in pixels.
+        img_size: Canvas size in pixels: an ``int`` for a square canvas, or a ``(width, height)``
+            pair for a rectangular one. :attr:`canvas_size` reads either back as ``(width, height)``;
+            images come out as ``(height, width, 3)`` arrays.
         min_objects: Minimum objects drawn per image (inclusive).
         max_objects: Maximum objects drawn per image (inclusive).
-        min_size_ratio: Minimum object size as a fraction of ``img_size``.
-        max_size_ratio: Maximum object size as a fraction of ``img_size``.
+        min_size_ratio: Minimum object size as a fraction of the canvas's shorter side.
+        max_size_ratio: Maximum object size as a fraction of the canvas's shorter side.
         overlap_iou: Reject a candidate whose IoU with any kept box exceeds this.
         boundary_tolerance: Max fraction of a box allowed outside the canvas.
         max_placement_attempts: Retry cap per object before giving up.
         background: What fills the canvas before any object is drawn. Either a plain fill — a
-            :class:`Color`, an ``(r, g, b)`` triple, or a :class:`Fill` — or a
+            :class:`Color` or its name (``"red"``), an ``(r, g, b)`` triple, or a :class:`Fill` — or a
             :class:`~synth_datasets.content.backgrounds.Background` such as
             :class:`~synth_datasets.content.backgrounds.NoiseBackground` or
             :class:`~synth_datasets.content.backgrounds.TextureBackground`. A plain fill is
             normalized to a :class:`~synth_datasets.content.backgrounds.SolidBackground` at
             construction, so ``config.background`` always reads back as a background object and the
-            default draws exactly the flat grey canvas it always did. The field used to be handed
-            straight to Pillow, so a colour *name* such as ``"white"`` or ``"#204080"`` rendered;
-            those are rejected now, since this is the first validation the field has had — pass the
-            triple instead. A background renders from its
+            default draws a flat grey canvas. Only the three :class:`Color` names are accepted as
+            strings; other Pillow colour strings such as ``"white"`` or ``"#204080"`` are rejected —
+            pass an ``(r, g, b)`` triple instead. A background renders from its
             own side stream, never from the placement stream, so switching one on never moves an
             object at a fixed seed.
         rotate: Apply a random rotation to each polygonal shape.
@@ -686,18 +840,26 @@ class SyntheticConfig:
             animal silhouettes instead, ``tuple(AnimalShape)`` for every animal, ``tuple(SymbolShape)``
             for every symbol, ``tuple(LetterShape)`` for every letter, or
             ``(*PrimitiveShape, *AnimalShape, *SymbolShape, *LetterShape)`` for the full mixed vocabulary.
+            A shape may also be spelled by its name — ``("duck", "giraffe")``, or a single ``"duck"`` —
+            which is how a YAML file or the ``vision-synth`` command line can name one; each name is
+            resolved to its member at construction (see
+            :func:`~synth_datasets.families.resolve_shape`), so ``config.shapes`` always reads back
+            as members. ``distractor_shapes`` accepts names the same way.
             Restricting this **does** renumber classes: the vocabulary a run declares and the ids
             it stamps both narrow to exactly these shapes, in this order (see :func:`class_names`),
             so a symbols-only run numbers its symbols from ``0`` rather than from their offset into
             the full :class:`Shape` enum. Compare runs by class name, not by raw id.
         colors: Fills the generator may draw, sampled uniformly. Each may be spelled as a
-            :class:`Color` member, a raw ``(r, g, b)`` triple, or a :class:`Fill`; all three are
+            :class:`Color` member, its name in any case (``"red"``), a raw ``(r, g, b)`` triple, or a
+            :class:`Fill`; all four are
             normalized to :class:`Fill` at construction, so ``config.colors`` reads back as
             ``Fill`` objects whichever spelling went in. Defaults to :data:`DEFAULT_COLORS` (all
             three named colors); pass e.g. ``(Color.RED,)`` to draw only red objects, or
-            ``((255, 215, 0),)`` for a custom yellow. Restricting this does **not** renumber
-            classes: no naming mode narrows its color axis, so the three colors keep their ids in
-            every run.
+            ``((255, 215, 0),)`` for a custom yellow. Under :attr:`ClassMode.COLOR` and
+            :attr:`ClassMode.SHAPE_COLOR` restricting this **does** renumber classes, exactly as
+            ``shapes`` does: the color axis narrows to exactly these fills, in this order, so
+            ``colors=(Color.BLUE,)`` declares one color class, ``blue``, with id ``0``. Under
+            :attr:`ClassMode.SHAPE` there is no color axis, so the ids never depend on this.
         task: Annotation task the generated samples target, as a :class:`Task` or its string value
             (``"detection"``, ``"segmentation"``, ``"obb"``, ``"keypoints"``). This is the **only**
             place a run's task is set — :func:`~synth_datasets.generate_dataset` reads it
@@ -710,7 +872,8 @@ class SyntheticConfig:
         ValueError: On non-positive sizes, inverted min/max ranges, an ``overlap_iou`` or
             ``boundary_tolerance`` outside ``[0, 1]``, ``max_placement_attempts`` below 1, an
             ``asymmetry_jitter`` outside ``[0, 0.5)``,
-            a ``shapes`` tuple that is empty or holds a non-:class:`Shape` element, a ``colors``
+            a ``shapes`` tuple that is empty, names an unknown shape (the message lists every valid
+            name), or holds an element that is neither a :class:`Shape` nor a name, a ``colors``
             tuple that is empty or holds an element that is no valid fill, a ``task`` naming no
             :class:`Task`, or a :attr:`Task.KEYPOINTS` task combined with a ``shapes`` tuple
             that does not belong entirely to one keypoint-bearing family (see
@@ -723,7 +886,7 @@ class SyntheticConfig:
     Examples:
         ```pycon
         >>> from synth_datasets.families.animals import AnimalShape
-        >>> from synth_datasets.core.config import Color, SyntheticConfig, Task
+        >>> from synth_datasets.core.config import ClassMode, Color, SyntheticConfig, Task, class_names
         >>> SyntheticConfig(img_size=128).img_size
         128
         >>> SyntheticConfig(shapes=(AnimalShape.DUCK, AnimalShape.CAMEL)).shapes
@@ -734,12 +897,17 @@ class SyntheticConfig:
         (Fill(rgb=(255, 0, 0), name='red'),)
         >>> SyntheticConfig(colors=((255, 215, 0),)).colors[0].label
         'ffd700'
+        >>> blue_only = SyntheticConfig(class_mode=ClassMode.COLOR, colors=(Color.BLUE,))
+        >>> class_names(blue_only.class_mode, blue_only.shapes, blue_only.colors)
+        ['blue']
+        >>> SyntheticConfig(shapes=("duck", "camel")).shapes
+        (<AnimalShape.DUCK: 'duck'>, <AnimalShape.CAMEL: 'camel'>)
 
         ```
 
     """
 
-    img_size: int = 640
+    img_size: int | tuple[int, int] = 640
     min_objects: int = 1
     max_objects: int = 10
     min_size_ratio: float = 0.1
@@ -774,12 +942,15 @@ class SyntheticConfig:
         # afford to reject a bare string. With the config the task's sole owner, ``task="keypoints"``
         # arrives here raw and is the documented spelling -- coerce it rather than reject it.
         object.__setattr__(self, "task", Task(self.task))
+        self._normalize_shapes()
         self._normalize_colors()
         self._normalize_background()
         self._validate_degradations()
         self._normalize_distractor_pools()
-        if self.img_size <= 0:
-            raise ValueError(f"img_size must be positive, got {self.img_size}")
+        as_canvas_size(self.img_size)
+        if isinstance(self.img_size, list):
+            # A YAML file spells a pair as a list; store the tuple so the frozen config stays hashable.
+            object.__setattr__(self, "img_size", tuple(self.img_size))
         if not 1 <= self.min_objects <= self.max_objects:
             raise ValueError(f"require 1 <= min_objects <= max_objects, got {self.min_objects}, {self.max_objects}")
         if not 0 < self.min_size_ratio <= self.max_size_ratio <= 1:
@@ -800,24 +971,44 @@ class SyntheticConfig:
             raise ValueError(f"asymmetry_jitter must be within [0, 0.5), got {self.asymmetry_jitter}")
         self._validate_vocabulary()
 
+    def _normalize_shapes(self) -> None:
+        """Resolve shape names in :attr:`shapes` and :attr:`distractor_shapes` to their enum members.
+
+        A YAML file or a command line can only spell a shape as a string, so a name is public API here the way
+        ``task="keypoints"`` is. It is resolved once, at this boundary, rather than compared as a string later:
+        ``Shape`` is a str-Enum, so ``"duck"`` compares equal to ``AnimalShape.DUCK`` while failing every identity
+        and ``type(shape)`` lookup downstream. A lone string — a name, or a bare member, which is a string too — is
+        one shape rather than a sequence to iterate, since iterating ``"duck"`` would yield the letters ``d u c k``.
+        Anything that is neither a member nor a name is left for :meth:`_validate_vocabulary` to reject.
+
+        Raises:
+            ValueError: If a string names no shape; the message lists every valid name.
+
+        """
+        object.__setattr__(self, "shapes", _resolve_shape_names(self.shapes))
+        if self.distractor_shapes is not None:
+            object.__setattr__(self, "distractor_shapes", _resolve_shape_names(self.distractor_shapes))
+
     def _normalize_colors(self) -> None:
         """Replace :attr:`colors` with the normalized :class:`Fill` tuple it stands for.
 
         Same reasoning as the ``class_mode`` and ``task`` coercions above, applied to a sequence:
-        a fill is public API in three spellings, so the union is unpacked once here rather than at
-        every point that later needs an RGB triple or a class-name label. A bare ``"red"`` string is
-        rejected rather than coerced — unlike ``class_mode="shape"`` it is not a documented
-        spelling, and under the :class:`str` mixin it would otherwise pass equality checks all the
-        way down to a fill lookup in the generator.
+        a fill is public API in several spellings, so the union is unpacked once here rather than at
+        every point that later needs an RGB triple or a class-name label. A colour name such as
+        ``"red"`` resolves to its :class:`Color` member here, so no bare string reaches the
+        generator, where under the :class:`str` mixin it would compare equal to the member while
+        failing every identity test. A lone string — a name, or a bare member — is one colour
+        rather than a sequence to iterate, since iterating ``"red"`` would yield ``r e d``.
 
         Raises:
-            ValueError: If ``colors`` is empty, or holds anything that is not a :class:`Color`, a
-                :class:`Fill`, or a valid ``(r, g, b)`` triple.
+            ValueError: If ``colors`` is empty, names an unknown colour, or holds anything that is
+                not a :class:`Color`, a colour name, a :class:`Fill`, or a valid ``(r, g, b)`` triple.
 
         """
-        if not self.colors:
+        colors = (self.colors,) if isinstance(self.colors, str) else self.colors
+        if not colors:
             raise ValueError("colors must name at least one Color, got an empty sequence")
-        object.__setattr__(self, "colors", tuple(Fill.parse(value) for value in self.colors))
+        object.__setattr__(self, "colors", tuple(Fill.parse(value) for value in colors))
 
     def _normalize_background(self) -> None:
         """Replace :attr:`background` with the :class:`Background` it stands for.
@@ -825,10 +1016,8 @@ class SyntheticConfig:
         Same boundary-normalization reasoning as :meth:`_normalize_colors`, applied to the canvas:
         the field accepts a bare fill *or* a background object, and everything past construction
         holds a background. A bare fill becomes a
-        :class:`~synth_datasets.content.backgrounds.SolidBackground`, which is exactly the flat
-        canvas the generator drew before backgrounds were types, so an existing configuration keeps
-        its pixels. This is also the first validation the field has ever had — it used to be handed
-        to Pillow unchecked.
+        :class:`~synth_datasets.content.backgrounds.SolidBackground`, which draws the same flat
+        canvas as the bare fill, pixel for pixel.
 
         The import is deferred rather than made at module scope because
         :mod:`~synth_datasets.content.backgrounds` imports this module for its fill union; the cycle
@@ -897,6 +1086,21 @@ class SyntheticConfig:
                     f"but {name} resolved to an empty pool; "
                     f"pass {name}= explicitly, or narrow shapes/colors so a complement remains"
                 )
+
+    @property
+    def canvas_size(self) -> tuple[int, int]:
+        """Return the canvas as ``(width, height)`` in pixels, whichever way :attr:`img_size` spells it.
+
+        Examples:
+            ```pycon
+            >>> from synth_datasets import SyntheticConfig
+            >>> SyntheticConfig(img_size=64).canvas_size, SyntheticConfig(img_size=(96, 48)).canvas_size
+            ((64, 64), (96, 48))
+
+            ```
+
+        """
+        return as_canvas_size(self.img_size)
 
     @property
     def resolved_background(self) -> Background:

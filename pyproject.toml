@@ -78,6 +78,7 @@ urls.Changelog = "https://github.com/Borda/vision-synth/blob/main/CHANGELOG.md"
 urls.Documentation = "https://borda.github.io/vision-synth/"
 urls.Homepage = "https://github.com/Borda/vision-synth"
 urls.Issues = "https://github.com/Borda/vision-synth/issues"
+scripts.vision-synth = "synth_datasets.cli:main"
 
 # Experimental third-party adapter extension point (see fused_transforms._backend.register_adapter).
 # Downstream packages expose an adapter by declaring, in THEIR pyproject.toml:

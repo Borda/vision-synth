@@ -93,9 +93,10 @@ def test_every_registered_family_derives_from_the_shape_base() -> None:
 def test_the_shape_base_still_rejects_a_bare_string() -> None:
     """A shape *value* is not a `Shape`, even though the str mixin makes it compare equal to one.
 
-    This is the check `SyntheticConfig._validate_vocabulary` relies on to catch `shapes=("duck",)`. Under the `str`
-    mixin `"duck" == AnimalShape.DUCK` and both hash alike, so a membership or equality test would let the string
-    through and it would only fail much later, in a registry lookup keyed by `type(shape)`.
+    This is the check `SyntheticConfig` relies on to tell a member from a name: under the `str` mixin `"duck" ==
+    AnimalShape.DUCK` and both hash alike, so a membership or equality test would let the string through unresolved and
+    it would only fail much later, in a registry lookup keyed by `type(shape)`. The config resolves a name to its member
+    instead (see `test_shape_names.py`), and needs this check to know when to.
 
     """
     from synth_datasets import Shape
@@ -103,3 +104,23 @@ def test_the_shape_base_still_rejects_a_bare_string() -> None:
 
     assert AnimalShape.DUCK == "duck"
     assert not isinstance("duck", Shape)
+
+
+def test_family_enums_are_exported_at_top_level() -> None:
+    """Each family's shape enum is importable from the package root, in registry order.
+
+    `SyntheticConfig(shapes=...)` is typed and documented against these enums, so reaching them through a family
+    submodule was an avoidable detour for the one name per family a caller always needs.
+
+    """
+    import synth_datasets
+    from synth_datasets import AnimalShape, LetterShape, PrimitiveShape, SymbolShape
+    from synth_datasets.families import SHAPE_FAMILIES
+
+    assert tuple(family.member_type for family in SHAPE_FAMILIES) == (
+        PrimitiveShape,
+        AnimalShape,
+        SymbolShape,
+        LetterShape,
+    )
+    assert {"PrimitiveShape", "AnimalShape", "SymbolShape", "LetterShape"} <= set(synth_datasets.__all__)

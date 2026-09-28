@@ -1,11 +1,9 @@
 """The base class every shape family's enum inherits, and nothing else.
 
 Its whole job is to make "is this a drawable shape?" answerable by one type rather than by a
-hand-maintained union. :data:`~synth_datasets.families.Shape` used to be spelled
-``PrimitiveShape | AnimalShape | SymbolShape | LetterShape``, which meant adding a family was a
-two-site edit — append to the registry *and* extend the union — with the second site easy to forget
-and slow to fail. With every family enum deriving from :class:`ShapeEnum`, the union is the base
-class, so the registry is the only place a new family has to be named.
+hand-maintained union. With every family enum deriving from :class:`ShapeEnum`,
+:data:`~synth_datasets.families.Shape` is that base class, so the registry is the only place a new
+family has to be named.
 
 The class is deliberately **empty**. Two reasons, both hard:
 

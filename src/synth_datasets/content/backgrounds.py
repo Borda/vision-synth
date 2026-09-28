@@ -43,11 +43,14 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from synth_datasets._render import require_stream, to_uint8
-from synth_datasets.core.config import ColorLike, Fill
+from synth_datasets.core.config import ColorLike, Fill, as_canvas_size
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
     from PIL.Image import Image as PILImage
+
+#: What :meth:`Background.render` receives: a square side, or ``(width, height)``.
+CanvasSize = int | tuple[int, int]
 
 #: The grey every mode falls back to, and the fill the generator drew before backgrounds were types.
 #: Spelled once here so the default of five dataclasses cannot drift apart.
@@ -95,13 +98,16 @@ class Background(ABC):
         return True
 
     @abstractmethod
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
-        """Return the canvas this background fills, as ``(img_size, img_size, 3)`` ``uint8``.
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
+        """Return the canvas this background fills, as ``(height, width, 3)`` ``uint8``.
 
         Args:
             rng: The side stream to draw from, or ``None`` when :attr:`consumes_randomness` is
                 ``False`` for this instance. It is never the generator's placement stream.
-            img_size: Square canvas side length in pixels.
+            img_size: The canvas side as an ``int`` when it is square, or ``(width, height)`` when
+                it is not. The generator passes an ``int`` for every square canvas, so a subclass
+                that only ever serves square configs may treat it as one; the built-ins normalize
+                both spellings through :func:`~synth_datasets.core.config.as_canvas_size`.
 
         Returns:
             A writable, C-contiguous RGB canvas.
@@ -109,13 +115,13 @@ class Background(ABC):
         """
 
     def render_with_source(
-        self, rng: np.random.Generator | None, img_size: int
+        self, rng: np.random.Generator | None, img_size: CanvasSize
     ) -> tuple[NDArray[np.uint8], str | None]:
         """Return the canvas together with whatever names where its pixels came from.
 
         Args:
             rng: The side stream, exactly as :meth:`render` takes it.
-            img_size: Square canvas side length in pixels.
+            img_size: The canvas size, exactly as :meth:`render` takes it.
 
         Returns:
             The canvas and a provenance string, or ``None`` when the mode is procedural and there is
@@ -161,7 +167,7 @@ class SolidBackground(Background):
         """Return ``False``: a flat fill has nothing to draw."""
         return False
 
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
         """Return a canvas of one repeated colour, ignoring ``rng`` entirely.
 
         Built with :func:`numpy.full` rather than a broadcast view made contiguous: at ``img_size=1`` every axis is
@@ -170,7 +176,8 @@ class SolidBackground(Background):
         canvas size.
 
         """
-        return np.full((img_size, img_size, 3), _rgb(self.color).astype(np.uint8), dtype=np.uint8)
+        width, height = as_canvas_size(img_size)
+        return np.full((height, width, 3), _rgb(self.color).astype(np.uint8), dtype=np.uint8)
 
 
 @dataclass(frozen=True)
@@ -223,22 +230,22 @@ class GradientBackground(Background):
         """
         return self.direction is None and not self.radial
 
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
         """Return the ramp, interpolating between the stops in float and rounding once."""
         first, second = (_rgb(stop) for stop in self.stops)
         return to_uint8(first + self._ramp(rng, img_size)[..., None] * (second - first))
 
-    def _ramp(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.float32]:
+    def _ramp(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.float32]:
         """Return the scalar field the stops are interpolated over, normalized to ``[0, 1]``.
 
         The linear field is rescaled by its own extent rather than by a closed form, so the ramp spans both stops
         exactly at every angle instead of compressing toward the diagonals.
 
         """
-        rows, columns = np.mgrid[0:img_size, 0:img_size].astype(np.float32)
+        width, height = as_canvas_size(img_size)
+        rows, columns = np.mgrid[0:height, 0:width].astype(np.float32)
         if self.radial:
-            centre = (img_size - 1) / 2.0
-            distance = np.hypot(rows - centre, columns - centre)
+            distance = np.hypot(rows - (height - 1) / 2.0, columns - (width - 1) / 2.0)
             return np.asarray(distance / max(float(distance.max()), 1e-6), dtype=np.float32)
         if self.direction is not None:
             angle = float(self.direction)
@@ -285,10 +292,11 @@ class NoiseBackground(Background):
         if self.sigma < 0:
             raise ValueError(f"sigma must be non-negative, got {self.sigma}")
 
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
         """Return the base colour plus one Gaussian field, added rather than multiplied."""
         stream = require_stream(rng, type(self).__name__)
-        noise = stream.standard_normal((img_size, img_size, 3)).astype(np.float32) * float(self.sigma)
+        width, height = as_canvas_size(img_size)
+        noise = stream.standard_normal((height, width, 3)).astype(np.float32) * float(self.sigma)
         return to_uint8(_rgb(self.base) + noise)
 
 
@@ -330,7 +338,7 @@ class ImpulseNoiseBackground(Background):
             if not 0.0 <= value <= 1.0:
                 raise ValueError(f"{name} must be within [0, 1], got {value}")
 
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
         """Return the base colour with a fraction of pixels replaced outright by black or white.
 
         Replacement, not addition: adding a fixed salt value to an arbitrary base would not produce endpoint pixels,
@@ -338,9 +346,10 @@ class ImpulseNoiseBackground(Background):
 
         """
         stream = require_stream(rng, type(self).__name__)
-        canvas = np.broadcast_to(_rgb(self.base), (img_size, img_size, 3)).copy()
-        selected = stream.random((img_size, img_size)) < float(self.amount)
-        salt = stream.random((img_size, img_size)) < float(self.salt_ratio)
+        width, height = as_canvas_size(img_size)
+        canvas = np.broadcast_to(_rgb(self.base), (height, width, 3)).copy()
+        selected = stream.random((height, width)) < float(self.amount)
+        salt = stream.random((height, width)) < float(self.salt_ratio)
         canvas[selected & salt] = 255.0
         canvas[selected & ~salt] = 0.0
         return to_uint8(canvas)
@@ -402,7 +411,7 @@ class TextureBackground(Background):
         if self.quantize is not None and self.quantize < 2:
             raise ValueError(f"quantize must be at least 2 levels when given, got {self.quantize}")
 
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
         """Return the base colour plus the summed octaves, added rather than multiplied.
 
         Additive on purpose: a multiplicative field would make the effective contrast depend on
@@ -412,7 +421,7 @@ class TextureBackground(Background):
         field = self._field(require_stream(rng, type(self).__name__), img_size)
         return to_uint8(_rgb(self.base) + float(self.amplitude) * field[..., None])
 
-    def _field(self, rng: np.random.Generator, img_size: int) -> NDArray[np.float32]:
+    def _field(self, rng: np.random.Generator, img_size: CanvasSize) -> NDArray[np.float32]:
         """Return the summed, normalized and optionally posterized value-noise field in ``[-1, 1]``.
 
         One uniform lattice is drawn per octave and upsampled bicubically, so the draw count is the octave count
@@ -422,12 +431,19 @@ class TextureBackground(Background):
         """
         from PIL import Image
 
-        field = np.zeros((img_size, img_size), dtype=np.float32)
+        width, height = as_canvas_size(img_size)
+        short = min(width, height)
+        field = np.zeros((height, width), dtype=np.float32)
         weights = 0.0
         for octave in range(self.octaves):
-            cells = math.ceil(float(self.frequency) * 2**octave) + 1
-            lattice = rng.uniform(-1.0, 1.0, size=(cells, cells)).astype(np.float32)
-            upsampled = Image.fromarray(lattice, mode="F").resize((img_size, img_size), Image.Resampling.BICUBIC)
+            # ``frequency`` counts features across the shorter side; the longer side gets proportionally more cells,
+            # so a rectangular canvas shows more features rather than stretched ones. On a square canvas both axes
+            # get the same count, and the draw is the same ``(cells, cells)`` lattice it always was.
+            features = float(self.frequency) * 2**octave
+            cells_x = math.ceil(features * (width / short)) + 1
+            cells_y = math.ceil(features * (height / short)) + 1
+            lattice = rng.uniform(-1.0, 1.0, size=(cells_y, cells_x)).astype(np.float32)
+            upsampled = Image.fromarray(lattice, mode="F").resize((width, height), Image.Resampling.BICUBIC)
             weight = 0.5**octave
             field += np.asarray(upsampled, dtype=np.float32) * weight
             weights += weight
@@ -536,12 +552,12 @@ class ImageBackground(Background):
         object.__setattr__(self, "image_dir", Path(self.image_dir))
         _scan(self.image_dir)
 
-    def render(self, rng: np.random.Generator | None, img_size: int) -> NDArray[np.uint8]:
+    def render(self, rng: np.random.Generator | None, img_size: CanvasSize) -> NDArray[np.uint8]:
         """Return one random crop, discarding which file it came from."""
         return self.render_with_source(rng, img_size)[0]
 
     def render_with_source(
-        self, rng: np.random.Generator | None, img_size: int
+        self, rng: np.random.Generator | None, img_size: CanvasSize
     ) -> tuple[NDArray[np.uint8], str | None]:
         """Return one random crop and the name of the file it was taken from.
 
@@ -557,26 +573,28 @@ class ImageBackground(Background):
         chosen = files[int(stream.integers(len(files)))]
         with Image.open(chosen) as opened:
             picture = opened.convert("L" if self.grayscale else "RGB")
-            picture = _at_least(picture, img_size)
-            left = int(stream.integers(picture.width - img_size + 1))
-            top = int(stream.integers(picture.height - img_size + 1))
-            crop = picture.crop((left, top, left + img_size, top + img_size)).convert("RGB")
+            width, height = as_canvas_size(img_size)
+            picture = _at_least(picture, width, height)
+            left = int(stream.integers(picture.width - width + 1))
+            top = int(stream.integers(picture.height - height + 1))
+            crop = picture.crop((left, top, left + width, top + height)).convert("RGB")
         source = PurePath(chosen.relative_to(self.image_dir)).as_posix()
         return np.array(crop, dtype=np.uint8), source
 
 
-def _at_least(picture: PILImage, img_size: int) -> PILImage:
-    """Return a picture whose every side is at least ``img_size``, upscaling proportionally if not.
+def _at_least(picture: PILImage, width: int, height: int) -> PILImage:
+    """Return a picture at least ``width`` wide and ``height`` high, upscaling proportionally if not.
 
     A file smaller than the canvas has no crop to give, and refusing it would make the mode depend on the caller pre-
     sizing a directory. Scaling the short side up keeps the aspect ratio, so the texture statistics the mode exists for
     are stretched rather than distorted.
 
     """
-    if picture.width >= img_size and picture.height >= img_size:
+    if picture.width >= width and picture.height >= height:
         return picture
     from PIL import Image
 
-    scale = img_size / min(picture.width, picture.height)
-    size = (max(img_size, round(picture.width * scale)), max(img_size, round(picture.height * scale)))
+    # The larger of the two per-axis factors; on a square canvas this is ``side / min(picture sides)``.
+    scale = max(width / picture.width, height / picture.height)
+    size = (max(width, round(picture.width * scale)), max(height, round(picture.height * scale)))
     return picture.resize(size, Image.Resampling.BICUBIC)

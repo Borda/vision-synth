@@ -6,19 +6,10 @@ Every family — :mod:`~synth_datasets.families.primitives`,
 :data:`SHAPE_FAMILIES`, and every other module in the package consults that tuple instead of
 naming the families itself.
 
-That is the whole point. Before this module existed, "which families exist" was re-derived in six
-places, each in a different representation: a type union, a dict keyed by class, a dict keyed by
-landmark-table *length*, an if-chain over polygon tables, an ``isinstance`` chain, and a block of
-per-family re-exports. Adding a family meant finding all six, and missing one failed quietly —
-forget the ``isinstance`` chain and the family generated no landmarks at all, which a writer then
-serialized as a structurally valid all-zero keypoint table.
-
-Adding a family now means exactly one edit: write the module and append one :class:`ShapeFamily`
-here. :data:`Shape` used to be a second, easily forgotten site — a hand-written
-``PrimitiveShape | AnimalShape | ...`` union, needed because a type checker cannot infer the member
-types from :data:`SHAPE_FAMILIES`. It is now the shared base class
-:class:`~synth_datasets.families.shape_enum.ShapeEnum` instead, which a checker reads directly off
-each family's own declaration, so there is nothing left to keep in sync.
+Adding a family means exactly one edit: write the module and append one :class:`ShapeFamily`
+here. :data:`Shape` needs no second edit: it is the shared base class
+:class:`~synth_datasets.families.shape_enum.ShapeEnum`, which a type checker reads directly off
+each family's own declaration.
 
 Examples:
     ```pycon
@@ -60,8 +51,8 @@ if TYPE_CHECKING:
 
 #: Any drawable shape, as a static type *and* as a runtime check: every family's enum derives from
 #: :class:`~synth_datasets.families.shape_enum.ShapeEnum`, so ``isinstance(value, Shape)`` accepts
-#: any member type and still rejects a bare ``"duck"`` string — which is what
-#: :meth:`~synth_datasets.core.config.SyntheticConfig._validate_vocabulary` relies on. This was
+#: any member type and still tells a bare ``"duck"`` string apart — which is how :func:`resolve_shape`
+#: knows a name needs resolving and a member does not. This was
 #: a hand-written ``PrimitiveShape | AnimalShape | ...`` union until the base class replaced it,
 #: which is what reduced adding a family to a single edit site. It is not iterable — use
 #: :data:`ALL_SHAPES` for the full vocabulary.
@@ -214,6 +205,48 @@ DEFAULT_SHAPES: tuple[Shape, ...] = SHAPE_FAMILIES[0].members
 
 _BY_TYPE: dict[type, ShapeFamily] = {family.member_type: family for family in SHAPE_FAMILIES}
 _BY_VALUE: dict[str, ShapeFamily] = {value: family for family in SHAPE_FAMILIES for value in family.values}
+#: Every shape keyed by its name (its string value), for :func:`resolve_shape`. One flat map is enough because
+#: values are unique across families, which :data:`_BY_VALUE` above already relies on.
+_BY_NAME: dict[str, Shape] = {str(shape.value): shape for shape in ALL_SHAPES}
+
+
+def resolve_shape(shape: Shape | str) -> Shape:
+    """Return the shape a name stands for; a :data:`Shape` member is returned unchanged.
+
+    A YAML file or a command line can only spell a shape as a string, so
+    :class:`~synth_datasets.core.config.SyntheticConfig` resolves names through here at construction. The member,
+    not the equal string, is what every downstream lookup needs: under the ``str`` mixin ``"duck"`` compares equal to
+    ``AnimalShape.DUCK`` but is not one, and :func:`family_of` looks a shape up by its type.
+
+    Args:
+        shape: A :data:`Shape` member, or its name such as ``"duck"``, ``"square"`` or ``"a"``.
+
+    Returns:
+        The member.
+
+    Raises:
+        ValueError: If ``shape`` is a string naming no shape; the message lists every valid name, family by family.
+
+    Examples:
+        ```pycon
+        >>> from synth_datasets.families import resolve_shape
+        >>> resolve_shape("duck")
+        <AnimalShape.DUCK: 'duck'>
+        >>> resolve_shape("dragon")
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown shape name 'dragon'; valid names are primitives: ...
+
+        ```
+
+    """
+    if isinstance(shape, Shape):
+        return shape
+    member = _BY_NAME.get(shape)
+    if member is None:
+        valid = "; ".join(f"{family.name}: {', '.join(family.values)}" for family in SHAPE_FAMILIES)
+        raise ValueError(f"unknown shape name {shape!r}; valid names are {valid}")
+    return member
 
 
 def family_of(shape: Shape) -> ShapeFamily:

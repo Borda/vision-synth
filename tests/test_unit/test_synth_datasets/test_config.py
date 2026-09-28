@@ -342,16 +342,15 @@ def test_shapes_rejects_an_empty_tuple() -> None:
 @pytest.mark.parametrize(
     "bad",
     [
-        pytest.param(("duck",), id="bare-string"),
-        pytest.param((AnimalShape.DUCK, "square"), id="mixed-string"),
         pytest.param((AnimalShape.DUCK, None), id="none"),
+        pytest.param((AnimalShape.DUCK, 3), id="int"),
     ],
 )
 def test_shapes_rejects_non_shape_elements(bad: tuple[object, ...]) -> None:
-    """Anything that is not a `Shape` member is refused, including an equal bare string.
+    """Anything that is neither a `Shape` member nor a shape name is refused.
 
-    Both members subclass `str`, so `"duck" == AnimalShape.DUCK` is True and a plain string would sail through a naive
-    equality check while breaking identity comparisons downstream.
+    A shape *name* is accepted and resolved to its member (see `test_shapes_accepts_shape_names`); what is refused is
+    anything else, rather than letting it surface as an opaque lookup failure downstream.
 
     """
     with pytest.raises(ValueError, match="only Shape members"):
@@ -394,21 +393,54 @@ def test_colors_rejects_an_empty_tuple() -> None:
 @pytest.mark.parametrize(
     "bad",
     [
-        pytest.param(("red",), id="bare-string"),
-        pytest.param((Color.RED, "blue"), id="mixed-string"),
         pytest.param((Color.RED, None), id="none"),
+        pytest.param((1, 2, 3), id="bare-ints"),
     ],
 )
 def test_colors_rejects_non_color_elements(bad: tuple[object, ...]) -> None:
-    """Anything that is neither a `Color` member nor a valid RGB triple is refused.
+    """Anything that is neither a `Color` member, a colour name, a `Fill`, nor a valid RGB triple is refused.
 
-    `Color` subclasses `str`, so `"red" == Color.RED` is True and a plain string would sail through a naive equality
-    check while breaking identity comparisons downstream. Custom fills are accepted now, but only as real `(r, g, b)`
-    triples — widening the field must not turn it into "accept anything".
+    Colour names and custom `(r, g, b)` triples are accepted, but widening the field must not turn it into "accept
+    anything": `None` or a bare sequence of ints still fails at construction rather than deep in the generator.
 
     """
     with pytest.raises(ValueError, match="Color member or an"):
         SyntheticConfig(colors=bad)
+
+
+@pytest.mark.parametrize(
+    ("colors", "expected"),
+    [
+        pytest.param(("red", "blue"), (Color.RED, Color.BLUE), id="names"),
+        pytest.param(("Red", "BLUE"), (Color.RED, Color.BLUE), id="any-case"),
+        pytest.param((Color.GREEN, "red", (255, 0, 0)), (Color.GREEN, Color.RED, Color.RED), id="mixed-spellings"),
+        pytest.param("green", (Color.GREEN,), id="lone-name"),
+    ],
+)
+def test_colors_accept_colour_names(colors: object, expected: tuple[Color, ...]) -> None:
+    """A colour name resolves to its `Color` member, so a YAML file or `--colors red,blue` can spell one.
+
+    A lone string is one name rather than a sequence of characters: iterating `"green"` would yield `g r e e n`.
+
+    """
+    assert [fill.rgb for fill in SyntheticConfig(colors=colors).colors] == [color.rgb for color in expected]
+
+
+def test_named_colours_keep_their_class_names() -> None:
+    config = SyntheticConfig(class_mode="color", colors=("blue", "red"))
+    assert [fill.label for fill in config.colors] == ["blue", "red"]
+
+
+def test_an_unknown_colour_name_lists_the_valid_ones() -> None:
+    with pytest.raises(ValueError, match=r"unknown colour name 'purple'.*red, green, blue"):
+        SyntheticConfig(colors=("red", "purple"))
+    with pytest.raises(ValueError, match="unknown colour name '#ff0000'"):
+        Fill.parse("#ff0000")
+
+
+def test_a_colour_name_parses_to_the_member_s_fill_not_a_bare_string() -> None:
+    """Under the `str` mixin `"red" == Color.RED`, so a name must become the member's `Fill`, not pass as-is."""
+    assert Fill.parse("red") == Fill.parse(Color.RED)
 
 
 @pytest.mark.parametrize(
@@ -548,7 +580,6 @@ def test_fill_parse_accepts_every_spelling_and_is_idempotent() -> None:
 @pytest.mark.parametrize(
     "bad",
     [
-        pytest.param("red", id="bare-string"),
         pytest.param((255, 0), id="two-channels"),
         pytest.param((255, 0, 0, 0), id="four-channels"),
         pytest.param((256, 0, 0), id="channel-above-range"),
@@ -558,12 +589,7 @@ def test_fill_parse_accepts_every_spelling_and_is_idempotent() -> None:
     ],
 )
 def test_fill_rejects_anything_that_is_not_an_8_bit_triple(bad: object) -> None:
-    """A malformed fill raises where it is written, not deep inside the generator's draw call.
-
-    `"red"` is the case worth naming: under the `str` mixin it compares equal to `Color.RED` and hashes alike, so an
-    equality or membership check would pass it straight through to a `.rgb` access that has no such attribute.
-
-    """
+    """A malformed fill raises where it is written, not deep inside the generator's draw call."""
     with pytest.raises(ValueError, match="Color member or an"):
         Fill.parse(bad)  # type: ignore[arg-type]
 
