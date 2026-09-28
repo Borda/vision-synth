@@ -554,13 +554,13 @@ def _record_from_sample(case: CaseKey, mode: str, sample: MemSample) -> dict[str
 
 
 def _measure_mode(thunk: Callable, case: CaseKey, mode: str, warmup: int) -> dict[str, Any]:
-    """Run one mode thunk under the device memory counter, capturing skips."""
+    """Run one mode thunk and distinguish unsupported cases from failures."""
     try:
         sample = _measure(thunk, case.device, warmup)
     except SkipCase as skip:
         return case.record(mode=mode, status="skipped", skip_reason=str(skip))
     except Exception as exc:
-        return case.record(mode=mode, status="skipped", skip_reason=f"{type(exc).__name__}: {exc}")
+        return case.record(mode=mode, status="error", error=f"{type(exc).__name__}: {exc}")
     return _record_from_sample(case, mode, sample)
 
 
@@ -574,6 +574,9 @@ def _run_case(case: CaseKey, warmup: int) -> list[dict[str, Any]]:
     except SkipCase as skip:
         reason = str(skip)
         return [case.record(mode=mode, status="skipped", skip_reason=reason) for mode in ("native", "fused")]
+    except Exception as exc:
+        error = f"{type(exc).__name__}: {exc}"
+        return [case.record(mode=mode, status="error", error=error) for mode in ("native", "fused")]
     return [
         _measure_mode(native_thunk, case, "native", warmup),
         _measure_mode(fused_thunk, case, "fused", warmup),
@@ -717,6 +720,7 @@ def _print_results_table(results: list[dict[str, Any]]) -> None:
 
     for r in results:
         if r.get("status") != "ok":
+            note = f"error: {r.get('error', '')}" if r.get("status") == "error" else f"skip: {r.get('skip_reason', '')}"
             table.add_row(
                 r["sequence"],
                 "│",
@@ -728,7 +732,7 @@ def _print_results_table(results: list[dict[str, Any]]) -> None:
                 "—",
                 "",
                 "",
-                f"skip: {r.get('skip_reason', '')}",
+                note,
             )
             continue
         peak_x = alloc_x = ""
@@ -833,8 +837,9 @@ def main(
     print()
     _print_results_table(results)
     n_ok = sum(1 for r in results if r.get("status") == "ok")
-    n_skip = len(results) - n_ok
-    print(f"\nResults: {n_ok} ok, {n_skip} skipped")
+    n_skip = sum(1 for r in results if r.get("status") == "skipped")
+    n_error = sum(1 for r in results if r.get("status") == "error")
+    print(f"\nResults: {n_ok} ok, {n_skip} skipped, {n_error} errors")
     print("Ratios are fused/native; <1.00x means fused uses less. 'allocs≈' = approximate count (MPS).")
 
     if json:
@@ -842,6 +847,8 @@ def main(
         out_path = RESULTS_DIR / f"bench_memory_{_platform_slug()}.json"
         out_path.write_text(json_module.dumps({"metadata": _build_metadata(cfg, source), "results": results}, indent=2))
         print(f"JSON → {out_path}")
+    if n_error:
+        raise RuntimeError(f"{n_error} memory benchmark measurements failed")
 
 
 if __name__ == "__main__":

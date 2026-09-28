@@ -422,13 +422,12 @@ def class_vocabulary(
         shapes: The shapes a run draws from, in the order they should be numbered.
         colors: The fills a run draws from, in the order they are numbered. Defaults to the
             three named :class:`Color` members. Only the color-naming modes read it.
-            :attr:`ClassMode.COLOR` ignores them, since its classes never depend on the shape
-            vocabulary.
-        colors: The fills a run draws from, in the order they are numbered. Defaults to the
-            three named :class:`Color` members. Only the color-naming modes read it.
 
     Returns:
         The :class:`ClassVocabulary` for that combination.
+
+    Raises:
+        ValueError: If a factor that defines classes repeats, or two classes would share a name.
 
     Examples:
         ```pycon
@@ -460,6 +459,12 @@ def _build_vocabulary(class_mode: ClassMode, shapes: tuple[Shape, ...], colors: 
     pass over the vocabulary for every shape drawn.
 
     """
+    if class_mode is not ClassMode.COLOR and len(set(shapes)) != len(shapes):
+        raise ValueError("shapes contain a duplicate shape")
+    if class_mode is not ClassMode.SHAPE:
+        rgb_values = [color.rgb for color in colors]
+        if len(set(rgb_values)) != len(rgb_values):
+            raise ValueError("colors contain a duplicate RGB fill")
     if class_mode is ClassMode.COLOR:
         pairs: list[tuple[Shape | None, Fill | None]] = [(None, color) for color in colors]
     elif class_mode is ClassMode.SHAPE:
@@ -470,6 +475,9 @@ def _build_vocabulary(class_mode: ClassMode, shapes: tuple[Shape, ...], colors: 
         ClassEntry(index=index, name=_render_name(shape, color, class_mode), shape=shape, color=color)
         for index, (shape, color) in enumerate(pairs)
     )
+    names = [entry.name for entry in entries]
+    if len(set(names)) != len(names):
+        raise ValueError("vocabulary contains a duplicate class name")
     return ClassVocabulary(class_mode=class_mode, entries=entries)
 
 
@@ -1183,16 +1191,15 @@ class SyntheticConfig:
         return tuple(fill for fill in DISTRACTOR_PALETTE if fill.rgb not in claimed)
 
     def _validate_vocabulary(self) -> None:
-        """Reject an unusable shape/color tuple, a non-:class:`Task` task, or an unannotatable pairing.
+        """Reject ambiguous shape/color pools or an unannotatable task pairing.
 
         Split out of :meth:`__post_init__` so neither routine outgrows the project's complexity
         budget; it carries every check that reads the enum-valued fields rather than the numbers.
 
         Raises:
-            ValueError: If ``shapes`` is empty or holds a non-:class:`Shape` element, ``colors`` is
-                empty or holds a non-:class:`Color` element, ``task`` is not a :class:`Task` member,
-                or a :attr:`Task.KEYPOINTS` task is paired with a ``shapes`` tuple that does not
-                belong entirely to one keypoint-bearing family.
+            ValueError: If ``shapes`` is empty or holds a non-:class:`Shape` element, a class-defining
+                shape or color RGB repeats, class names collide, or a :attr:`Task.KEYPOINTS` task is
+                paired with shapes that do not belong to one keypoint-bearing family.
 
         """
         if not self.shapes:
@@ -1208,3 +1215,4 @@ class SyntheticConfig:
             # for rather than re-derived here.
             reason = describe_keypoint_mismatch(self.shapes)
             raise ValueError(f"task {Task.KEYPOINTS.value!r} needs one keypoint schema, but {reason}")
+        class_vocabulary(self.class_mode, self.shapes, self.colors)

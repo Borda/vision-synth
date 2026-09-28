@@ -119,6 +119,18 @@ def test_data_yaml_omits_absent_split(tmp_path: Path) -> None:
     assert "test" not in doc
 
 
+def test_custom_split_requires_an_explicit_consumer_path(tmp_path: Path) -> None:
+    """Custom split files exist although the standard training YAML has no custom key."""
+    _write(tmp_path, Task.DETECTION, splits=("train", "calib", "test"), count=1)
+    doc = yaml.safe_load((tmp_path / "data.yaml").read_text())
+
+    assert doc["train"] == "images/train"
+    assert doc["test"] == "images/test"
+    assert "calib" not in doc
+    assert (tmp_path / "images" / "calib" / "img_000000.jpg").is_file()
+    assert (tmp_path / "labels" / "calib" / "img_000000.txt").is_file()
+
+
 def test_image_label_parity(tmp_path: Path) -> None:
     """Image and label files have one-to-one correspondence."""
     _write(tmp_path, Task.DETECTION)

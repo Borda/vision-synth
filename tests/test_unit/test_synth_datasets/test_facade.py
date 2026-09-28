@@ -169,6 +169,14 @@ def test_rejects_non_positive_num_images(tmp_path: Path, bad: int) -> None:
         generate_dataset(tmp_path, num_images=bad, fmt="coco", seed=0)
 
 
+@pytest.mark.parametrize("bad", [1.0, 1.5, True])
+def test_rejects_non_integer_num_images_before_writing(tmp_path: Path, bad: object) -> None:
+    """Invalid counts fail at the facade with its documented ValueError and no files."""
+    with pytest.raises(ValueError, match="num_images must be a positive integer"):
+        generate_dataset(tmp_path, num_images=bad, fmt="coco", seed=0)  # type: ignore[arg-type]
+    assert list(tmp_path.iterdir()) == []
+
+
 def test_supplied_config_rejects_competing_field_keywords(tmp_path: Path) -> None:
     """Passing a config *and* config fields is refused rather than silently letting one win.
 

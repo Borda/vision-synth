@@ -13,6 +13,10 @@ on:
       - "src/**"
       - ".github/scripts/measure_parity_tolerances.py"
       - ".github/parity_baseline/**"
+      - ".github/workflows/ci_gate-parity.yml"
+      - "docs/research/parity-tolerances.md"
+      - "pyproject.toml"
+      - "uv.lock"
   push:
     branches: [main]
   workflow_dispatch: {}

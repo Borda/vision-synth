@@ -67,6 +67,7 @@ QUICK_MAX_BATCH: int = 8  # --quick caps the batch sweep at this size
 
 # Representative subset of the optimize_score.py bank: one single-op baseline,
 # a 3-op and two 5-op geometric chains, and two mixed geo+colour sequences.
+# The exact-only flip probe isolates device synchronisation in the discrete path.
 _GEO_LABELS: tuple[str, ...] = ("a01_rotate", "b02_geom_3", "b04_geom_5", "b05_geom_5_warp")
 _MIXED_LABELS: tuple[str, ...] = ("d02_mixed_g3c3__agr", "d03_mixed_g4c3__agr")
 
@@ -121,7 +122,7 @@ def _load_sequences() -> tuple[list[Sequence], str]:
     for label, nb_geom, alb_tfms, k_tfms, tv_tfms in _MIXED_AGR_CASES:
         if label in _MIXED_LABELS:
             sequences.append(Sequence(label, nb_geom, k_tfms, tv_tfms, alb_tfms, reorder=ReorderPolicy.AGGRESSIVE))
-    sequences.append(_crop_fusion_sequence())
+    sequences.extend((_crop_fusion_sequence(), _exact_flip_sequence()))
     return sequences, "imported"
 
 
@@ -134,6 +135,17 @@ def _crop_fusion_sequence() -> Sequence:
         [K.RandomRotation(20.0, p=1.0), K.RandomResizedCrop((h_out, w_out), scale=(0.6, 1.0))],
         [tv.RandomRotation(20), tv.RandomResizedCrop((h_out, w_out), scale=(0.6, 1.0))],
         [A.Rotate(limit=20, p=1.0), A.RandomResizedCrop(size=(h_out, w_out), scale=(0.6, 1.0), p=1.0)],
+    )
+
+
+def _exact_flip_sequence() -> Sequence:
+    """Build a three-flip probe for exact geometric execution on each device."""
+    return Sequence(
+        "e02_exact_flips",
+        3,
+        [K.RandomHorizontalFlip(p=0.5), K.RandomVerticalFlip(p=0.5), K.RandomHorizontalFlip(p=0.5)],
+        [tv.RandomHorizontalFlip(p=0.5), tv.RandomVerticalFlip(p=0.5), tv.RandomHorizontalFlip(p=0.5)],
+        [A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.5), A.HorizontalFlip(p=0.5)],
     )
 
 
@@ -209,6 +221,7 @@ def _fallback_sequences() -> list[Sequence]:
             reorder=ReorderPolicy.AGGRESSIVE,
         ),
         _crop_fusion_sequence(),
+        _exact_flip_sequence(),
     ]
 
 
@@ -393,7 +406,7 @@ def _measure_mode(thunk: Callable, case: CaseKey, mode: str, cfg: BenchConfig) -
         record.update(status="skipped", skip_reason=str(skip))
         return record
     except Exception as exc:
-        record.update(status="skipped", skip_reason=f"{type(exc).__name__}: {exc}")
+        record.update(status="error", error=f"{type(exc).__name__}: {exc}")
         return record
     record.update(status="ok", **_summarise(samples, case.batch))
     if device.supports_peak_mem:
@@ -411,6 +424,9 @@ def _run_case(case: CaseKey, cfg: BenchConfig) -> list[dict[str, Any]]:
     except SkipCase as skip:
         reason = str(skip)
         return [case.record(mode=mode, status="skipped", skip_reason=reason) for mode in ("native", "fused")]
+    except Exception as exc:
+        error = f"{type(exc).__name__}: {exc}"
+        return [case.record(mode=mode, status="error", error=error) for mode in ("native", "fused")]
     return [
         _measure_mode(native_thunk, case, "native", cfg),
         _measure_mode(fused_thunk, case, "fused", cfg),
@@ -569,7 +585,8 @@ def _print_results_table(results: list[dict[str, Any]]) -> None:
     for r in results:
         common = [r["sequence"], "│", r["backend"], r["mode"], r["device"], str(r["batch"])]
         if r.get("status") != "ok":
-            table.add_row(*common, "—", "—", "—", "—", "—", "", f"skip: {r.get('skip_reason', '')}")
+            note = f"error: {r.get('error', '')}" if r.get("status") == "error" else f"skip: {r.get('skip_reason', '')}"
+            table.add_row(*common, "—", "—", "—", "—", "—", "", note)
             continue
         boost = ""
         if r["mode"] == "fused":
@@ -644,8 +661,11 @@ def main(
 
     _print_results_table(results)
     n_ok = sum(1 for r in results if r.get("status") == "ok")
-    n_skip = len(results) - n_ok
-    print(f"\nResults: {n_ok} ok, {n_skip} skipped → {out_path}")
+    n_skip = sum(1 for r in results if r.get("status") == "skipped")
+    n_error = sum(1 for r in results if r.get("status") == "error")
+    print(f"\nResults: {n_ok} ok, {n_skip} skipped, {n_error} errors → {out_path}")
+    if n_error:
+        raise RuntimeError(f"{n_error} benchmark measurements failed; see {out_path}")
 
 
 if __name__ == "__main__":

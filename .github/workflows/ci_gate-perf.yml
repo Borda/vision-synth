@@ -1,24 +1,33 @@
 name: CI perf regression gate
 
 # Triggers:
-#   - Pull requests touching the fusion core (gate fires only where a regression is possible)
+#   - Pull requests touching the fusion core, benchmark harness, or its dependencies
 #   - Pushes to main touching the same paths (keeps trend visible in Actions even without a PR)
 #   - Manual dispatch (re-run on demand)
 #   - Weekly schedule (Monday 03:17 UTC) for trend tracking even without pushes
 #
 # The dataset generator lives in `src/synth_datasets/` and never touches the fusion core that
-# `experiments/optimize_score.py` exercises, so it is simply absent from these filters -- no
-# exclusion needed since the split moved it out of this package.
+# `experiments/optimize_score.py` exercises, so it is absent from these filters.
 on:
   pull_request:
     paths:
       - "src/fused_transforms/**"
       - "experiments/**"
+      - ".github/scripts/ci_perf_baseline_aggregate.py"
+      - ".github/scripts/ci_perf_gate_compare.py"
+      - ".github/workflows/ci_gate-perf.yml"
+      - "pyproject.toml"
+      - "uv.lock"
   push:
     branches: [main]
     paths:
       - "src/fused_transforms/**"
       - "experiments/**"
+      - ".github/scripts/ci_perf_baseline_aggregate.py"
+      - ".github/scripts/ci_perf_gate_compare.py"
+      - ".github/workflows/ci_gate-perf.yml"
+      - "pyproject.toml"
+      - "uv.lock"
   workflow_dispatch: {}
   schedule:
     - cron: "17 3 * * 1"

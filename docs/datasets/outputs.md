@@ -64,7 +64,7 @@ shapes_yolo/
   data.yaml
 ```
 
-`data.yaml` lists only the splits that were written:
+`data.yaml` lists the standard `train`, `val`, and `test` splits that were written:
 
 ```yaml
 path: .
@@ -78,6 +78,8 @@ names:
   2: triangle
   3: circle
 ```
+
+Custom split names still produce `images/<split>/` and `labels/<split>/` directories. They are not additional `data.yaml` keys because the training layout uses the standard keys; point a consumer at the custom image directory explicitly. If `train` is absent, the first written split supplies the `train` path in `data.yaml`.
 
 Each label file has one row per object. Class ids are **0-based**; all coordinates are normalized to `[0, 1]` and clamped:
 

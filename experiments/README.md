@@ -1,44 +1,51 @@
 # Experiments
 
-Benchmark and optimization scripts used during development to measure `vision-synth`' speedup over native Albumentations / Kornia / TorchVision pipelines, and to drive the automated performance-optimization campaigns recorded in `.plans/`. These are developer tools, not part of the installed package — nothing here ships to users.
+Benchmark and optimization scripts used during development to compare `vision-synth` with native Albumentations, Kornia, and TorchVision pipelines. These are developer tools outside the installed package. Results are specific to the measured workload and environment; see the [benchmark methodology](../docs/research/methodology.md) before citing them.
 
-All scripts are plain Python but written in the [jupytext "percent" format](https://jupytext.readthedocs.io/) (`# %%` cell markers), so each can be run as a script or converted to a notebook:
-
-```bash
-uv run python experiments/<script>.py
-# or, as a notebook:
-jupytext --to notebook experiments/<script>.py
-jupyter lab experiments/<script>.ipynb
-```
-
-Install the extras these scripts need once:
+Install the optional backends and benchmark dependency group, then run a script:
 
 ```bash
-uv pip install -e ".[all,benchmark]"
+uv sync --all-extras --group benchmark
+uv run --all-extras --group benchmark python experiments/bench_gpu_batch.py --quick
 ```
 
-Every script writes its numeric results to `experiments/results/` (JSON +, for the pipeline benchmark, PNG figures). That directory is gitignored — it's scratch output, regenerated on every run, not checked into version control. The sample output below was captured from a real (short) run of each script on a Darwin/arm64 host with Torch 2.10; exact numbers will differ on your machine but the qualitative shape (which cases fuse well, which don't) should hold.
+`bench_augmentation_pipelines.py` and `bench_primitive_vs_affine.py` use [Jupytext percent-format](https://jupytext.readthedocs.io/) `# %%` cells. They also run as plain Python scripts. JupyterLab is in the benchmark group; Jupytext is not declared by the project, so install it separately if you want to convert either script to a notebook. The other experiment scripts are plain Python without notebook cells.
+
+Most scripts write host-specific scratch results under ignored `experiments/results/`; `optimize_score.py` prints its score and writes JSON only when given `--details-json`. `bench_albu_preparation.py` requires an output path. The sample output below is historical and is not a performance claim for the current revision or another machine.
 
 ## Files
 
-| File                              | Purpose                                                                                                                                                  | Typical runtime                          |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `optimize_score.py`               | Median of three complete 45-case scores by default; `--repetitions 1` keeps the optimization campaign at one score.                                      | ~90–180 s by default; ~30–60 s per score |
-| `bench_augmentation_pipelines.py` | Full per-sequence latency comparison (28 sequences × 3 backends × native/fused) + visual sanity figures.                                                 | ~40–60 s                                 |
-| `bench_primitive_vs_affine.py`    | Is routing a single op through the backend's generic `Affine` as cheap as its dedicated primitive? Answers the "can we always fuse via Affine" question. | ~5–10 s                                  |
-| `bench_gpu_batch.py`              | Device × batch-size sweep (CPU/CUDA/MPS, batch 1 & 8): latency + throughput.                                                                             | ~1–2 min (`--quick`), longer full        |
-| `bench_memory.py`                 | Peak memory and allocation-count comparison, same sequence/device/batch sweep as above.                                                                  | ~1 min (`--quick`), longer full          |
+| File                              | Purpose                                                                                  |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| `optimize_score.py`               | Fixed 45-case CPU score; median of three full passes by default.                         |
+| `bench_augmentation_pipelines.py` | CPU latency across 28 sequences, three backends, and native/fused modes; visual figures. |
+| `bench_primitive_vs_affine.py`    | Dedicated primitive versus generic affine cost and chain amortization.                   |
+| `bench_gpu_batch.py`              | CPU/CUDA/MPS latency and throughput by batch size where supported.                       |
+| `bench_memory.py`                 | Action-aware tensor memory and allocation counters by device and batch size.             |
+| `bench_rfdetr_shape.py`           | Detector-shaped CPU image/box endpoint across four reproducible variants.                |
+| `bench_albu_preparation.py`       | Albumentations matrix preparation and image/box endpoint comparison.                     |
+| `bench_antialias.py`              | CPU cost of opt-in antialias filtering and its scale estimate.                           |
+
+Run the three focused CPU probes with:
+
+```bash
+uv run --all-extras --group benchmark python experiments/bench_rfdetr_shape.py
+NO_ALBUMENTATIONS_UPDATE=1 uv run --all-extras --group benchmark python experiments/bench_albu_preparation.py experiments/results/preparation.json --revision YOUR_SOURCE_REVISION
+uv run --all-extras --group benchmark python experiments/bench_antialias.py
+```
+
+The preparation probe uses private implementation details and requires an output path plus a revision label. Its results, like the other probes, need the recorded source revision and environment to be interpreted.
 
 ______________________________________________________________________
 
 ## `optimize_score.py` — composite optimization metric
 
 ```bash
-uv run python experiments/optimize_score.py  # three complete scores by default
-uv run python experiments/optimize_score.py --repetitions 10  # PR gate setting
+uv run --all-extras --group benchmark python experiments/optimize_score.py  # three complete scores by default
+uv run --all-extras --group benchmark python experiments/optimize_score.py --repetitions 10  # PR gate setting
 ```
 
-Times 45 cases (single-op baselines, pure-geometric chains, mixed geo+colour chains under aggressive reordering) across Kornia, TorchVision, and Albumentations, each native vs. fused, and prints the geometric mean of all 45 boost ratios plus the theoretical ceiling (geomean of each case's `nb_geom`). This is the single number an optimization campaign tries to push toward the ceiling. `--repetitions` repeats all 45 cases in one process (default 3) and reports the median score; individual repetition scores go to standard error. No JSON/figures are written — standard output stays two lines. At the documented 30–60 seconds per complete score, 10 repetitions take roughly 5–10 minutes of benchmark time, before setup.
+Times 45 cases (single-op baselines, pure-geometric chains, mixed geo+colour chains under aggressive reordering) across Kornia, TorchVision, and Albumentations, each native vs. fused. It prints the geometric mean of the 45 native/fused latency ratios and `theoretical_target`, the geometric mean of each case's geometric operation count. That target is an operation-count reference, not a speed ceiling. `--repetitions` repeats all 45 cases in one process (default 3) and reports the median score; individual scores go to standard error. Optional `--details-json PATH` records per-case timings. Standard output stays two lines.
 
 **Sample output (short run):**
 
@@ -47,12 +54,12 @@ real_score=1.7601
 theoretical_target=2.3752
 ```
 
-Interpretation: fused pipelines are currently ~1.76× faster than native on average across the 45-case bank, against a theoretical best-case of ~2.38× (the gap is mostly CPU-bound colour-op time in the mixed-pipeline cases, which fusing the geometric ops alone can't remove).
+This sample is a historical single-run score for one fixed CPU case bank, not a current or typical-user speedup. The `2.3752` value counts geometric operations in that bank and cannot bound runtime performance. The [methodology](../docs/research/methodology.md#interpret-the-fixed-bank-score) records a separately dated historical `1.7861x` result and the missing controls needed for a comparison claim.
 
 ## `bench_augmentation_pipelines.py` — full pipeline comparison
 
 ```bash
-uv run python experiments/bench_augmentation_pipelines.py
+uv run --all-extras --group benchmark python experiments/bench_augmentation_pipelines.py
 ```
 
 Runs 28 sequences (single-op `a*`, geometric `b*`, colour `c*`, mixed `d*` with `__pw`/`__agr` reorder variants) × 3 backends × native/fused = 168 timed benchmarks, then renders one visual-sanity PNG per sequence (native vs. fused output side by side, with a `max|native-fused|` diff annotation) and writes `experiments/results/benchmark_results.json`.
@@ -81,16 +88,14 @@ d03_mixed_g4c3__agr  albumentations  fused  →  fused(Rotate, HorizontalFlip, V
   color(RandomBrightnessContrast, RandomBrightnessContrast) → passthrough(HueSaturationValue)  [4 warps saved]
 ```
 
-**Illustration** — `experiments/results/visual_b02_geom_3.png` (Rotate + HFlip
-
-- Scale, all three backends, native on top / fused below; each panel's `max|native-fused|` confirms the two paths draw identical random parameters and agree numerically):
+**Illustration** — `experiments/results/visual_b02_geom_3.png` (Rotate, HFlip, Scale; all three backends, native on top and fused below). The panels display `max|native-fused|` as a visual diagnostic. Resetting seeds makes rows reproducible, but does not prove the paths sampled identical geometry or establish numeric parity:
 
 ![b02_geom_3 native vs fused](results/visual_b02_geom_3.png)
 
 ## `bench_primitive_vs_affine.py` — primitive vs. generic Affine
 
 ```bash
-uv run python experiments/bench_primitive_vs_affine.py
+uv run --all-extras --group benchmark python experiments/bench_primitive_vs_affine.py
 ```
 
 For each backend, times a dedicated primitive (`A.Rotate`, `K.RandomRotation`, …) against the backend's generic `Affine`/`RandomAffine` configured to the same effect. A ratio ≈ 1.0 means fuse-aug can freely route that op through `Affine` (and therefore fuse it into a chain) at no per-op cost; a ratio ≫ 1.0 means the dedicated primitive is meaningfully cheaper and the fused path pays a tax for single ops of that kind. Also times 2–6 op chains as dedicated primitives vs. one combined `Affine` call, which is the actual saving fusion delivers.
@@ -119,9 +124,9 @@ Results: `experiments/results/bench_primitive_vs_affine.json`.
 ## `bench_gpu_batch.py` — device × batch-size sweep
 
 ```bash
-uv run python experiments/bench_gpu_batch.py            # full sweep
-uv run python experiments/bench_gpu_batch.py --quick     # fast smoke run
-uv run python experiments/bench_gpu_batch.py --batch-sizes '[1,8,32]'
+uv run --all-extras --group benchmark python experiments/bench_gpu_batch.py            # full sweep
+uv run --all-extras --group benchmark python experiments/bench_gpu_batch.py --quick     # fast smoke run
+uv run --all-extras --group benchmark python experiments/bench_gpu_batch.py --batch-sizes '[1,8,32]'
 ```
 
 Sweeps CPU (always) plus CUDA/MPS (auto-detected) at batch size 1 and 8 for a representative subset of sequences, reporting median/p10/p90 latency and throughput (img/s) for native vs. fused. Correct per-device synchronization (`torch.cuda.synchronize`/`torch.mps.synchronize`) is applied before/after timing so the numbers reflect real device execution, not async dispatch. Native Albumentations is CPU/NumPy-only, so it's skipped (recorded, not silently dropped) on `cuda`/`mps` device rows.
@@ -148,30 +153,27 @@ Sweeps CPU (always) plus CUDA/MPS (auto-detected) at batch size 1 and 8 for a re
 ## `bench_memory.py` — peak memory & allocation count
 
 ```bash
-uv run python experiments/bench_memory.py            # full sweep
-uv run python experiments/bench_memory.py --quick     # fast smoke subset
-uv run python experiments/bench_memory.py --json      # also write JSON
-uv run python experiments/bench_memory.py --devices '["cpu"]' --batch-sizes '[1,8]'
+uv run --all-extras --group benchmark python experiments/bench_memory.py            # full sweep
+uv run --all-extras --group benchmark python experiments/bench_memory.py --quick     # fast smoke subset
+uv run --all-extras --group benchmark python experiments/bench_memory.py --json      # also write JSON
+uv run --all-extras --group benchmark python experiments/bench_memory.py --devices '["cpu"]' --batch-sizes '[1,8]'
 ```
 
-Same sequence/device/batch matrix as `bench_gpu_batch.py`, but measures peak memory and allocation count instead of latency, testing the hypothesis that fusing an N-op chain into one `grid_sample` both lowers peak memory (no chain of intermediate warped tensors) and cuts allocation count. Uses `torch.profiler` (CPU), `torch.mps.current_allocated_memory()` (MPS), or `max_memory_allocated` (CUDA) depending on which counter is reliable per device.
+Measures memory counters on a sequence/device/batch sweep. CPU Torch profiling records live and incremental tensor peaks, preexisting baseline, and physical allocation events. CUDA uses peak allocator stats; MPS current allocation is a snapshot, not a transient peak. Unavailable counters are reported as null with an error. These metrics do not cover every allocator or total process memory; see [memory methodology](../docs/research/methodology.md#measure-memory-responsibly).
 
-**Sample output (`--quick`, CPU, batch 1 & 8; `peak x`/`alloc x` = fused/native ratio, `<1x` = fused uses less):**
+The [corrected CPU tensor-memory sweep](../docs/research/benchmarks.md#corrected-cpu-tensor-memory-sweep-september-6-2026) measured all 72 rows on September 6, 2026. Representative three-operation rows from that recorded environment are:
 
-```
-sequence             backend        mode    device  batch peak MB   allocs   peak x  alloc x
-b02_geom_3           kornia         native  cpu     1     4.0       560
-b02_geom_3           kornia         fused   cpu     1     3.0       104      0.75x   0.19x
-b02_geom_3           torchvision    native  cpu     1     24.5      92
-b02_geom_3           torchvision    fused   cpu     1     3.0       50       0.12x   0.54x
-b02_geom_3           kornia         native  cpu     8     110.5     885
-b02_geom_3           kornia         fused   cpu     8     38.0      503      0.34x   0.57x
-```
+| Backend / batch | Native / fused live tensor peak (MiB) | Native / fused CREATE count |
+| --------------- | ------------------------------------- | --------------------------- |
+| Kornia / 1      | 2.751 / 1.500                         | 271 / 28                    |
+| Kornia / 8      | 21.002 / 16.002                       | 429 / 260                   |
+| TorchVision / 1 | 4.250 / 2.250                         | 35 / 23                     |
+| TorchVision / 8 | 30.500 / 16.002                       | 35 / 231                    |
 
-Reading this: the fused TorchVision path uses ~8× less peak memory than native at batch 8 for a 3-op geometric chain (no intermediate per-op tensors to hold), even though its allocation *count* is sometimes higher (small scratch buffers inside the single fused `grid_sample` call vs. TorchVision's few large per-op allocations). A quick smoke run reported `66 ok, 6 skipped`.
+The earlier `117.5 MB → 38.0 MB` TorchVision ratio and other historical peak/allocation ratios are **withdrawn** because the original profiler timeline accounting was incorrect. The corrected table measures Torch tensor timeline events on CPU only. The profiler also warned about an allocation predating profiling whose size was unknown. No corrected CUDA/MPS memory result is included here.
 
 ## Notes
 
-- All scripts seed `torch`/`numpy` identically for native and fused runs, so any reported difference is real cost, not different random draws — the pipeline benchmark's visual figures make this explicit via the `max|native-fused|` annotation on each panel.
+- Seeded visual rows are reproducible within each path. Native and fused paths can consume random draws differently; the timing cells do not replay paired geometry. A correctness claim needs matched transform parameters or matrices before comparing pixels.
 - `optimize_score.py`'s 45-case bank and `bench_augmentation_pipelines.py`'s 28-case bank overlap but aren't identical; see `program.md` for the optimization-campaign context these scripts were built for.
 - `bench_gpu_batch.py` and `bench_memory.py` import their sequence bank from `optimize_score.py` when available, falling back to an inline copy — console output notes which provenance was used.

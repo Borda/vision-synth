@@ -12,6 +12,8 @@ import numpy as np
 import pytest
 import torch
 
+from fused_transforms.affine.segment import ExactAffineSegment
+
 _ROOT = Path(__file__).parents[2]
 
 
@@ -55,6 +57,16 @@ def bench_memory():
     )
     pytest.importorskip("rich", reason="bench_memory imports Rich table output", exc_type=ModuleNotFoundError)
     return _load_experiment("bench_memory")
+
+
+@pytest.fixture(scope="module")
+def bench_gpu_batch():
+    """Load the throughput benchmark for error-reporting checks."""
+    pytest.importorskip("albumentations", exc_type=ModuleNotFoundError)
+    pytest.importorskip("kornia.augmentation", exc_type=ModuleNotFoundError)
+    pytest.importorskip("torchvision.transforms.v2", exc_type=ModuleNotFoundError)
+    pytest.importorskip("rich", exc_type=ModuleNotFoundError)
+    return _load_experiment("bench_gpu_batch")
 
 
 @pytest.fixture(scope="module")
@@ -155,6 +167,61 @@ def test_timeline_stats_accepts_the_installed_profiler_events(bench_memory):
     assert stats.live_peak_bytes == 4096
     assert stats.incremental_peak_bytes == 4096
     assert stats.allocation_count == 1
+
+
+def test_gpu_benchmark_distinguishes_runtime_failure_from_unsupported_case(bench_gpu_batch):
+    """A broken supported path must not be reported as an expected skip."""
+    device = bench_gpu_batch.Device("cpu", torch.device("cpu"), lambda: None)
+    case = bench_gpu_batch.CaseKey(SimpleNamespace(label="broken", nb_geom=1), "kornia", device, 1)
+    config = SimpleNamespace(warmup=0, measure=1)
+
+    def failing_call():
+        raise RuntimeError("kernel failed")
+
+    def unsupported_call():
+        raise bench_gpu_batch.SkipCase("unsupported")
+
+    failed = bench_gpu_batch._measure_mode(failing_call, case, "fused", config)
+    skipped = bench_gpu_batch._measure_mode(unsupported_call, case, "native", config)
+
+    assert failed["status"] == "error"
+    assert failed["error"] == "RuntimeError: kernel failed"
+    assert skipped["status"] == "skipped"
+    assert skipped["skip_reason"] == "unsupported"
+
+
+def test_memory_benchmark_distinguishes_runtime_failure_from_unsupported_case(bench_memory):
+    """Profiler-path failures must be visible separately from device skips."""
+    device = bench_memory.Device("cpu", torch.device("cpu"), lambda: None, counter="torch-profiler timeline")
+    case = bench_memory.CaseKey(SimpleNamespace(label="broken", nb_geom=1), "kornia", device, 1)
+
+    def failing_call():
+        raise RuntimeError("profiler path failed")
+
+    def unsupported_call():
+        raise bench_memory.SkipCase("unsupported")
+
+    failed = bench_memory._measure_mode(failing_call, case, "fused", warmup=0)
+    skipped = bench_memory._measure_mode(unsupported_call, case, "native", warmup=0)
+
+    assert failed["status"] == "error"
+    assert failed["error"] == "RuntimeError: profiler path failed"
+    assert skipped["status"] == "skipped"
+    assert skipped["skip_reason"] == "unsupported"
+
+
+def test_gpu_benchmark_has_runnable_exact_flip_probe(bench_gpu_batch):
+    """The device sweep must expose the exact path where sync cost may occur."""
+    sequences, _ = bench_gpu_batch._load_sequences()
+    exact = next(seq for seq in sequences if seq.label == "e02_exact_flips")
+    device = bench_gpu_batch.Device("cpu", torch.device("cpu"), lambda: None)
+    native, fused = bench_gpu_batch._tensor_thunks(exact, "kornia", device, 1)
+    pipeline = bench_gpu_batch._build_fused(exact.kornia, exact.reorder)
+
+    assert exact.nb_geom == 3
+    assert isinstance(pipeline._segments[0], ExactAffineSegment)
+    assert native().shape == (1, 3, 256, 256)
+    assert fused().shape == (1, 3, 256, 256)
 
 
 def _assert_model_ready_endpoint(result: tuple[torch.Tensor, torch.Tensor, torch.Tensor], resolution: int) -> None:

@@ -15,6 +15,7 @@ from synth_datasets.core.config import (
     Task,
     class_id,
     class_names,
+    class_vocabulary,
 )
 from synth_datasets.families import ALL_SHAPES
 from synth_datasets.families.animals import AnimalShape
@@ -413,7 +414,7 @@ def test_colors_rejects_non_color_elements(bad: tuple[object, ...]) -> None:
     [
         pytest.param(("red", "blue"), (Color.RED, Color.BLUE), id="names"),
         pytest.param(("Red", "BLUE"), (Color.RED, Color.BLUE), id="any-case"),
-        pytest.param((Color.GREEN, "red", (255, 0, 0)), (Color.GREEN, Color.RED, Color.RED), id="mixed-spellings"),
+        pytest.param((Color.GREEN, "red", Color.BLUE), (Color.GREEN, Color.RED, Color.BLUE), id="mixed-spellings"),
         pytest.param("green", (Color.GREEN,), id="lone-name"),
     ],
 )
@@ -522,6 +523,68 @@ def test_a_raw_fill_is_labelled_by_its_hex_value() -> None:
     names = class_names(ClassMode.SHAPE_COLOR, (PrimitiveShape.SQUARE,), ((255, 215, 0), Color.RED))
 
     assert names == ["ffd700_square", "red_square"]
+
+
+@pytest.mark.parametrize("mode", [ClassMode.COLOR, ClassMode.SHAPE_COLOR])
+def test_color_classes_reject_distinct_labels_for_the_same_rgb(mode: ClassMode) -> None:
+    """A named and raw fill with identical pixels cannot be separate classes."""
+    colors = (Color.RED, (255, 0, 0))
+
+    with pytest.raises(ValueError, match="duplicate RGB"):
+        class_vocabulary(mode, (PrimitiveShape.SQUARE,), colors)
+    with pytest.raises(ValueError, match="duplicate RGB"):
+        SyntheticConfig(class_mode=mode, shapes=(PrimitiveShape.SQUARE,), colors=colors)
+
+
+@pytest.mark.parametrize(
+    ("mode", "shapes", "colors", "reason"),
+    [
+        pytest.param(
+            ClassMode.SHAPE, (PrimitiveShape.SQUARE, PrimitiveShape.SQUARE), (Color.RED,), "duplicate shape", id="shape"
+        ),
+        pytest.param(ClassMode.COLOR, (PrimitiveShape.SQUARE,), (Color.RED, Color.RED), "duplicate RGB", id="color"),
+        pytest.param(
+            ClassMode.SHAPE_COLOR,
+            (PrimitiveShape.SQUARE, PrimitiveShape.SQUARE),
+            (Color.RED,),
+            "duplicate shape",
+            id="shape-color-shape",
+        ),
+        pytest.param(
+            ClassMode.SHAPE_COLOR,
+            (PrimitiveShape.SQUARE,),
+            (Color.RED, Color.RED),
+            "duplicate RGB",
+            id="shape-color-color",
+        ),
+    ],
+)
+def test_config_rejects_repeated_class_entries(mode: ClassMode, shapes: tuple, colors: tuple, reason: str) -> None:
+    """Repeated class-defining entries must not create unreachable IDs."""
+    with pytest.raises(ValueError, match=reason):
+        SyntheticConfig(class_mode=mode, shapes=shapes, colors=colors)
+
+
+def test_class_ignored_pool_can_repeat_as_a_sampling_weight() -> None:
+    """A repeated ignored factor changes draw frequency without adding classes."""
+    square = PrimitiveShape.SQUARE
+    shape_named = SyntheticConfig(class_mode=ClassMode.SHAPE, shapes=(square,), colors=(Color.RED, Color.RED))
+    color_named = SyntheticConfig(class_mode=ClassMode.COLOR, shapes=(square, square), colors=(Color.RED,))
+
+    assert shape_named.colors == (Fill.parse(Color.RED), Fill.parse(Color.RED))
+    assert class_vocabulary(shape_named.class_mode, shape_named.shapes, shape_named.colors).names == ["square"]
+    assert color_named.shapes == (square, square)
+    assert class_vocabulary(color_named.class_mode, color_named.shapes, color_named.colors).names == ["red"]
+
+
+def test_vocabulary_rejects_duplicate_class_names_from_custom_fills() -> None:
+    """Two distinct fills cannot publish the same class name and hide one ID."""
+    with pytest.raises(ValueError, match="duplicate class name"):
+        class_vocabulary(
+            ClassMode.COLOR,
+            (PrimitiveShape.SQUARE,),
+            (Color.RED, Fill(rgb=(1, 2, 3), name="red")),
+        )
 
 
 def test_split_ratios_accepts_arbitrary_split_names() -> None:

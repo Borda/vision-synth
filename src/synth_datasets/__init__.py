@@ -39,6 +39,7 @@ from __future__ import annotations
 import importlib
 import itertools
 from importlib.metadata import PackageNotFoundError, version
+from numbers import Integral
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
@@ -318,7 +319,7 @@ def generate_dataset(
         ```
 
     """
-    if num_images < 1:
+    if isinstance(num_images, bool) or not isinstance(num_images, Integral) or num_images < 1:
         raise ValueError(f"num_images must be a positive integer, got {num_images}")
     if config is not None and config_kwargs:
         raise ValueError(

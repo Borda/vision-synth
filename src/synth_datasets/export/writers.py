@@ -1239,7 +1239,7 @@ class YoloWriter(DatasetWriter):
             (lbl_dir / f"{stem}.txt").write_text("\n".join(rows) + ("\n" if rows else ""), encoding="utf-8")
 
     def _data_yaml(self, splits: dict[str, Iterable[Sample]]) -> str:
-        """Build the ``data.yaml`` contents referencing present splits."""
+        """Build standard YOLO train/val/test paths, using the first split if train is absent."""
         if not splits:  # defensive backstop; write() is the primary guard
             raise ValueError("YoloWriter requires at least one split, got an empty mapping")
         lines = ["path: .", f"train: images/{'train' if 'train' in splits else next(iter(splits))}"]

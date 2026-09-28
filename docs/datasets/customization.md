@@ -383,6 +383,8 @@ print(holdout.to_dict())
 
 The arithmetic is unchanged: fractions must be non-negative and sum to 1, or construction raises.
 
+For YOLO output, every custom split is written under `images/<split>/` and `labels/<split>/`. `data.yaml` exposes only the standard `train`, `val`, and `test` keys; it does not list `calib`. Pass `images/calib` explicitly to a calibration tool that needs it. If you need a custom split as a trainer's validation or test input, configure that trainer with its path explicitly.
+
 ### Custom fill colors
 
 `colors` accepts a named `Color`, any 8-bit `(r, g, b)` triple, or an explicit `Fill`. All three are normalized to `Fill` at construction, so `config.colors` reads back as `Fill` objects whichever spelling went in — the same one-type-inside rule `task` and `class_mode` already follow.
@@ -412,6 +414,8 @@ print(class_names(ClassMode.SHAPE_COLOR, DEFAULT_SHAPES, gold.colors)[:2])
 ```
 
 </details>
+
+Entries that define classes must be unique: `shapes` in shape and shape-color mode, and `colors` RGB values in color and shape-color mode. Two fills with the same pixels cannot carry different color class IDs; duplicate class names are also rejected. The ignored pool may repeat as a sampling weight (`colors` in shape mode, `shapes` in color mode). These checks apply when constructing `SyntheticConfig` or calling `class_vocabulary` directly.
 
 ### Writing your own background or degradation
 
