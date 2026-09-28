@@ -156,7 +156,7 @@ class GeneratorPicklingMixin:
 
     Object *identity* is not preserved: a pipeline and its segments share one generator
     before the round trip and each restore their own copy. Rebinding the shared instance
-    is the owner's job — :class:`~fused_transforms.pipeline.FusedCompose` does it in
+    is the owner's job — :class:`~fused_transforms.core.pipeline.FusedCompose` does it in
     its ``__setstate__`` — because independent copies would advance separate streams
     while looking correct.
 

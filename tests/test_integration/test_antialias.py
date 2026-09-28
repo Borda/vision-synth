@@ -20,7 +20,7 @@ import pytest
 import torch
 
 import fused_transforms.affine.segment as segment
-import fused_transforms.pipeline as pipeline
+import fused_transforms.core.pipeline as pipeline
 from fused_transforms._compat import _KORNIA_AVAILABLE, _TORCHVISION_AVAILABLE
 from fused_transforms.affine.matrix import estimate_scale
 from fused_transforms.affine.segment import (

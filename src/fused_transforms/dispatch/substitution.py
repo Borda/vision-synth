@@ -20,7 +20,7 @@ and is extensible.
 
 Examples:
     ```pycon
-    >>> from fused_transforms.substitution import substitution_target_name
+    >>> from fused_transforms.dispatch.substitution import substitution_target_name
     >>> substitution_target_name("GaussianBlur")
     'RandomGaussianBlur'
     >>> substitution_target_name("MotionBlur") is None

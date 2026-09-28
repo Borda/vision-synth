@@ -29,7 +29,7 @@ from fused_transforms.affine.matrix import (
     vflip_matrix,
 )
 from fused_transforms.affine.segment import build_segments
-from fused_transforms.config_validation import (
+from fused_transforms.core.config_validation import (
     _coerce_randomness_policy,
     _has_coord_aux,
     _validate_fill,
@@ -51,7 +51,7 @@ from fused_transforms.types import (
 )
 
 if TYPE_CHECKING:
-    from fused_transforms.resolver import BackendStr, OpStr
+    from fused_transforms.dispatch.resolver import BackendStr, OpStr
 
 # The from_config doctest builds a Kornia-backed pipeline, so it is skipped when
 # Kornia is not installed (pytest-doctestplus reads this module-level mapping of
@@ -130,7 +130,8 @@ class FactoriesMixin:
             A configured ``FusedCompose`` instance.
 
         Raises:
-            ValueError: If ``backend`` is not in :data:`~fused_transforms.resolver.SUPPORTED_BACKENDS`; or, when
+            ValueError: If ``backend`` is not in
+                :data:`~fused_transforms.dispatch.resolver.SUPPORTED_BACKENDS`; or, when
                 ``on_unsupported="raise"``, if any spec's operation is unknown or unsupported by the chosen backend
                 (all offenders reported together). This validation applies even when ``specs`` is empty.
 
@@ -147,7 +148,7 @@ class FactoriesMixin:
             ```
 
         """
-        from fused_transforms.resolver import SUPPORTED_BACKENDS
+        from fused_transforms.dispatch.resolver import SUPPORTED_BACKENDS
 
         if backend not in SUPPORTED_BACKENDS:
             msg = f"unknown backend {backend!r}; supported: {sorted(SUPPORTED_BACKENDS)}"
@@ -219,7 +220,7 @@ class FactoriesMixin:
             ValueError: On a ``prob``-in-``params`` spec, or (under ``"raise"``) when any op is unsupported.
 
         """
-        from fused_transforms.resolver import SUPPORTED_OPS, resolve_op
+        from fused_transforms.dispatch.resolver import SUPPORTED_OPS, resolve_op
 
         offenders: list[str] = []
         kept: list[TransformSpec] = []
@@ -266,7 +267,7 @@ class FactoriesMixin:
             The constructed backend transform object.
 
         """
-        from fused_transforms.resolver import resolve_op, translate_params
+        from fused_transforms.dispatch.resolver import resolve_op, translate_params
 
         op_name = cast("OpStr", spec.operation)
         tfm_cls = cast(type, resolve_op(op_name, backend))
@@ -307,14 +308,14 @@ class FactoriesMixin:
         """Return the canonical op names *backend* can build.
 
         Args:
-            backend: Backend name (must be in :data:`~fused_transforms.resolver.SUPPORTED_BACKENDS`).
+            backend: Backend name (must be in :data:`~fused_transforms.dispatch.resolver.SUPPORTED_BACKENDS`).
 
         Returns:
             Frozenset of canonical op names the backend supports (empty if the backend's optional dependency is not
             installed).
 
         Raises:
-            KeyError: If *backend* is not in :data:`~fused_transforms.resolver.SUPPORTED_BACKENDS`.
+            KeyError: If *backend* is not in :data:`~fused_transforms.dispatch.resolver.SUPPORTED_BACKENDS`.
 
         Examples:
             ```pycon
@@ -325,7 +326,7 @@ class FactoriesMixin:
             ```
 
         """
-        from fused_transforms.resolver import capability_matrix
+        from fused_transforms.dispatch.resolver import capability_matrix
 
         return capability_matrix()[backend]
 
@@ -345,7 +346,7 @@ class FactoriesMixin:
             ```
 
         """
-        from fused_transforms.resolver import capability_matrix
+        from fused_transforms.dispatch.resolver import capability_matrix
 
         return capability_matrix()
 

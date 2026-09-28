@@ -75,7 +75,7 @@ from fused_transforms.affine.segment import (
     reorder_aggressive,
     reorder_pointwise,
 )
-from fused_transforms.config_validation import (
+from fused_transforms.core.config_validation import (
     _COORD_DATA_KEYS,
     _PIPELINE_TORCH_DTYPES,
     _apply_passthrough_substitution,
@@ -89,14 +89,14 @@ from fused_transforms.config_validation import (
     _validate_mask_interpolation,
     _validate_pipeline_dtype,
 )
-from fused_transforms.factories import (
+from fused_transforms.core.factories import (
     FactoriesMixin,
     _DirectFlipTransform,
     _DirectParamAdapter,
     _DirectParamTransform,
 )
-from fused_transforms.introspection import IntrospectionMixin
-from fused_transforms.planner import (
+from fused_transforms.core.introspection import IntrospectionMixin
+from fused_transforms.core.planner import (
     _adapter_for_backend,
     _build_mixed_segments,
     _PassthroughSegment,
@@ -190,7 +190,7 @@ def _tensor_to_numpy_image(tensor: Tensor, input_ndim: int) -> NDArray[Any]:
     follows the standard converter, which squeezes a single-image batch to ``(height, width, channels)``.
 
     """
-    from fused_transforms.converters import TorchToNumpyConverter
+    from fused_transforms.dispatch.converters import TorchToNumpyConverter
 
     array = TorchToNumpyConverter().convert(tensor)
     if input_ndim == 2 and array.ndim == 3 and array.shape[-1] == 1:
@@ -851,7 +851,7 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
         if output_backend is None or output_backend == "torch":
             return None
         if output_backend in ("numpy", "numpy_hwc"):
-            from fused_transforms.converters import TorchToNumpyConverter
+            from fused_transforms.dispatch.converters import TorchToNumpyConverter
 
             converter: BackendConverter = TorchToNumpyConverter()
         else:
@@ -1493,7 +1493,7 @@ class FusedCompose(FactoriesMixin, IntrospectionMixin, GeneratorPicklingMixin, n
                 raise TypeError(msg)
             return args, None
 
-        from fused_transforms.converters import NumpyToTorchConverter
+        from fused_transforms.dispatch.converters import NumpyToTorchConverter
 
         data_keys = cast("list[str]", self.data_keys)
         aux_ndims: dict[str, int] = {}

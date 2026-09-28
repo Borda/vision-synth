@@ -42,18 +42,18 @@ try:
         ProjectiveSegment,
         build_segments,
     )
-    from fused_transforms.converters import NumpyToTorchConverter, TorchToNumpyConverter
-    from fused_transforms.detection import augment_detection_batch
 
     # Import from the implementation module (not the ``compose`` compatibility
     # shim, whose runtime ``__getattr__`` forwarding is invisible to static doc
     # tooling such as griffe/mkdocstrings). ``compose`` stays a valid import and
     # pickle path for historical payloads.
-    from fused_transforms.pipeline import (
+    from fused_transforms.core.pipeline import (
         AugmentationSequential,
         Compose,
         FusedCompose,
     )
+    from fused_transforms.detection import augment_detection_batch
+    from fused_transforms.dispatch.converters import NumpyToTorchConverter, TorchToNumpyConverter
     from fused_transforms.targets import (
         clip_bbox_xyxy,
         corners_to_rboxes,

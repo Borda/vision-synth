@@ -25,8 +25,8 @@ from fused_transforms.affine.segment import (
     ProjectiveSegment,
     _FusedGeoCropSegment,
 )
-from fused_transforms.factories import _DirectParamAdapter
-from fused_transforms.planner import _PassthroughSegment
+from fused_transforms.core.factories import _DirectParamAdapter
+from fused_transforms.core.planner import _PassthroughSegment
 from fused_transforms.types import SegmentDescriptor, TransformAdapter, is_coordinate_changing_passthrough
 
 

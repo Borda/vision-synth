@@ -271,7 +271,7 @@ class TransformAdapter(Protocol):
     ``getattr``, so absence is tolerated for backwards compatibility):
 
     - ``capabilities: frozenset[str]`` — canonical op names (see
-      :data:`~fused_transforms.resolver.SUPPORTED_OPS`) the adapter can build.
+      :data:`~fused_transforms.dispatch.resolver.SUPPORTED_OPS`) the adapter can build.
     - ``sampling_semantics: SamplingSemantics`` — whether the adapter draws one parameter set per sample or one per
       batch.
 

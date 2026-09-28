@@ -10,7 +10,7 @@ classes, importing each backend lazily to avoid hard dependencies.
 
 Examples:
     ```pycon
-    >>> from fused_transforms.resolver import SUPPORTED_OPS
+    >>> from fused_transforms.dispatch.resolver import SUPPORTED_OPS
     >>> "rotation" in SUPPORTED_OPS
     True
 

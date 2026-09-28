@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 import torch
 
-import fused_transforms.resolver as resolver_mod
+import fused_transforms.dispatch.resolver as resolver_mod
 from fused_transforms import Compose, FusedCompose, TransformSpec
 from fused_transforms._compat import _ALBUMENTATIONS_AVAILABLE, _KORNIA_AVAILABLE, _TORCHVISION_AVAILABLE
 

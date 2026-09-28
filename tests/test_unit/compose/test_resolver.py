@@ -11,7 +11,7 @@ import pytest
 import torch
 
 from fused_transforms._compat import _ALBUMENTATIONS_AVAILABLE, _KORNIA_AVAILABLE, _TORCHVISION_AVAILABLE
-from fused_transforms.resolver import (
+from fused_transforms.dispatch.resolver import (
     SUPPORTED_BACKENDS,
     SUPPORTED_OPS,
     _registry_for,
