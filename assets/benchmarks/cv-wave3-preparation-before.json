@@ -1,0 +1,135 @@
+{
+  "revision": "1b454ed",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "torch": "2.10.0",
+  "albumentations": "2.0.8",
+  "numpy": "2.2.6",
+  "threads": 1,
+  "warmups": 5,
+  "timed_calls": 30,
+  "repeats": 3,
+  "canvas": [224, 224],
+  "endpoint": "CPU float32 BCHW image and dense pixel-edge bbox tensor; no decode, host/device transfer or model",
+  "measurements": [
+    {
+      "batch": 1,
+      "run": 0,
+      "prepare": {
+        "median_ms": 0.050833,
+        "p95_ms": 0.0851708
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 0.6825,
+        "p95_ms": 0.7915878
+      }
+    },
+    {
+      "batch": 1,
+      "run": 1,
+      "prepare": {
+        "median_ms": 0.051562,
+        "p95_ms": 0.08552135
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 0.675167,
+        "p95_ms": 0.76463925
+      }
+    },
+    {
+      "batch": 1,
+      "run": 2,
+      "prepare": {
+        "median_ms": 0.051271,
+        "p95_ms": 0.08529155000000001
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 0.667604,
+        "p95_ms": 0.7102333000000001
+      }
+    },
+    {
+      "batch": 8,
+      "run": 0,
+      "prepare": {
+        "median_ms": 0.4740415,
+        "p95_ms": 0.5739208
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 4.227354,
+        "p95_ms": 4.37345215
+      }
+    },
+    {
+      "batch": 8,
+      "run": 1,
+      "prepare": {
+        "median_ms": 0.4610835,
+        "p95_ms": 0.5784286499999999
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 4.163562499999999,
+        "p95_ms": 4.529003799999999
+      }
+    },
+    {
+      "batch": 8,
+      "run": 2,
+      "prepare": {
+        "median_ms": 0.4621455,
+        "p95_ms": 0.6279916999999999
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 4.175104,
+        "p95_ms": 4.38788735
+      }
+    },
+    {
+      "batch": 32,
+      "run": 0,
+      "prepare": {
+        "median_ms": 1.8668955,
+        "p95_ms": 2.12107485
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 16.4039375,
+        "p95_ms": 16.84604565
+      }
+    },
+    {
+      "batch": 32,
+      "run": 1,
+      "prepare": {
+        "median_ms": 1.9216045,
+        "p95_ms": 2.0886416
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 16.372521,
+        "p95_ms": 16.9270224
+      }
+    },
+    {
+      "batch": 32,
+      "run": 2,
+      "prepare": {
+        "median_ms": 1.889771,
+        "p95_ms": 2.07543995
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 16.3808335,
+        "p95_ms": 16.6856288
+      }
+    }
+  ],
+  "preparation_profile": "         210502 function calls in 0.054 seconds\n\n   Ordered by: cumulative time\n   List reduced from 51 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.054    0.054 .reports/codex/develop/2026-09-06-cv-waves/measure_wave3.py:60(<lambda>)\n        1    0.000    0.000    0.054    0.054 .reports/codex/develop/2026-09-06-cv-waves/measure_wave3.py:60(<listcomp>)\n       20    0.004    0.000    0.054    0.003 src/fuse_augmentations/affine/segment.py:2780(_compose_matrices)\n     1291    0.001    0.000    0.040    0.000 src/fuse_augmentations/adapters/albumentations.py:356(sample_params)\n      980    0.002    0.000    0.029    0.000 src/fuse_augmentations/adapters/albumentations.py:1254(_sample_matrices)\n     1960    0.014    0.000    0.021    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/functional.py:2625(create_affine_transformation_matrix)\n      536    0.001    0.000    0.015    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/transforms.py:989(get_params_dependent_on_data)\n    15944    0.003    0.000    0.013    0.000 src/fuse_augmentations/adapters/albumentations.py:220(_is_albu_instance)\n      444    0.001    0.000    0.010    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/rotate.py:592(get_params_dependent_on_data)\n    15944    0.002    0.000    0.010    0.000 {built-in method builtins.any}\n    42224    0.003    0.000    0.008    0.000 src/fuse_augmentations/adapters/albumentations.py:222(<genexpr>)\n    12071    0.007    0.000    0.007    0.000 {built-in method numpy.array}\n     1291    0.001    0.000    0.007    0.000 src/fuse_augmentations/adapters/albumentations.py:463(build_matrix)\n    28424    0.002    0.000    0.006    0.000 {built-in method builtins.isinstance}\n    24678    0.002    0.000    0.003    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/abc.py:117(__instancecheck__)\n     1602    0.002    0.000    0.002    0.000 {built-in method torch.tensor}\n    24678    0.002    0.000    0.002    0.000 {built-in method _abc._abc_instancecheck}\n      536    0.000    0.000    0.002    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/transforms.py:1054(_get_translate_params)\n     1072    0.000    0.000    0.001    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/random.py:366(randint)\n     1072    0.001    0.000    0.001    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/random.py:292(randrange)\n\n\n",
+  "recorded_date": "2026-09-06",
+  "scope": "CPU-only, fixed synthetic workload; no accelerator, transfer or model-quality result",
+  "benchmark_script": "experiments/bench_albu_preparation.py (same timing cases as original measurement artifact)",
+  "python": "3.10.19",
+  "fuse_augmentations": "0.12.0.dev0",
+  "seed_policy": {
+    "pipeline_streams": 17,
+    "input_generator": 23
+  },
+  "profile_batch": 32,
+  "metadata_note": "Python/package versions and explicit seed/profile labels added from the recorded environment and unchanged probe after measurement."
+}

@@ -1,0 +1,61 @@
+# vision-synth
+
+> Python synthetic computer vision dataset generator and PyTorch image augmentation engine. Generate labelled COCO/YOLO data for object detection, instance segmentation, oriented bounding boxes, and keypoint/pose estimation.
+
+Important: this package is not a general drop-in replacement for Kornia, TorchVision, or Albumentations Compose containers. Unknown spatial passthrough operations are unsafe with auxiliary targets. Performance depends on backend, device, shape, batch, and transform mix.
+
+## Start
+
+- [Generate a synthetic dataset](https://borda.github.io/vision-synth/datasets/): Installation, executable task recipes, formats, and difficulty controls. Start here for labelled computer vision test or training data.
+- [Overview](https://borda.github.io/vision-synth/): Verified capabilities, critical warnings, and navigation by goal.
+- [Installation](https://borda.github.io/vision-synth/getting-started/installation/): Base and optional-backend installation.
+- [Quickstart](https://borda.github.io/vision-synth/getting-started/quickstart/): Runnable backend-free BCHW tensor example.
+
+## Contracts and guides
+
+- [Capabilities](https://borda.github.io/vision-synth/concepts/capabilities/): Exact backend and transform support boundaries.
+- [Backend pipelines](https://borda.github.io/vision-synth/guides/backend-pipelines/): Kornia, TorchVision, Albumentations, native, and mixed-backend usage.
+- [Auxiliary targets](https://borda.github.io/vision-synth/guides/auxiliary-targets/): Safe mask, box, and keypoint routing contracts.
+- [Reproducibility](https://borda.github.io/vision-synth/guides/reproducibility/): RNG domains and research controls.
+- [Known limitations](https://borda.github.io/vision-synth/known-limitations/): Unsafe, approximate, unsupported, and unverified behavior.
+- [FAQ](https://borda.github.io/vision-synth/faq/): Direct answers to common developer and researcher questions.
+
+## Synthetic data
+
+Generate drawn primitives, animal silhouettes, symbols, or letters without source images. There is no `difficulty=` API: use `SyntheticConfig` fields such as object size, `background`, `degrade`, `distractors`, and `occluders`. The application owns training and curriculum scheduling.
+
+### Agent decision route
+
+- Need a saved dataset: import `generate_dataset` from `synth_datasets` and choose `fmt="coco"` or `fmt="yolo"`. `synth_datasets` is the only import path: the former `fused_transforms.data` facade and the `fused_transforms.generate_dataset` alias are both removed, so importing either one now fails.
+- Need samples without disk: import `SyntheticConfig`, `SyntheticGenerator`, or `SyntheticIterableDataset` from `synth_datasets`; use the iterable dataset with a PyTorch `DataLoader`. Importing `SyntheticConfig` or `SyntheticGenerator` stays torch-free; using `SyntheticIterableDataset` requires the `torch` extra.
+- Choose one task: `detection`, `segmentation`, `obb`, or `keypoints`. For keypoints, choose one supported family — animals, symbols, or letters; geometric primitives have no keypoint schema.
+- Need the image/annotation contract: read [Tasks and keypoints](https://borda.github.io/vision-synth/datasets/tasks/) and [Annotation formats](https://borda.github.io/vision-synth/datasets/outputs/).
+- Need a convergence check: follow [Prototyping and convergence checks](https://borda.github.io/vision-synth/datasets/prototyping/) with your external trainer; passing synthetic data does not guarantee real-image accuracy.
+
+Install the base package with `python -m pip install vision-synth`; optional Kornia, TorchVision, and Albumentations extras are not needed for synthetic rendering.
+
+- [Synthetic shape datasets](https://borda.github.io/vision-synth/datasets/): Generating labelled COCO and YOLO datasets of drawn shapes.
+- [Prototyping and convergence checks](https://borda.github.io/vision-synth/datasets/prototyping/): Use a small synthetic training experiment to validate task wiring and convergence before collecting real data.
+- [Shape families](https://borda.github.io/vision-synth/datasets/shapes/): The geometric, animal, symbol, and letter vocabularies, with a visual reference.
+- [Tasks and keypoints](https://borda.github.io/vision-synth/datasets/tasks/): Detection, segmentation, OBB, and keypoint annotations, with per-family landmark schemas.
+- [Annotation formats](https://borda.github.io/vision-synth/datasets/outputs/): COCO and YOLO on-disk layouts and the in-memory streaming feed.
+- [Difficulty bands](https://borda.github.io/vision-synth/datasets/difficulty/): Easy, moderate, and hard knob combinations and the training-free statistics ranking them.
+- [Customization and extension](https://borda.github.io/vision-synth/datasets/customization/): Backgrounds, baked degradations, unlabelled clutter, custom splits, and new families or writers.
+- [Synthetic data experiments](https://borda.github.io/vision-synth/applications/synthetic-data-experiments/): Which experiment answers which question, and how to decode COCO 1-based versus YOLO 0-based class indices.
+- [Generate and augment](https://borda.github.io/vision-synth/applications/generate-and-augment/): Feeding generated samples into a fused augmentation pipeline; the HWC/BCHW and pixel-edge box conventions the two packages share.
+- [Dataset generation API](https://borda.github.io/vision-synth/reference/datasets-generation/): Generated `generate_dataset`, `SyntheticGenerator`, `SyntheticConfig`, task/format enums, class vocabularies, and coordinate helpers.
+- [Dataset scenes and outputs API](https://borda.github.io/vision-synth/reference/datasets-scenes/): Generated `Sample`/`Annotation`, shape families, keypoint schemas, backgrounds, degradations, and writers.
+
+## Research and reference
+
+- [Quality and fidelity](https://borda.github.io/vision-synth/research/quality-and-fidelity/): Why fewer resampling passes can help and why native pixels differ.
+- [Benchmarks](https://borda.github.io/vision-synth/research/benchmarks/): Scoped CPU/MPS performance and memory results, including regressions.
+- [Methodology](https://borda.github.io/vision-synth/research/methodology/): A reproducible benchmark and parity protocol.
+- [Core API](https://borda.github.io/vision-synth/reference/core/): Generated `Compose` and `FusedCompose` API.
+- [Configuration API](https://borda.github.io/vision-synth/reference/configuration/): Generated declarative configuration API.
+- [Types and targets API](https://borda.github.io/vision-synth/reference/types-and-targets/): Generated enums, descriptors, converters, and coordinate helpers.
+
+## Source
+
+- [GitHub repository](https://github.com/Borda/vision-synth): Source, tests, experiments, and issue tracker.
+- [PyPI project](https://pypi.org/project/vision-synth/): Published distributions and installation metadata.

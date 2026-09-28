@@ -1,0 +1,139 @@
+{
+  "revision": "1b454ed-plus-wave3-runtime",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "torch": "2.10.0",
+  "albumentations": "2.0.8",
+  "numpy": "2.2.6",
+  "threads": 1,
+  "warmups": 5,
+  "timed_calls": 30,
+  "repeats": 3,
+  "canvas": [224, 224],
+  "endpoint": "CPU float32 BCHW image and dense pixel-edge bbox tensor; no decode, host/device transfer or model",
+  "measurements": [
+    {
+      "batch": 1,
+      "run": 0,
+      "prepare": {
+        "median_ms": 0.0338545,
+        "p95_ms": 0.04301045
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 0.5843545,
+        "p95_ms": 0.61781265
+      }
+    },
+    {
+      "batch": 1,
+      "run": 1,
+      "prepare": {
+        "median_ms": 0.0323125,
+        "p95_ms": 0.0355913
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 0.5917705,
+        "p95_ms": 0.6272920000000001
+      }
+    },
+    {
+      "batch": 1,
+      "run": 2,
+      "prepare": {
+        "median_ms": 0.0295625,
+        "p95_ms": 0.0361712
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 0.5956045,
+        "p95_ms": 0.62273735
+      }
+    },
+    {
+      "batch": 8,
+      "run": 0,
+      "prepare": {
+        "median_ms": 0.1939585,
+        "p95_ms": 0.24003125
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 3.7815624999999997,
+        "p95_ms": 3.84879985
+      }
+    },
+    {
+      "batch": 8,
+      "run": 1,
+      "prepare": {
+        "median_ms": 0.1891455,
+        "p95_ms": 0.23586424999999997
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 3.780083,
+        "p95_ms": 3.93429345
+      }
+    },
+    {
+      "batch": 8,
+      "run": 2,
+      "prepare": {
+        "median_ms": 0.1965415,
+        "p95_ms": 0.23172325
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 3.7928335,
+        "p95_ms": 3.87301875
+      }
+    },
+    {
+      "batch": 32,
+      "run": 0,
+      "prepare": {
+        "median_ms": 0.806125,
+        "p95_ms": 0.87583125
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 14.662812500000001,
+        "p95_ms": 15.043656099999998
+      }
+    },
+    {
+      "batch": 32,
+      "run": 1,
+      "prepare": {
+        "median_ms": 0.7920625,
+        "p95_ms": 0.8616834499999999
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 14.7188125,
+        "p95_ms": 14.96395175
+      }
+    },
+    {
+      "batch": 32,
+      "run": 2,
+      "prepare": {
+        "median_ms": 0.790041,
+        "p95_ms": 0.8846812499999999
+      },
+      "image_boxes_pipeline": {
+        "median_ms": 14.660625,
+        "p95_ms": 14.934870799999999
+      }
+    }
+  ],
+  "preparation_profile": "         52618 function calls in 0.022 seconds\n\n   Ordered by: cumulative time\n   List reduced from 45 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.022    0.022 .reports/codex/develop/2026-09-06-cv-waves/measure_wave3.py:60(<lambda>)\n        1    0.000    0.000    0.022    0.022 .reports/codex/develop/2026-09-06-cv-waves/measure_wave3.py:60(<listcomp>)\n       20    0.002    0.000    0.022    0.001 src/fuse_augmentations/affine/segment.py:2838(_compose_matrices)\n     1291    0.002    0.000    0.019    0.000 src/fuse_augmentations/affine/segment.py:2624(_sample_matrix_numpy)\n      536    0.001    0.000    0.016    0.000 src/fuse_augmentations/adapters/albumentations.py:1254(_sample_matrices)\n      536    0.001    0.000    0.014    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/transforms.py:989(get_params_dependent_on_data)\n     1072    0.007    0.000    0.011    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/functional.py:2625(create_affine_transformation_matrix)\n     7187    0.004    0.000    0.004    0.000 {built-in method numpy.array}\n      536    0.000    0.000    0.001    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/transforms.py:1054(_get_translate_params)\n     1072    0.000    0.000    0.001    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/random.py:366(randint)\n     1072    0.000    0.000    0.001    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/random.py:292(randrange)\n     1072    0.000    0.000    0.001    0.000 src/fuse_augmentations/adapters/albumentations.py:220(_is_albu_instance)\n      640    0.001    0.000    0.001    0.000 .venv/lib/python3.10/site-packages/numpy/lib/_twodim_base_impl.py:163(eye)\n     1072    0.000    0.000    0.001    0.000 {built-in method builtins.any}\n      536    0.000    0.000    0.001    0.000 .venv/lib/python3.10/site-packages/albumentations/augmentations/geometric/transforms.py:948(_get_scale)\n     2144    0.000    0.000    0.001    0.000 src/fuse_augmentations/adapters/albumentations.py:222(<genexpr>)\n     3124    0.000    0.000    0.000    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/random.py:546(uniform)\n     3216    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}\n     1072    0.000    0.000    0.000    0.000 <python-install>/cpython-3.10.19-macos-aarch64-none/lib/python3.10/random.py:239(_randbelow_with_getrandbits)\n     1827    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}\n\n\n",
+  "recorded_date": "2026-09-06",
+  "scope": "CPU-only, fixed synthetic workload; no accelerator, transfer or model-quality result",
+  "benchmark_script": "experiments/bench_albu_preparation.py (same timing cases as original measurement artifact)",
+  "runtime_sha256": {
+    "src/fuse_augmentations/affine/segment.py": "38b4db6973ad7ac58a12761b0d8fd2ecc9b58d8b38aa4c224d32f69770d07247",
+    "src/fuse_augmentations/pipeline.py": "a0306fd359a20b58320ff7877cf92471d28e354ac6ef4f5bb76526f5652e9d8a"
+  },
+  "python": "3.10.19",
+  "fuse_augmentations": "0.12.0.dev0",
+  "seed_policy": {
+    "pipeline_streams": 17,
+    "input_generator": 23
+  },
+  "profile_batch": 32,
+  "metadata_note": "Python/package versions and explicit seed/profile labels added from the recorded environment and unchanged probe after measurement."
+}

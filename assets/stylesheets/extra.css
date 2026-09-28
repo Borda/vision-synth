@@ -1,0 +1,155 @@
+:root {
+  --md-primary-fg-color: #3949ab;
+  --md-accent-fg-color: #ef6c00;
+}
+
+.md-typeset .admonition.critical,
+.md-typeset details.critical {
+  border-color: #d32f2f;
+}
+
+.md-typeset .critical > .admonition-title,
+.md-typeset .critical > summary {
+  background-color: rgb(211 47 47 / 10%);
+}
+
+.md-typeset .critical > .admonition-title::before,
+.md-typeset .critical > summary::before {
+  background-color: #d32f2f;
+}
+
+/* Top navigation bar: roll-down submenus + full-width content (desktop only). */
+@media screen and (min-width: 76.25em) {
+  /* Widen the layout: the top bar carries navigation, so drop the left sidebar. */
+  .md-grid {
+    max-width: 92rem;
+  }
+
+  .md-sidebar--primary {
+    display: none;
+  }
+
+  /* Keep the reading column near Material's default measure and let the table
+     of contents sit right beside it. The bar above still spans the full
+     window; capping the article group here is what stops paragraphs from
+     running past 200 characters and stranding the sidebar at the far edge. */
+  .md-main__inner {
+    margin-inline: auto;
+    max-width: 54rem;
+  }
+
+  /* Material clips both the tab bar and the tab list (overflow: auto,
+     contain: content) — the roll-down menus must paint outside them. This
+     drops Material's horizontal-scroll fallback for an overfull bar. */
+  .md-tabs {
+    overflow: visible;
+  }
+
+  .md-tabs__list {
+    contain: none;
+    overflow: visible;
+  }
+
+  /* Overfull bar wraps to a second row rather than spilling out of view —
+     Material's own scroll fallback is unavailable once the list is unclipped. */
+  .md-tabs__list {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  /* flex-start keeps the label on the same baseline as the tabs that have no
+     menu — centring the row would shift it by the toggle button's height. */
+  .md-tabs__item--nested {
+    align-items: flex-start;
+    display: flex;
+    position: relative;
+  }
+
+  .md-tabs__item--nested > .md-tabs__link {
+    padding-right: 0.1rem;
+  }
+
+  .md-tabs__toggle {
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    margin-top: 0.8rem;
+    outline-color: var(--md-accent-fg-color);
+    outline-offset: 0.2rem;
+    padding: 0.35rem 0.15rem 0;
+  }
+
+  .md-tabs__caret {
+    border-left: 0.3em solid transparent;
+    border-right: 0.3em solid transparent;
+    border-top: 0.3em solid currentcolor;
+    display: inline-block;
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  .md-tabs__menu {
+    background-color: var(--md-default-bg-color);
+    border-radius: 0.1rem;
+    box-shadow: var(--md-shadow-z2);
+    color: var(--md-default-fg-color);
+    display: none;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    min-width: 12rem;
+    padding: 0.2rem 0;
+    position: absolute;
+    top: 100%;
+    z-index: 10;
+  }
+
+  .md-tabs__item--nested:hover > .md-tabs__menu,
+  .md-tabs__item--nested:focus-within > .md-tabs__menu,
+  .md-tabs__item--open > .md-tabs__menu {
+    display: block;
+  }
+
+  .md-tabs__menu-item {
+    margin: 0;
+  }
+
+  .md-tabs__menu-link,
+  .md-tabs__menu-label {
+    color: inherit;
+    display: block;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    padding: 0.35rem 0.8rem;
+    white-space: nowrap;
+  }
+
+  .md-tabs__menu-label {
+    color: var(--md-default-fg-color--light);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .md-tabs__menu-link:hover,
+  .md-tabs__menu-link:focus {
+    background-color: var(--md-accent-fg-color);
+    color: var(--md-accent-bg-color);
+  }
+
+  .md-tabs__menu-link--active {
+    font-weight: 700;
+  }
+
+  .md-tabs__menu .md-tabs__menu {
+    box-shadow: none;
+    display: block;
+    padding: 0;
+    position: static;
+  }
+
+  .md-tabs__menu .md-tabs__menu .md-tabs__menu-link {
+    padding-left: 1.4rem;
+  }
+}
