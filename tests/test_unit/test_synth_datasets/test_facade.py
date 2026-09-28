@@ -10,9 +10,9 @@ import pytest
 import yaml
 
 from synth_datasets import SplitRatios, generate_dataset
-from synth_datasets.animals import AnimalShape
-from synth_datasets.letters import LetterShape
-from synth_datasets.symbols import SymbolShape
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.symbols import SymbolShape
 
 _FORMATS = ["coco", "yolo"]
 _TASKS = ["detection", "segmentation", "obb"]
@@ -187,7 +187,7 @@ def test_supplied_config_rejects_competing_field_keywords(tmp_path: Path) -> Non
 
 def test_task_reaches_the_generator_not_only_the_writer(tmp_path: Path) -> None:
     """A facade `task=` configures the generator too, so the landmark block holds real points."""
-    from synth_datasets.animals import ANIMAL_KEYPOINT_NAMES, AnimalShape
+    from synth_datasets.families.animals import ANIMAL_KEYPOINT_NAMES, AnimalShape
 
     counts = generate_dataset(
         tmp_path, num_images=4, fmt="coco", task="keypoints", shapes=(AnimalShape.DUCK,), img_size=64, seed=0
@@ -209,7 +209,7 @@ def test_a_task_keyword_cannot_compete_with_a_supplied_config(tmp_path: Path) ->
 
     """
     from synth_datasets import SyntheticConfig, Task
-    from synth_datasets.animals import AnimalShape
+    from synth_datasets.families.animals import AnimalShape
 
     config = SyntheticConfig(img_size=64, task=Task.KEYPOINTS, shapes=(AnimalShape.DUCK,))
 
@@ -226,7 +226,7 @@ def test_omitted_task_adopts_the_supplied_config_task(tmp_path: Path) -> None:
 
     """
     from synth_datasets import SyntheticConfig, Task
-    from synth_datasets.animals import ANIMAL_KEYPOINT_NAMES, AnimalShape
+    from synth_datasets.families.animals import ANIMAL_KEYPOINT_NAMES, AnimalShape
 
     config = SyntheticConfig(img_size=64, task=Task.KEYPOINTS, shapes=(AnimalShape.DUCK,))
     counts = generate_dataset(tmp_path, num_images=4, fmt="coco", config=config, seed=0)

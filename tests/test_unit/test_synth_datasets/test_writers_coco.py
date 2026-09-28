@@ -8,14 +8,14 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from synth_datasets.animals import ANIMAL_KEYPOINT_NAMES, ANIMAL_KEYPOINT_SCHEMA, AnimalShape
-from synth_datasets.config import ClassMode, Color, SyntheticConfig, Task, class_vocabulary
+from synth_datasets.core.config import ClassMode, Color, SyntheticConfig, Task, class_vocabulary
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.core.keypoints import KeypointSchema
+from synth_datasets.export.writers import CocoWriter
 from synth_datasets.families import ALL_SHAPES, keypoint_schema_for
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.keypoints import KeypointSchema
-from synth_datasets.letters import LETTER_KEYPOINT_SCHEMA, LetterShape
-from synth_datasets.symbols import SYMBOL_KEYPOINT_NAMES, SYMBOL_KEYPOINT_SCHEMA, SymbolShape
-from synth_datasets.writers import CocoWriter
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_NAMES, ANIMAL_KEYPOINT_SCHEMA, AnimalShape
+from synth_datasets.families.letters import LETTER_KEYPOINT_SCHEMA, LetterShape
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_NAMES, SYMBOL_KEYPOINT_SCHEMA, SymbolShape
 
 
 def _write(
@@ -314,8 +314,8 @@ def test_keypoints_num_keypoints_excludes_absent_landmarks(tmp_path: Path) -> No
 def test_letter_shape_dataset_emits_a_single_segmentation_ring(tmp_path: Path) -> None:
     """A letter's `segmentation` is one ring, exactly like every other single-polygon family.
 
-    A letter is one outline polygon (see `synth_datasets.letters`), not a pile of disjoint stroke ribbons, so this must
-    behave identically to a symbol or animal run rather than needing any letter-specific handling.
+    A letter is one outline polygon (see `synth_datasets.families.letters`), not a pile of disjoint stroke ribbons, so
+    this must behave identically to a symbol or animal run rather than needing any letter-specific handling.
 
     """
     doc, _samples, names = _write(

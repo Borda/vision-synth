@@ -5,9 +5,9 @@ segmentation, oriented-bounding-box, or keypoint tasks. This is a standalone gen
 dataset loaders, no model, no training loop.
 
 The shape vocabulary is assembled from independent families —
-:mod:`~synth_datasets.primitives` (analytic), :mod:`~synth_datasets.animals`
-(traced silhouettes), :mod:`~synth_datasets.symbols`, and
-:mod:`~synth_datasets.letters` (stroke figures) — registered in
+:mod:`~synth_datasets.families.primitives` (analytic), :mod:`~synth_datasets.families.animals`
+(traced silhouettes), :mod:`~synth_datasets.families.symbols`, and
+:mod:`~synth_datasets.families.letters` (stroke figures) — registered in
 :mod:`~synth_datasets.families`. Reach for a family's own module when you want its
 specifics; this namespace exports the pieces a dataset-building caller needs.
 
@@ -41,7 +41,7 @@ import itertools
 from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING, Any
 
-from synth_datasets.backgrounds import (
+from synth_datasets.content.backgrounds import (
     Background,
     GradientBackground,
     ImageBackground,
@@ -50,7 +50,19 @@ from synth_datasets.backgrounds import (
     SolidBackground,
     TextureBackground,
 )
-from synth_datasets.config import (
+from synth_datasets.content.degradations import (
+    JPEG as JPEG,
+)
+from synth_datasets.content.degradations import (
+    ColorCast,
+    Contrast,
+    Degradation,
+    GaussianBlur,
+    GaussianNoise,
+    Quantize,
+    Vignette,
+)
+from synth_datasets.core.config import (
     DISTRACTOR_PALETTE,
     ClassEntry,
     ClassMode,
@@ -65,18 +77,10 @@ from synth_datasets.config import (
     class_names,
     class_vocabulary,
 )
-from synth_datasets.degradations import (
-    JPEG as JPEG,
-)
-from synth_datasets.degradations import (
-    ColorCast,
-    Contrast,
-    Degradation,
-    GaussianBlur,
-    GaussianNoise,
-    Quantize,
-    Vignette,
-)
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.core.keypoints import KeypointSchema
+from synth_datasets.core.sample import Annotation, Sample, SceneRecord
+from synth_datasets.export.writers import CocoWriter, DatasetWriter, YoloWriter, get_writer, register_writer
 from synth_datasets.families import (
     ALL_SHAPES,
     DEFAULT_SHAPES,
@@ -87,10 +91,6 @@ from synth_datasets.families import (
     keypoint_schema_for,
     shape_outline,
 )
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.keypoints import KeypointSchema
-from synth_datasets.sample import Annotation, Sample, SceneRecord
-from synth_datasets.writers import CocoWriter, DatasetWriter, YoloWriter, get_writer, register_writer
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -98,7 +98,7 @@ if TYPE_CHECKING:
 
     # Explicit re-export (`as` same name): keeps this name resolvable to static type checkers even
     # though it is intentionally left out of __all__ below -- see the module docstring and __getattr__.
-    from synth_datasets.datasets import SyntheticIterableDataset as SyntheticIterableDataset
+    from synth_datasets.export.datasets import SyntheticIterableDataset as SyntheticIterableDataset
 
 try:
     # `synth_datasets` ships inside the `vision-synth` distribution (see pyproject.toml's
@@ -161,7 +161,7 @@ __all__ = [
 #: Names resolved on first access rather than at import. :class:`SyntheticIterableDataset` is here
 #: to keep ``import synth_datasets`` free of torch — measured at ~440 ms of the ~480 ms this
 #: package used to cost, imposed on every caller including the many who only write a dataset to disk.
-_LAZY: dict[str, str] = {"SyntheticIterableDataset": "synth_datasets.datasets"}
+_LAZY: dict[str, str] = {"SyntheticIterableDataset": "synth_datasets.export.datasets"}
 
 
 def __getattr__(name: str) -> Any:  # noqa: ANN401 - module-level attribute access is untyped by nature

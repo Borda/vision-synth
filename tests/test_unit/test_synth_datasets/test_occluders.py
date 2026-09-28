@@ -14,10 +14,10 @@ import pickle
 import numpy as np
 import pytest
 
-from synth_datasets.animals import AnimalShape
-from synth_datasets.config import SyntheticConfig, Task
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.sample import Annotation, Sample, SceneRecord
+from synth_datasets.core.config import SyntheticConfig, Task
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.core.sample import Annotation, Sample, SceneRecord
+from synth_datasets.families.animals import AnimalShape
 
 
 def _keypoint_config(occluders: int) -> SyntheticConfig:
@@ -153,7 +153,7 @@ def test_occluders_leave_polygons_and_boxes_untouched() -> None:
 
 def test_a_demoted_landmark_is_accepted_by_the_annotation_contract() -> None:
     """Visibility 1 is a valid COCO flag, so `Annotation` takes it without special-casing."""
-    from synth_datasets.animals import ANIMAL_KEYPOINT_SCHEMA
+    from synth_datasets.families.animals import ANIMAL_KEYPOINT_SCHEMA
 
     table = tuple((1.0, 2.0, 1) for _ in ANIMAL_KEYPOINT_SCHEMA.names)
 

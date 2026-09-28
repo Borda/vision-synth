@@ -1,8 +1,8 @@
 """The shape-family registry: the one place that knows which shape families exist.
 
-Every family — :mod:`~synth_datasets.primitives`,
-:mod:`~synth_datasets.animals`, :mod:`~synth_datasets.symbols`,
-:mod:`~synth_datasets.letters` — contributes exactly one :class:`ShapeFamily` entry to
+Every family — :mod:`~synth_datasets.families.primitives`,
+:mod:`~synth_datasets.families.animals`, :mod:`~synth_datasets.families.symbols`,
+:mod:`~synth_datasets.families.letters` — contributes exactly one :class:`ShapeFamily` entry to
 :data:`SHAPE_FAMILIES`, and every other module in the package consults that tuple instead of
 naming the families itself.
 
@@ -17,7 +17,7 @@ Adding a family now means exactly one edit: write the module and append one :cla
 here. :data:`Shape` used to be a second, easily forgotten site — a hand-written
 ``PrimitiveShape | AnimalShape | ...`` union, needed because a type checker cannot infer the member
 types from :data:`SHAPE_FAMILIES`. It is now the shared base class
-:class:`~synth_datasets.shape_enum.ShapeEnum` instead, which a checker reads directly off
+:class:`~synth_datasets.families.shape_enum.ShapeEnum` instead, which a checker reads directly off
 each family's own declaration, so there is nothing left to keep in sync.
 
 Examples:
@@ -25,7 +25,7 @@ Examples:
     >>> from synth_datasets.families import SHAPE_FAMILIES, family_of, shape_outline
     >>> [family.name for family in SHAPE_FAMILIES]
     ['primitives', 'animals', 'symbols', 'letters']
-    >>> from synth_datasets.animals import AnimalShape
+    >>> from synth_datasets.families.animals import AnimalShape
     >>> family_of(AnimalShape.DUCK).name
     'animals'
     >>> shape_outline("square", center=(0.0, 0.0), size=2.0).shape
@@ -43,12 +43,12 @@ from typing import TYPE_CHECKING, Any, Protocol
 
 import numpy as np
 
-from synth_datasets.animals import ANIMAL_KEYPOINT_SCHEMA, ANIMAL_POLYGONS, AnimalShape, animal_keypoints
-from synth_datasets.geometry import place_points
-from synth_datasets.letters import LETTER_KEYPOINT_SCHEMA, LETTER_POLYGONS, LetterShape, letter_keypoints
-from synth_datasets.primitives import PrimitiveShape, primitive_outline
-from synth_datasets.shape_enum import ShapeEnum
-from synth_datasets.symbols import SYMBOL_KEYPOINT_SCHEMA, SYMBOL_POLYGONS, SymbolShape, symbol_keypoints
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_SCHEMA, ANIMAL_POLYGONS, AnimalShape, animal_keypoints
+from synth_datasets.families.geometry import place_points
+from synth_datasets.families.letters import LETTER_KEYPOINT_SCHEMA, LETTER_POLYGONS, LetterShape, letter_keypoints
+from synth_datasets.families.primitives import PrimitiveShape, primitive_outline
+from synth_datasets.families.shape_enum import ShapeEnum
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_SCHEMA, SYMBOL_POLYGONS, SymbolShape, symbol_keypoints
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -56,12 +56,12 @@ if TYPE_CHECKING:
 
     from numpy.typing import NDArray
 
-    from synth_datasets.keypoints import KeypointSchema
+    from synth_datasets.core.keypoints import KeypointSchema
 
 #: Any drawable shape, as a static type *and* as a runtime check: every family's enum derives from
-#: :class:`~synth_datasets.shape_enum.ShapeEnum`, so ``isinstance(value, Shape)`` accepts
+#: :class:`~synth_datasets.families.shape_enum.ShapeEnum`, so ``isinstance(value, Shape)`` accepts
 #: any member type and still rejects a bare ``"duck"`` string — which is what
-#: :meth:`~synth_datasets.config.SyntheticConfig._validate_vocabulary` relies on. This was
+#: :meth:`~synth_datasets.core.config.SyntheticConfig._validate_vocabulary` relies on. This was
 #: a hand-written ``PrimitiveShape | AnimalShape | ...`` union until the base class replaced it,
 #: which is what reduced adding a family to a single edit site. It is not iterable — use
 #: :data:`ALL_SHAPES` for the full vocabulary.
@@ -116,14 +116,14 @@ class ShapeFamily:
     Args:
         name: The family's short name, used in error messages and diagnostics (``"animals"``).
         members: Every member of the family's enum, in declaration order — which is also the order
-            :func:`~synth_datasets.config.class_names` numbers them in.
+            :func:`~synth_datasets.core.config.class_names` numbers them in.
         base_outline: Returns the origin-centered ``(num_points, 2)`` outline for one member
-            *value* at a given size. Analytic for :mod:`~synth_datasets.primitives`, a
+            *value* at a given size. Analytic for :mod:`~synth_datasets.families.primitives`, a
             table lookup for every asset-backed family; the two are interchangeable here precisely
             because both share the unit convention (area centroid at the origin, larger extent
             equal to ``size``).
         keypoint_schema: The family's landmark vocabulary, or ``None`` for a family whose members
-            carry no landmarks (:class:`~synth_datasets.primitives.PrimitiveShape`). A
+            carry no landmarks (:class:`~synth_datasets.families.primitives.PrimitiveShape`). A
             family with a schema must also supply ``place_keypoints``, and vice versa.
         place_keypoints: Places the family's landmark table through the same skew/rotate/translate
             pipeline its outline goes through, or ``None`` for a family with no landmarks.
@@ -177,7 +177,7 @@ class ShapeFamily:
 
 
 #: Every shape family, in the order their classes are numbered by
-#: :func:`~synth_datasets.config.class_names`. Append here to add a family — and extend
+#: :func:`~synth_datasets.core.config.class_names`. Append here to add a family — and extend
 #: :data:`Shape` on the same change.
 SHAPE_FAMILIES: tuple[ShapeFamily, ...] = (
     ShapeFamily(name="primitives", members=tuple(PrimitiveShape), base_outline=primitive_outline),
@@ -205,10 +205,10 @@ SHAPE_FAMILIES: tuple[ShapeFamily, ...] = (
 )
 
 #: Every drawable shape, across every family, in class-id order. This is the full vocabulary
-#: :func:`~synth_datasets.config.class_names` numbers when a run is not narrowed.
+#: :func:`~synth_datasets.core.config.class_names` numbers when a run is not narrowed.
 ALL_SHAPES: tuple[Shape, ...] = tuple(member for family in SHAPE_FAMILIES for member in family.members)
 
-#: The shapes a :class:`~synth_datasets.config.SyntheticConfig` draws when ``shapes`` is not
+#: The shapes a :class:`~synth_datasets.core.config.SyntheticConfig` draws when ``shapes`` is not
 #: overridden — the analytic family alone, i.e. the vocabulary that predates every asset-backed one.
 DEFAULT_SHAPES: tuple[Shape, ...] = SHAPE_FAMILIES[0].members
 
@@ -232,7 +232,7 @@ def family_of(shape: Shape) -> ShapeFamily:
     Examples:
         ```pycon
         >>> from synth_datasets.families import family_of
-        >>> from synth_datasets.symbols import SymbolShape
+        >>> from synth_datasets.families.symbols import SymbolShape
         >>> family_of(SymbolShape.KITE).name
         'symbols'
 
@@ -280,7 +280,7 @@ def shape_outline(
     """Build the skewed, rotated, translated outline for any shape value, from any family.
 
     The drawing entry point. It replaced ``geometry.shape_outline``, whose name said "polygon" while
-    :attr:`~synth_datasets.sample.Annotation.polygon` means the *flat* coordinate list a
+    :attr:`~synth_datasets.core.sample.Annotation.polygon` means the *flat* coordinate list a
     writer emits — two different things one word away from each other.
 
     Args:
@@ -289,7 +289,7 @@ def shape_outline(
         size: Bounding size in pixels.
         angle: Rotation in radians applied about the shape center.
         skew: Signed fraction narrowing one pre-rotation half — see
-            :attr:`~synth_datasets.config.SyntheticConfig.asymmetry_jitter`. ``0.0`` (the
+            :attr:`~synth_datasets.core.config.SyntheticConfig.asymmetry_jitter`. ``0.0`` (the
             default) leaves the outline unchanged.
 
     Returns:
@@ -315,18 +315,18 @@ def keypoint_schema_for(shapes: Iterable[Shape]) -> KeypointSchema | None:
 
     Args:
         shapes: The shapes a run draws from — typically
-            :attr:`~synth_datasets.config.SyntheticConfig.shapes`.
+            :attr:`~synth_datasets.core.config.SyntheticConfig.shapes`.
 
     Returns:
-        The :class:`~synth_datasets.keypoints.KeypointSchema` every shape shares, or
+        The :class:`~synth_datasets.core.keypoints.KeypointSchema` every shape shares, or
         ``None`` when ``shapes`` spans no single keypoint-bearing family. Use
         :func:`describe_keypoint_mismatch` to find out *which* of those cases it was.
 
     Examples:
         ```pycon
-        >>> from synth_datasets.animals import AnimalShape
+        >>> from synth_datasets.families.animals import AnimalShape
         >>> from synth_datasets.families import keypoint_schema_for
-        >>> from synth_datasets.primitives import PrimitiveShape
+        >>> from synth_datasets.families.primitives import PrimitiveShape
         >>> keypoint_schema_for((AnimalShape.DUCK, AnimalShape.CAMEL)).kpt_shape
         16
         >>> keypoint_schema_for((PrimitiveShape.SQUARE,)) is None
@@ -358,7 +358,7 @@ def describe_keypoint_mismatch(shapes: Iterable[Shape]) -> str:
     Examples:
         ```pycon
         >>> from synth_datasets.families import describe_keypoint_mismatch
-        >>> from synth_datasets.primitives import PrimitiveShape
+        >>> from synth_datasets.families.primitives import PrimitiveShape
         >>> describe_keypoint_mismatch((PrimitiveShape.SQUARE,)).startswith("['square'] have no keypoint table")
         True
 
@@ -389,7 +389,7 @@ def place_keypoints(
         size: Bounding size in pixels.
         angle: Rotation in radians about the shape center.
         skew: Signed asymmetry fraction; see
-            :attr:`~synth_datasets.config.SyntheticConfig.asymmetry_jitter`.
+            :attr:`~synth_datasets.core.config.SyntheticConfig.asymmetry_jitter`.
 
     Returns:
         The placed ``(num_keypoints, 2)`` table, or ``None`` when ``shape``'s family carries none.

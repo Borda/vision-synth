@@ -14,12 +14,12 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
-from synth_datasets.animals import AnimalShape
-from synth_datasets.config import DISTRACTOR_PALETTE, Color, Fill, SyntheticConfig, Task
-from synth_datasets.degradations import Contrast
+from synth_datasets.content.degradations import Contrast
+from synth_datasets.core.config import DISTRACTOR_PALETTE, Color, Fill, SyntheticConfig, Task
+from synth_datasets.core.generator import SyntheticGenerator
 from synth_datasets.families import ALL_SHAPES
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.primitives import PrimitiveShape
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.primitives import PrimitiveShape
 
 #: How far apart two fills must stay after the harshest documented contrast knock-down. Chosen as a
 #: distance a viewer and a first-layer filter both still resolve, well above the JPEG noise floor.

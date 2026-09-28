@@ -13,9 +13,9 @@ from pathlib import Path
 import numpy as np
 import synth_datasets
 from PIL import Image
-from synth_datasets.animals import AnimalShape
-from synth_datasets.backgrounds import ImageBackground
-from synth_datasets.degradations import JPEG, GaussianBlur
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.content.backgrounds import ImageBackground
+from synth_datasets.content.degradations import JPEG, GaussianBlur
 
 
 def _forbidden_loaded():

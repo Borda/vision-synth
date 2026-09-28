@@ -15,11 +15,11 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 
-from synth_datasets.animals import AnimalShape, animal_keypoints
 from synth_datasets.families import shape_outline
-from synth_datasets.letters import LetterShape, letter_keypoints
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import SymbolShape, symbol_keypoints
+from synth_datasets.families.animals import AnimalShape, animal_keypoints
+from synth_datasets.families.letters import LetterShape, letter_keypoints
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SymbolShape, symbol_keypoints
 
 #: Keypoint accessor per family. Spelled out here rather than taken from
 #: :data:`~synth_datasets.families.SHAPE_FAMILIES` on purpose: the snapshot is the check

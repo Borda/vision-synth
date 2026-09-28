@@ -51,10 +51,10 @@ os.environ.setdefault("NO_ALBUMENTATIONS_UPDATE", "1")
 # the schema *and* the path parser live in the package, not here — one definition for the loader, the
 # writers and this editor, so a document the loader accepts (relative commands, H/V) is read the same
 # way here instead of through a second, stricter parser that would silently misplace its vertices
-from synth_datasets.animals import ANIMAL_KEYPOINT_NAMES, ANIMAL_KEYPOINT_SKELETON
-from synth_datasets.letters import LETTER_KEYPOINT_NAMES
-from synth_datasets.svgio import parse_path_d
-from synth_datasets.symbols import SYMBOL_KEYPOINT_NAMES, SYMBOL_KEYPOINT_SKELETON
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_NAMES, ANIMAL_KEYPOINT_SKELETON
+from synth_datasets.families.letters import LETTER_KEYPOINT_NAMES
+from synth_datasets.families.svgio import parse_path_d
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_NAMES, SYMBOL_KEYPOINT_SKELETON
 
 #: Fill color per point, written into every ``<circle>`` this editor saves. Lives here rather than
 #: in the package because nothing in the library reads a fill — only this authoring tool does. A test
@@ -147,7 +147,7 @@ class Family:
 FAMILIES: tuple[Family, ...] = (
     Family(
         name="animals",
-        directory=DATA_DIR / "zoo",
+        directory=DATA_DIR / "assets" / "animals",
         point_names=ANIMAL_KEYPOINT_NAMES,
         palette=ANIMAL_PALETTE,
         group_id="keypoints",
@@ -155,7 +155,7 @@ FAMILIES: tuple[Family, ...] = (
     ),
     Family(
         name="symbols",
-        directory=DATA_DIR / "symbols",
+        directory=DATA_DIR / "assets" / "symbols",
         point_names=SYMBOL_KEYPOINT_NAMES,
         palette=_cycled_palette(SYMBOL_KEYPOINT_NAMES),
         group_id="keypoints",
@@ -163,7 +163,7 @@ FAMILIES: tuple[Family, ...] = (
     ),
     Family(
         name="letters",
-        directory=DATA_DIR / "letters",
+        directory=DATA_DIR / "assets" / "letters",
         point_names=LETTER_KEYPOINT_NAMES,
         palette=_cycled_palette(LETTER_KEYPOINT_NAMES),
         group_id="nodes",

@@ -4,12 +4,12 @@ Unlike ``animate_synthetic_dataset.py``'s colored, randomly placed, animated pre
 plain single-shape images: upright, at each shape's own authored orientation (no rotation, no
 skew) — a field-guide-style lookup of what each shape and its keypoint schema actually look like,
 not a sample of what the generator draws in practice. Every symbol and animal is authored
-mirror-symmetric about its own vertical axis (see :mod:`~synth_datasets.symbols`), so
+mirror-symmetric about its own vertical axis (see :mod:`~synth_datasets.families.symbols`), so
 rendering at that authored angle is what keeps a reference recognizable: an ``arrow`` pointing up,
 a ``house`` with its roof up, a ``kite`` on its long axis.
 
 The box drawn in yellow is the shape's plain axis-aligned **detection** box (``bbox``) at this
-reference orientation. Since :func:`~synth_datasets.geometry.polygon_to_obb` derives the
+reference orientation. Since :func:`~synth_datasets.families.geometry.polygon_to_obb` derives the
 oriented box in the shape's own upright frame, this same box *is* what the **OBB** task exports at
 this unrotated pose — the generator's rotated samples carry it turned rigidly with the shape (see
 the animated OBB preview and the "Tasks" section). The three
@@ -28,11 +28,11 @@ Files are named ``<prefix><shape>.png`` with the same prefix convention
 ``symbols-``, ``letters-``), so e.g. ``symbols-arrow.png``, ``animals-duck.png``, and
 ``letters-x.png``.
 
-A letter (see :mod:`~synth_datasets.letters`) is a single outline polygon exactly like a
+A letter (see :mod:`~synth_datasets.families.letters`) is a single outline polygon exactly like a
 geometric, animal, or symbol shape, so it reuses ``shape_outline`` the same way every other family
 does. Its skeleton differs per member (that is what makes it that letter), though, unlike the
 animal/symbol families' one shared topology, so its edges come from
-:meth:`~synth_datasets.keypoints.KeypointSchema.skeleton_for` instead of a fixed tuple.
+:meth:`~synth_datasets.core.keypoints.KeypointSchema.skeleton_for` instead of a fixed tuple.
 
 Render every shape in every family:
     python examples/render_shape_reference.py
@@ -50,19 +50,19 @@ from typing import TYPE_CHECKING
 import numpy as np
 from PIL import Image, ImageDraw
 
-from synth_datasets.animals import ANIMAL_KEYPOINT_SCHEMA, AnimalShape, animal_keypoints
 from synth_datasets.families import shape_outline
-from synth_datasets.geometry import polygon_to_bbox_xyxy
-from synth_datasets.letters import LETTER_KEYPOINT_SCHEMA, LetterShape, letter_keypoints
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import SYMBOL_KEYPOINT_SCHEMA, SymbolShape, symbol_keypoints
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_SCHEMA, AnimalShape, animal_keypoints
+from synth_datasets.families.geometry import polygon_to_bbox_xyxy
+from synth_datasets.families.letters import LETTER_KEYPOINT_SCHEMA, LetterShape, letter_keypoints
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_SCHEMA, SymbolShape, symbol_keypoints
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from numpy.typing import NDArray
 
-    from synth_datasets.keypoints import KeypointSchema
+    from synth_datasets.core.keypoints import KeypointSchema
 
 _CANVAS = 200
 #: Pixels reserved on every side of the canvas so a fitted shape's stroke width and keypoint dot
@@ -127,9 +127,10 @@ def _fit_size(name: str) -> float:
 def _draw_shape(draw: ImageDraw.ImageDraw, name: str, size: float) -> None:
     """Draw one shape's outline (filled light gray, black edge) and its yellow detection box.
 
-    The box is the plain axis-aligned bounding box over the outline at this reference orientation — which, at an
-    unrotated pose, is exactly the upright-frame oriented box :func:`~synth_datasets.geometry.polygon_to_obb` derives
-    for the OBB task (see the module docstring).
+    The box is the plain axis-aligned bounding box over the outline at this reference orientation — which, at
+    an unrotated pose, is exactly the upright-frame oriented box
+    :func:`~synth_datasets.families.geometry.polygon_to_obb` derives for the OBB task (see the module
+    docstring).
 
     """
     poly = shape_outline(name, _SHAPE_CENTER, size)

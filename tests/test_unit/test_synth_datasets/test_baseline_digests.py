@@ -25,7 +25,7 @@ import numpy as np
 import PIL
 import pytest
 
-from synth_datasets.config import SyntheticConfig
+from synth_datasets.core.config import SyntheticConfig
 
 from ._baseline import _FEATURE_MATRIX, _MATRIX, baseline_names, build_baseline
 

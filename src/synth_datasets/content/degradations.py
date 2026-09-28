@@ -21,7 +21,7 @@ keeps every effect independently testable.
 Examples:
     ```pycon
     >>> import numpy as np
-    >>> from synth_datasets.degradations import Contrast, Quantize
+    >>> from synth_datasets.content.degradations import Contrast, Quantize
     >>> image = np.full((4, 4, 3), 200, dtype=np.uint8)
     >>> int(Quantize(levels=2).apply(image, None).max())
     255
@@ -103,7 +103,7 @@ class GaussianNoise(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import GaussianNoise
+        >>> from synth_datasets.content.degradations import GaussianNoise
         >>> GaussianNoise(sigma=10.0).apply(np.zeros((4, 4, 3), np.uint8), np.random.default_rng(0)).dtype
         dtype('uint8')
 
@@ -146,7 +146,7 @@ class GaussianBlur(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import GaussianBlur
+        >>> from synth_datasets.content.degradations import GaussianBlur
         >>> edge = np.zeros((8, 8, 3), np.uint8)
         >>> edge[:, 4:] = 255
         >>> bool(GaussianBlur(radius=1.5).apply(edge, None)[0, 3, 0] > 0)
@@ -188,7 +188,7 @@ class JPEG(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import JPEG
+        >>> from synth_datasets.content.degradations import JPEG
         >>> JPEG(quality=30).apply(np.full((16, 16, 3), 128, np.uint8), None).shape
         (16, 16, 3)
 
@@ -219,7 +219,7 @@ class JPEG(Degradation):
 class Contrast(Degradation):
     """A contrast scaling around the image's own mean luminance.
 
-    Under :attr:`~synth_datasets.config.ClassMode.COLOR` this is the knob that makes classes
+    Under :attr:`~synth_datasets.core.config.ClassMode.COLOR` this is the knob that makes classes
     converge toward each other, since every fill moves toward the same grey.
 
     Args:
@@ -231,7 +231,7 @@ class Contrast(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import Contrast
+        >>> from synth_datasets.content.degradations import Contrast
         >>> flat = np.stack([np.full((4, 4), v, np.uint8) for v in (0, 255, 128)], axis=2)
         >>> int(Contrast(factor=0.0).apply(flat, None).std())
         0
@@ -271,7 +271,7 @@ class ColorCast(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import ColorCast
+        >>> from synth_datasets.content.degradations import ColorCast
         >>> grey = np.full((2, 2, 3), 100, np.uint8)
         >>> ColorCast(gain=(1.2, 1.0, 0.8)).apply(grey, None)[0, 0].tolist()
         [120, 100, 80]
@@ -310,7 +310,7 @@ class Vignette(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import Vignette
+        >>> from synth_datasets.content.degradations import Vignette
         >>> flat = np.full((9, 9, 3), 200, np.uint8)
         >>> out = Vignette(strength=0.5).apply(flat, None)
         >>> bool(out[0, 0, 0] < out[4, 4, 0])
@@ -354,7 +354,7 @@ class Quantize(Degradation):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.degradations import Quantize
+        >>> from synth_datasets.content.degradations import Quantize
         >>> ramp = np.arange(256, dtype=np.uint8).reshape(16, 16)[..., None].repeat(3, axis=2)
         >>> len(np.unique(Quantize(levels=4).apply(ramp, None)))
         4

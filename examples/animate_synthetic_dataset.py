@@ -28,12 +28,12 @@ four geometric shapes do. Coverage is then confirmed rather than hoped for —
 ``_covering_stream`` walks the seed forward until the stream contains every
 shape, and prints which seed it settled on.
 
-A letter (see :mod:`~synth_datasets.letters`) is a single outline polygon exactly like a
+A letter (see :mod:`~synth_datasets.families.letters`) is a single outline polygon exactly like a
 geometric, animal, or symbol shape, so its ``segmentation``/``obb`` overlay draws the same one
 closed loop through ``ann.polygon``/``ann.obb_corners`` every other family uses. Its keypoints
 overlay differs per letter, though — unlike the animal/symbol families' one shared topology, a
 letter's skeleton edges come from
-:meth:`~synth_datasets.keypoints.KeypointSchema.skeleton_for` per
+:meth:`~synth_datasets.core.keypoints.KeypointSchema.skeleton_for` per
 annotation instead of one schema-wide tuple.
 
 Render every task (detection, segmentation, obb; keypoints when using animals, symbols, or letters):
@@ -61,15 +61,15 @@ from typing import TYPE_CHECKING, TypedDict
 from PIL import Image, ImageDraw
 
 from synth_datasets import SyntheticConfig, SyntheticGenerator
-from synth_datasets.animals import AnimalShape
-from synth_datasets.config import DEFAULT_SHAPES, Task, keypoint_schema_for
-from synth_datasets.geometry import PIXEL_CENTRE_OFFSET
-from synth_datasets.letters import LetterShape
-from synth_datasets.sample import Annotation, Sample
-from synth_datasets.symbols import SymbolShape
+from synth_datasets.core.config import DEFAULT_SHAPES, Task, keypoint_schema_for
+from synth_datasets.core.sample import Annotation, Sample
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.geometry import PIXEL_CENTRE_OFFSET
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.symbols import SymbolShape
 
 if TYPE_CHECKING:
-    from synth_datasets.keypoints import KeypointSchema
+    from synth_datasets.core.keypoints import KeypointSchema
 
 TASKS = ("detection", "segmentation", "obb", "keypoints")
 
@@ -145,9 +145,9 @@ def _draw_annotation(
     """Draw one annotation's overlay for the given task onto ``draw``.
 
     ``schema`` is the active run's keypoint schema — see
-    :func:`~synth_datasets.config.keypoint_schema_for` — and is only read for the
+    :func:`~synth_datasets.core.config.keypoint_schema_for` — and is only read for the
     ``"keypoints"`` task, resolved to ``ann``'s own edges via
-    :meth:`~synth_datasets.keypoints.KeypointSchema.skeleton_for` (identical to
+    :meth:`~synth_datasets.core.keypoints.KeypointSchema.skeleton_for` (identical to
     ``schema.skeleton`` for every family but letters, whose topology genuinely differs per member);
     every other task ignores it.
 

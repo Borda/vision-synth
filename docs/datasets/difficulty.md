@@ -86,7 +86,7 @@ from synth_datasets import (
     SyntheticConfig,
     TextureBackground,
 )
-from synth_datasets.letters import LetterShape
+from synth_datasets.families.letters import LetterShape
 
 hard = SyntheticConfig(
     img_size=256,

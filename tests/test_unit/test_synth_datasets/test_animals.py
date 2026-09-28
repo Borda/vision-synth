@@ -9,7 +9,9 @@ import numpy as np
 import pytest
 from PIL import Image, ImageDraw
 
-from synth_datasets.animals import (
+from synth_datasets.core.keypoints import _normalized, _normalized_pair
+from synth_datasets.families import shape_outline
+from synth_datasets.families.animals import (
     _OPTIONAL_KEYPOINTS,
     _REQUIRED_KEYPOINTS,
     _ZOO,
@@ -22,11 +24,9 @@ from synth_datasets.animals import (
     _read_svg,
     animal_keypoints,
 )
-from synth_datasets.families import shape_outline
-from synth_datasets.geometry import polygon_to_bbox_xyxy
-from synth_datasets.keypoints import _normalized, _normalized_pair
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.svgio import (
+from synth_datasets.families.geometry import polygon_to_bbox_xyxy
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.svgio import (
     _SVG_NS,
     _ZOO_NS,
     parse_path_d,
@@ -683,7 +683,7 @@ def test_read_svg_rejects_a_document_without_exactly_one_path(tmp_path: Path, mo
     or ambiguous outline deep inside a generation run.
 
     """
-    monkeypatch.setattr("synth_datasets.animals._ZOO", tmp_path)
+    monkeypatch.setattr("synth_datasets.families.animals._ZOO", tmp_path)
     (tmp_path / "test.svg").write_text(f'<svg xmlns="{_SVG_NS}"><g id="keypoints"></g></svg>', encoding="utf-8")
     with pytest.raises(ValueError, match=r"exactly one <path>, found 0"):
         _read_svg("test")
@@ -697,7 +697,7 @@ def test_read_svg_rejects_a_document_missing_provenance(tmp_path: Path, monkeypa
     attribution trail.
 
     """
-    monkeypatch.setattr("synth_datasets.animals._ZOO", tmp_path)
+    monkeypatch.setattr("synth_datasets.families.animals._ZOO", tmp_path)
     (tmp_path / "test.svg").write_text(
         f'<svg xmlns="{_SVG_NS}"><path d="M 0 0 L 10 0 L 10 10 L 0 10 Z"/></svg>', encoding="utf-8"
     )

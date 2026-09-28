@@ -99,34 +99,34 @@ For narrative guides, start with [Synthetic data generation](../datasets/index.m
 
 ## Coordinate helpers
 
-`synth_datasets.geometry` holds the pixel-space conversions the writers and annotations rely on. Polygons and oriented-box corners are in pixel-centre space; axis-aligned boxes are in pixel-edge space. The two differ by half a pixel each way and are not interchangeable.
+`synth_datasets.families.geometry` holds the pixel-space conversions the writers and annotations rely on. Polygons and oriented-box corners are in pixel-centre space; axis-aligned boxes are in pixel-edge space. The two differ by half a pixel each way and are not interchangeable.
 
-::: synth_datasets.geometry.to_pixel_centre
+::: synth_datasets.families.geometry.to_pixel_centre
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.geometry.to_pixel_edge
+::: synth_datasets.families.geometry.to_pixel_edge
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.geometry.polygon_to_bbox_xyxy
+::: synth_datasets.families.geometry.polygon_to_bbox_xyxy
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.geometry.polygon_to_obb
+::: synth_datasets.families.geometry.polygon_to_obb
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.geometry.rotate_polygon
+::: synth_datasets.families.geometry.rotate_polygon
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.geometry.bbox_iou
+::: synth_datasets.families.geometry.bbox_iou
     options:
         show_root_heading: true
         show_source: false
@@ -135,7 +135,7 @@ For narrative guides, start with [Synthetic data generation](../datasets/index.m
 
 `SyntheticIterableDataset` is the only torch-dependent name in the namespace. It is resolved lazily on first attribute access, so `import synth_datasets` stays torch-free; using the class requires `pip install "vision-synth[torch]"`. There is no `set_epoch()` method — construct a new dataset with `epoch=...` for a fresh stream. See [distributed ranks and epochs](../datasets/outputs.md#distributed-ranks-and-epochs).
 
-::: synth_datasets.datasets.SyntheticIterableDataset
+::: synth_datasets.export.datasets.SyntheticIterableDataset
     options:
         show_root_heading: true
         show_source: false

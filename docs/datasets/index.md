@@ -7,7 +7,7 @@ description: Generate synthetic COCO and YOLO datasets for computer vision proto
 
 `synth_datasets` draws labelled shapes for computer vision experiments. Export COCO or YOLO files for your trainer, or stream samples into a PyTorch DataLoader. Use it to prototype a pipeline, check whether a model can overfit a tiny dataset, and measure sensitivity to smaller objects, clutter, occlusion, or degraded images. The package generates data; your application owns training and evaluation.
 
-`synth_datasets` is a standalone top-level package: it never imports the `fused_transforms` augmentation engine and needs no `torch` install for direct generation. It is also the only import path — the old `fused_transforms.data` facade and the `fused_transforms.generate_dataset` alias are both removed, so use `synth_datasets.geometry` and the other `synth_datasets.*` modules directly. `SyntheticIterableDataset` and PyTorch `DataLoader` integration require the `torch` extra.
+`synth_datasets` is a standalone top-level package: it never imports the `fused_transforms` augmentation engine and needs no `torch` install for direct generation. It is also the only import path — the old `fused_transforms.data` facade and the `fused_transforms.generate_dataset` alias are both removed, so use `synth_datasets.families.geometry` and the other `synth_datasets.*` modules directly. `SyntheticIterableDataset` and PyTorch `DataLoader` integration require the `torch` extra.
 
 **Start with [Prototyping and convergence checks](prototyping.md)** for runnable recipes and an experiment sequence: check the loader, fit fixed easy samples, evaluate held-out images, then increase difficulty.
 
@@ -67,7 +67,7 @@ Keep the same `generate_dataset` call and select these arguments. Both formats s
 | Oriented object detection  | `task="obb"`                                  | Four oriented-box corners and classes                     |
 | Keypoint / pose estimation | `task="keypoints", shapes=tuple(AnimalShape)` | Boxes, classes, and the animal landmark/visibility schema |
 
-For the pose recipe, import `AnimalShape` from `synth_datasets.animals`. Symbols and letters also support pose, each with its own schema; use one family per keypoint dataset. The default geometric primitives support detection, segmentation, and OBB.
+For the pose recipe, import `AnimalShape` from `synth_datasets.families.animals`. Symbols and letters also support pose, each with its own schema; use one family per keypoint dataset. The default geometric primitives support detection, segmentation, and OBB.
 
 Use `fmt="coco"` for per-split `_annotations.coco.json` files or `fmt="yolo"` for normalized text labels plus `data.yaml`. Set `class_mode="shape"` to predict shape names; `"color"` and `"shape_color"` select other class vocabularies. Coordinate conventions and the COCO OBB representation are documented in [Annotation formats](outputs.md).
 
@@ -80,7 +80,7 @@ import tempfile
 from pathlib import Path
 
 from synth_datasets import generate_dataset
-from synth_datasets.animals import AnimalShape
+from synth_datasets.families.animals import AnimalShape
 
 with tempfile.TemporaryDirectory() as out_dir:
     for task in ("detection", "segmentation", "obb", "keypoints"):

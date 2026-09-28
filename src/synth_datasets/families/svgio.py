@@ -1,7 +1,7 @@
 """Shared SVG asset reading for every packaged shape family.
 
-Three families ship artwork now — :mod:`~synth_datasets.animals` (traced silhouettes),
-:mod:`~synth_datasets.symbols` (hand-authored outlines), and :mod:`~synth_datasets.letters` (stroke
+Three families ship artwork now — :mod:`~synth_datasets.families.animals` (traced silhouettes),
+:mod:`~synth_datasets.families.symbols` (hand-authored outlines), and :mod:`~synth_datasets.families.letters` (stroke
 graphs) — and all three are edited by the same tool, ``examples/edit_shape_keypoints.py``. One reader is what makes that
 true: a document the loader accepts is read the same way by the editor, rather than through a second, stricter parser
 that would silently misplace its vertices.

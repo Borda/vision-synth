@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 
 from synth_datasets import generate_dataset
-from synth_datasets.config import SyntheticConfig, Task, class_vocabulary
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.writers import CocoWriter, YoloWriter
+from synth_datasets.core.config import SyntheticConfig, Task, class_vocabulary
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.export.writers import CocoWriter, YoloWriter
 
 
 def test_coco_writer_consumes_a_generator(tmp_path):

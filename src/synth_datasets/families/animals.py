@@ -1,16 +1,16 @@
-"""Animal-silhouette outline and landmark tables, loaded from the packaged ``zoo`` files.
+"""Animal-silhouette outline and landmark tables, loaded from the packaged ``assets/animals`` files.
 
 Twelve side-profile silhouettes — duck, elephant, giraffe, fish, rabbit, camel, eagle, penguin,
 whale, kangaroo, flamingo, crocodile — traced from public-domain reference art (see
 :data:`ANIMAL_SOURCES`) rather than guessed by hand, so each one is recognizable at preview size.
 Every animal ships as one SVG document,
-``synth_datasets/zoo/<animal>.svg``, holding its outline path, its sixteen landmarks (as a
+``synth_datasets/assets/animals/<animal>.svg``, holding its outline path, its sixteen landmarks (as a
 ``<g id="keypoints">`` of ``<circle>`` elements) and its provenance (as ``zoo:``-namespaced root
 attributes); the artwork can therefore be opened, inspected and corrected in any SVG editor without
 touching Python. This module is only the loader that turns those documents into NumPy tables.
 
 Each outline is a **simple** (non-self-intersecting) polygon in the unit space
-:func:`~synth_datasets.geometry._base_polygon` uses for the geometric shapes: center of mass
+:func:`~synth_datasets.families.geometry._base_polygon` uses for the geometric shapes: center of mass
 at the origin and the larger of the two extents scaled to ``1``, so multiplying by a pixel ``size``
 yields a shape bounded by ``size`` pixels. Coordinates are in screen orientation — ``+x`` right,
 ``+y`` **down** — matching Pillow's raster axes, so every animal renders upright and faces left.
@@ -21,7 +21,7 @@ time, which makes the invariant impossible to break by editing an SVG file.
 anatomical ``mouth``/``eye``/``ear``/``head``/``neck``/``body_top``/``body_bottom``/``tail`` chain
 plus two-segment front limbs (``front_elbow_*`` then ``front_limb_*``: paws, wings, or
 fins/flippers) and the optional two-segment hind legs (``hind_knee_*`` then ``hind_limb_*``) — that
-:attr:`~synth_datasets.config.Task.KEYPOINTS` annotates.
+:attr:`~synth_datasets.core.config.Task.KEYPOINTS` annotates.
 Landmarks are mapped through *their outline's* transform, so the two tables live in one frame: a
 landmark sits **inside or on** its silhouette and, unlike an outline table, is neither centred on the
 origin nor scaled to unit extent by itself.
@@ -35,8 +35,8 @@ than a faked point. Every other name is mandatory; a missing one is a load-time
 chosen because the rest of the pipeline already handles it for free: a NaN coordinate compares
 ``False`` against every bound check downstream (canvas-visibility, placement clipping), so it falls
 through to "not labeled" exactly like a point clipped off-canvas — see
-:func:`~synth_datasets.generator._visible_keypoints` and
-:func:`~synth_datasets.writers._keypoint_triples`. This module's own :func:`_frame` only
+:func:`~synth_datasets.core.generator._visible_keypoints` and
+:func:`~synth_datasets.export.writers._keypoint_triples`. This module's own :func:`_frame` only
 ever measures the **outline**, never the landmark table, so a NaN landmark can never poison the
 outline's centring/scaling math — that invariant is what makes the encoding safe.
 
@@ -45,13 +45,13 @@ archetype, so the classes stay separable at a glance and every outline point kee
 identity under rotation.
 
 Pure NumPy plus the stdlib XML parser — no Pillow, no torch, and no import from
-:mod:`synth_datasets.config`: the configuration layer imports *this* module for the animal
+:mod:`synth_datasets.core.config`: the configuration layer imports *this* module for the animal
 half of its shape vocabulary, never the other way round. Tables are keyed by the plain
 :class:`AnimalShape` *values*.
 
 Examples:
     ```pycon
-    >>> from synth_datasets.animals import ANIMAL_KEYPOINTS, ANIMAL_POLYGONS
+    >>> from synth_datasets.families.animals import ANIMAL_KEYPOINTS, ANIMAL_POLYGONS
     >>> len(ANIMAL_POLYGONS)
     12
     >>> sorted(ANIMAL_POLYGONS)[:6]
@@ -79,10 +79,10 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from synth_datasets.geometry import place_points
-from synth_datasets.keypoints import KeypointSchema, _normalized_pair
-from synth_datasets.shape_enum import ShapeEnum
-from synth_datasets.svgio import read_outline_document
+from synth_datasets.core.keypoints import KeypointSchema, _normalized_pair
+from synth_datasets.families.geometry import place_points
+from synth_datasets.families.shape_enum import ShapeEnum
+from synth_datasets.families.svgio import read_outline_document
 
 if TYPE_CHECKING:
     from importlib.resources.abc import Traversable
@@ -97,8 +97,8 @@ class AnimalShape(ShapeEnum):
     asymmetric and belongs to a distinct silhouette archetype, so the classes stay separable at a
     glance and every outline point keeps an unambiguous identity under rotation — the property a
     landmark needs and a square or circle cannot offer. Every member has a ``<value>.svg`` document
-    in the packaged ``zoo`` directory and therefore a landmark table, which is what makes
-    :attr:`~synth_datasets.config.Task.KEYPOINTS` well-defined for exactly this enum.
+    in the packaged ``assets/animals`` directory and therefore a landmark table, which is what makes
+    :attr:`~synth_datasets.core.config.Task.KEYPOINTS` well-defined for exactly this enum.
 
     Attributes:
         DUCK: Compact duck silhouette with an S-curved neck and a beak.
@@ -116,7 +116,7 @@ class AnimalShape(ShapeEnum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.animals import AnimalShape
+        >>> from synth_datasets.families.animals import AnimalShape
         >>> len(AnimalShape)
         12
         >>> AnimalShape("duck")
@@ -144,9 +144,9 @@ class AnimalShape(ShapeEnum):
 #: because the loader and its tables are keyed by name rather than by member.
 ANIMAL_NAMES: tuple[str, ...] = tuple(shape.value for shape in AnimalShape)
 
-#: Landmark names for :attr:`~synth_datasets.config.Task.KEYPOINTS`, in the order every
-#: keypoint table, annotation, and label row uses — and the order landmarks are read out of a zoo
-#: document. One shared anatomical schema across all animals: Ultralytics' YOLO pose format carries
+#: Landmark names for :attr:`~synth_datasets.core.config.Task.KEYPOINTS`, in the order every
+#: keypoint table, annotation, and label row uses — and the order landmarks are read out of an
+#: animal document. One shared anatomical schema across all animals: Ultralytics' YOLO pose format carries
 #: a single dataset-wide ``kpt_shape``, so a per-class name list is not representable.
 #: The ``front_limb_*`` pair covers whatever the animal actually has at that slot — paws, wings, or
 #: flippers/fins; ``left`` is the limb nearer the viewer (fully visible), ``right`` the far one — a
@@ -216,14 +216,14 @@ ANIMAL_KEYPOINT_SKELETON: tuple[tuple[int, int], ...] = (
     (13, 15),
 )
 
-_ZOO: Traversable = files("synth_datasets") / "zoo"
+_ZOO: Traversable = files("synth_datasets") / "assets" / "animals"
 
 
 def _read_svg(name: str) -> tuple[list[tuple[float, float]], dict[str, tuple[float, float]], dict[str, str]]:
-    """Read one packaged zoo document through the shared reader.
+    """Read one packaged animal document through the shared reader.
 
     Args:
-        name: Animal name, i.e. the ``<name>.svg`` stem in the packaged ``zoo`` directory.
+        name: Animal name, i.e. the ``<name>.svg`` stem in the packaged ``assets/animals`` directory.
 
     Returns:
         The outline vertices, the present keypoints (by name), and the provenance attributes.
@@ -251,13 +251,13 @@ def _load() -> tuple[
 
 _POLYGONS, _KEYPOINTS, _SOURCES = _load()
 
-#: Outline table per animal :class:`~synth_datasets.config.Shape` *value*.
+#: Outline table per animal :class:`~synth_datasets.core.config.Shape` *value*.
 #: Every entry is unit-normalized and read-only; scale a copy rather than mutating it. The table
 #: itself is a read-only view as well, so ``ANIMAL_POLYGONS["duck"] = other`` raises instead of
 #: silently repointing an outline every consumer in the process shares.
 ANIMAL_POLYGONS: Mapping[str, NDArray[np.float64]] = MappingProxyType(_POLYGONS)
 
-#: Landmark table per animal :class:`~synth_datasets.config.Shape` *value*, in
+#: Landmark table per animal :class:`~synth_datasets.core.config.Shape` *value*, in
 #: ``config.KEYPOINT_NAMES`` order. Every entry is a read-only ``(16, 2)`` array in its outline's
 #: unit frame, so landmarks lie inside or on the silhouette; scale a copy rather than mutating it. A
 #: row is ``(nan, nan)`` for a landmark the animal does not have — the ``ear`` row and all four hind
@@ -280,7 +280,7 @@ ANIMAL_SOURCES: Mapping[str, Mapping[str, str]] = MappingProxyType({
 ANIMAL_KEYPOINT_FLIP_IDX: tuple[int, ...] = tuple(range(len(ANIMAL_KEYPOINT_NAMES)))
 
 #: The complete keypoint schema for every :class:`AnimalShape` — the one artifact
-#: :func:`~synth_datasets.config.keypoint_schema_for` and the writers need to describe an
+#: :func:`~synth_datasets.core.config.keypoint_schema_for` and the writers need to describe an
 #: animal ``Task.KEYPOINTS`` run.
 ANIMAL_KEYPOINT_SCHEMA = KeypointSchema(
     names=ANIMAL_KEYPOINT_NAMES,
@@ -309,7 +309,7 @@ def animal_keypoints(
         size: Bounding size in pixels — the same value passed to ``shape_outline``.
         angle: Rotation in radians about the shape center — likewise.
         skew: Signed fraction narrowing one pre-rotation half — likewise; see
-            :attr:`~synth_datasets.config.SyntheticConfig.asymmetry_jitter`.
+            :attr:`~synth_datasets.core.config.SyntheticConfig.asymmetry_jitter`.
 
     Returns:
         ``(16, 2)`` float array of landmark coordinates in image pixels, ordered by
@@ -323,7 +323,7 @@ def animal_keypoints(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.animals import AnimalShape, animal_keypoints
+        >>> from synth_datasets.families.animals import AnimalShape, animal_keypoints
         >>> points = animal_keypoints(AnimalShape.DUCK, center=(50.0, 50.0), size=20.0)
         >>> points.shape
         (16, 2)

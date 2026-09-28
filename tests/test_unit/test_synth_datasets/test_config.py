@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from synth_datasets.animals import AnimalShape
-from synth_datasets.config import (
+from synth_datasets.core.config import (
     DEFAULT_COLORS,
     DEFAULT_SHAPES,
     ClassMode,
@@ -18,9 +17,10 @@ from synth_datasets.config import (
     class_names,
 )
 from synth_datasets.families import ALL_SHAPES
-from synth_datasets.letters import LetterShape
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import SymbolShape
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SymbolShape
 
 
 def test_split_ratios_default_sums_to_one() -> None:

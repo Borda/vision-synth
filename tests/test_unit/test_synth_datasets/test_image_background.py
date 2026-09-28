@@ -16,9 +16,9 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from synth_datasets.backgrounds import ImageBackground
-from synth_datasets.config import SyntheticConfig
-from synth_datasets.generator import SyntheticGenerator
+from synth_datasets.content.backgrounds import ImageBackground
+from synth_datasets.core.config import SyntheticConfig
+from synth_datasets.core.generator import SyntheticGenerator
 
 IMG_SIZE = 32
 

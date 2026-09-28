@@ -59,7 +59,7 @@ jobs:
           fi
           grep -qF 'vision-synth[torch]' "${RUNNER_TEMP}/import_err.txt"
       - name: 🧪 Run torch-free tests and doctests
-        run: pytest src/synth_datasets tests/test_unit/test_synth_datasets --ignore=src/synth_datasets/datasets.py -v
+        run: pytest src/synth_datasets tests/test_unit/test_synth_datasets --ignore=src/synth_datasets/export/datasets.py -v
 
   doctests-only:
     permissions:

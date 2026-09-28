@@ -13,8 +13,7 @@ from collections.abc import Callable
 import numpy as np
 import pytest
 
-from synth_datasets.config import SyntheticConfig
-from synth_datasets.degradations import (
+from synth_datasets.content.degradations import (
     JPEG,
     ColorCast,
     Contrast,
@@ -24,7 +23,8 @@ from synth_datasets.degradations import (
     Quantize,
     Vignette,
 )
-from synth_datasets.generator import SyntheticGenerator
+from synth_datasets.core.config import SyntheticConfig
+from synth_datasets.core.generator import SyntheticGenerator
 
 IMG_SIZE = 24
 

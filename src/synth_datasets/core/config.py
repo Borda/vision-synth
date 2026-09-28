@@ -2,7 +2,7 @@
 
 Defines the task/format/class-mode enums, the class vocabulary derived from shapes and colors, the
 split ratios, and the :class:`SyntheticConfig` knob bundle consumed by
-:class:`~synth_datasets.generator.SyntheticGenerator`.
+:class:`~synth_datasets.core.generator.SyntheticGenerator`.
 
 Which shape families exist is **not** decided here — that is
 :mod:`~synth_datasets.families`, which this module reads. Everything below is about how a
@@ -30,8 +30,8 @@ from synth_datasets.families import (
 )
 
 if TYPE_CHECKING:
-    from synth_datasets.backgrounds import Background
-    from synth_datasets.degradations import Degradation
+    from synth_datasets.content.backgrounds import Background
+    from synth_datasets.content.degradations import Degradation
 
 _SPLIT_SUM_TOL = 1e-6
 
@@ -61,7 +61,7 @@ class Color(str, Enum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import Color
+        >>> from synth_datasets.core.config import Color
         >>> Color.GREEN.rgb
         (0, 128, 0)
         >>> Color("red") is Color.RED
@@ -115,7 +115,7 @@ class Fill:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import Color, Fill
+        >>> from synth_datasets.core.config import Color, Fill
         >>> Fill.parse(Color.BLUE).rgb
         (0, 0, 255)
         >>> Fill.parse((255, 215, 0)).label
@@ -147,7 +147,7 @@ class Fill:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import Color, Fill
+            >>> from synth_datasets.core.config import Color, Fill
             >>> Fill.parse(Color.RED).label, Fill.parse((255, 215, 0)).label
             ('red', 'ffd700')
 
@@ -179,7 +179,7 @@ class Fill:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import Color, Fill
+            >>> from synth_datasets.core.config import Color, Fill
             >>> Fill.parse(Color.BLUE)
             Fill(rgb=(0, 0, 255), name='blue')
             >>> Fill.parse((255, 215, 0))
@@ -241,7 +241,7 @@ class Task(str, Enum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import Task
+        >>> from synth_datasets.core.config import Task
         >>> Task.OBB.value
         'obb'
         >>> Task("keypoints") is Task.KEYPOINTS
@@ -307,8 +307,8 @@ class ClassEntry:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, class_vocabulary
-        >>> from synth_datasets.primitives import PrimitiveShape
+        >>> from synth_datasets.core.config import ClassMode, class_vocabulary
+        >>> from synth_datasets.families.primitives import PrimitiveShape
         >>> entry = class_vocabulary(ClassMode.SHAPE, (PrimitiveShape.SQUARE,)).entries[0]
         >>> entry.index, entry.name, entry.color is None
         (0, 'square', True)
@@ -339,8 +339,8 @@ class ClassVocabulary:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, Color, class_vocabulary
-        >>> from synth_datasets.animals import AnimalShape
+        >>> from synth_datasets.core.config import ClassMode, Color, class_vocabulary
+        >>> from synth_datasets.families.animals import AnimalShape
         >>> vocab = class_vocabulary(ClassMode.SHAPE, (AnimalShape.DUCK, AnimalShape.CAMEL))
         >>> vocab.names
         ['duck', 'camel']
@@ -415,7 +415,7 @@ def class_vocabulary(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, class_vocabulary
+        >>> from synth_datasets.core.config import ClassMode, class_vocabulary
         >>> from synth_datasets.families import ALL_SHAPES, DEFAULT_SHAPES
         >>> class_vocabulary(ClassMode.SHAPE, DEFAULT_SHAPES).names
         ['square', 'rectangle', 'triangle', 'circle']
@@ -475,7 +475,7 @@ def class_names(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, class_names
+        >>> from synth_datasets.core.config import ClassMode, class_names
         >>> from synth_datasets.families import ALL_SHAPES, DEFAULT_SHAPES
         >>> class_names(ClassMode.SHAPE, DEFAULT_SHAPES)
         ['square', 'rectangle', 'triangle', 'circle']
@@ -517,10 +517,10 @@ def class_id(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, Color, class_id
+        >>> from synth_datasets.core.config import ClassMode, Color, class_id
         >>> from synth_datasets.families import ALL_SHAPES
-        >>> from synth_datasets.primitives import PrimitiveShape
-        >>> from synth_datasets.symbols import SymbolShape
+        >>> from synth_datasets.families.primitives import PrimitiveShape
+        >>> from synth_datasets.families.symbols import SymbolShape
         >>> class_id(PrimitiveShape.TRIANGLE, Color.RED, ClassMode.SHAPE, ALL_SHAPES)
         2
         >>> class_id(PrimitiveShape.TRIANGLE, Color.RED, ClassMode.COLOR, ALL_SHAPES)
@@ -575,7 +575,7 @@ class SplitRatios:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import SplitRatios
+        >>> from synth_datasets.core.config import SplitRatios
         >>> SplitRatios().to_dict()
         {'train': 0.7, 'val': 0.2, 'test': 0.1}
         >>> SplitRatios(0.8, 0.2, 0.0).to_dict()
@@ -619,7 +619,7 @@ class SplitRatios:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import SplitRatios
+            >>> from synth_datasets.core.config import SplitRatios
             >>> SplitRatios.custom({"train": 0.9, "holdout": 0.1}).to_dict()
             {'train': 0.9, 'holdout': 0.1}
 
@@ -656,10 +656,10 @@ class SyntheticConfig:
         max_placement_attempts: Retry cap per object before giving up.
         background: What fills the canvas before any object is drawn. Either a plain fill — a
             :class:`Color`, an ``(r, g, b)`` triple, or a :class:`Fill` — or a
-            :class:`~synth_datasets.backgrounds.Background` such as
-            :class:`~synth_datasets.backgrounds.NoiseBackground` or
-            :class:`~synth_datasets.backgrounds.TextureBackground`. A plain fill is
-            normalized to a :class:`~synth_datasets.backgrounds.SolidBackground` at
+            :class:`~synth_datasets.content.backgrounds.Background` such as
+            :class:`~synth_datasets.content.backgrounds.NoiseBackground` or
+            :class:`~synth_datasets.content.backgrounds.TextureBackground`. A plain fill is
+            normalized to a :class:`~synth_datasets.content.backgrounds.SolidBackground` at
             construction, so ``config.background`` always reads back as a background object and the
             default draws exactly the flat grey canvas it always did. The field used to be handed
             straight to Pillow, so a colour *name* such as ``"white"`` or ``"#204080"`` rendered;
@@ -672,7 +672,7 @@ class SyntheticConfig:
             shape — left or right of its own local vertical axis, before rotation — is narrowed,
             drawn independently per placed object. ``0.0`` (the default) disables it and leaves
             every existing seeded configuration's output unchanged. Every shape this package draws
-            except :attr:`~synth_datasets.primitives.PrimitiveShape.CIRCLE` is mirror-symmetric
+            except :attr:`~synth_datasets.families.primitives.PrimitiveShape.CIRCLE` is mirror-symmetric
             about that axis in its canonical orientation, so its oriented bounding box would
             otherwise always show identical left/right margins; a nonzero value breaks that with
             per-instance variety instead — real oriented objects (vehicles, ships) are rarely that
@@ -714,16 +714,16 @@ class SyntheticConfig:
             tuple that is empty or holds an element that is no valid fill, a ``task`` naming no
             :class:`Task`, or a :attr:`Task.KEYPOINTS` task combined with a ``shapes`` tuple
             that does not belong entirely to one keypoint-bearing family (see
-            :func:`keypoint_schema_for`) — a :class:`~synth_datasets.primitives.PrimitiveShape`
-            mixed in, or two of :class:`~synth_datasets.animals.AnimalShape`,
-            :class:`~synth_datasets.symbols.SymbolShape`, and
-            :class:`~synth_datasets.letters.LetterShape` mixed together, since only one
+            :func:`keypoint_schema_for`) — a :class:`~synth_datasets.families.primitives.PrimitiveShape`
+            mixed in, or two of :class:`~synth_datasets.families.animals.AnimalShape`,
+            :class:`~synth_datasets.families.symbols.SymbolShape`, and
+            :class:`~synth_datasets.families.letters.LetterShape` mixed together, since only one
             landmark schema can describe a dataset.
 
     Examples:
         ```pycon
-        >>> from synth_datasets.animals import AnimalShape
-        >>> from synth_datasets.config import Color, SyntheticConfig, Task
+        >>> from synth_datasets.families.animals import AnimalShape
+        >>> from synth_datasets.core.config import Color, SyntheticConfig, Task
         >>> SyntheticConfig(img_size=128).img_size
         128
         >>> SyntheticConfig(shapes=(AnimalShape.DUCK, AnimalShape.CAMEL)).shapes
@@ -825,20 +825,20 @@ class SyntheticConfig:
         Same boundary-normalization reasoning as :meth:`_normalize_colors`, applied to the canvas:
         the field accepts a bare fill *or* a background object, and everything past construction
         holds a background. A bare fill becomes a
-        :class:`~synth_datasets.backgrounds.SolidBackground`, which is exactly the flat
+        :class:`~synth_datasets.content.backgrounds.SolidBackground`, which is exactly the flat
         canvas the generator drew before backgrounds were types, so an existing configuration keeps
         its pixels. This is also the first validation the field has ever had — it used to be handed
         to Pillow unchecked.
 
         The import is deferred rather than made at module scope because
-        :mod:`~synth_datasets.backgrounds` imports this module for its fill union; the cycle
+        :mod:`~synth_datasets.content.backgrounds` imports this module for its fill union; the cycle
         is real and broken here, at the one runtime point that needs the concrete class.
 
         Raises:
             ValueError: If ``background`` is neither a :class:`Background` nor a valid fill.
 
         """
-        from synth_datasets.backgrounds import Background, SolidBackground
+        from synth_datasets.content.backgrounds import Background, SolidBackground
 
         if isinstance(self.background, Background):
             return
@@ -854,10 +854,10 @@ class SyntheticConfig:
 
         Raises:
             ValueError: If any element is not a
-                :class:`~synth_datasets.degradations.Degradation`.
+                :class:`~synth_datasets.content.degradations.Degradation`.
 
         """
-        from synth_datasets.degradations import Degradation
+        from synth_datasets.content.degradations import Degradation
 
         object.__setattr__(self, "degrade", tuple(self.degrade))
         invalid = [step for step in self.degrade if not isinstance(step, Degradation)]
@@ -910,7 +910,7 @@ class SyntheticConfig:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import SyntheticConfig
+            >>> from synth_datasets.core.config import SyntheticConfig
             >>> type(SyntheticConfig(img_size=32, background=(10, 20, 30)).resolved_background).__name__
             'SolidBackground'
 
@@ -921,7 +921,7 @@ class SyntheticConfig:
                 ``__post_init__`` can produce.
 
         """
-        from synth_datasets.backgrounds import Background
+        from synth_datasets.content.backgrounds import Background
 
         if not isinstance(self.background, Background):  # pragma: no cover - __post_init__ normalizes it
             raise TypeError(f"background holds {type(self.background).__name__}, not a Background")
@@ -938,8 +938,8 @@ class SyntheticConfig:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import SyntheticConfig
-            >>> from synth_datasets.primitives import PrimitiveShape
+            >>> from synth_datasets.core.config import SyntheticConfig
+            >>> from synth_datasets.families.primitives import PrimitiveShape
             >>> config = SyntheticConfig(img_size=32, shapes=(PrimitiveShape.SQUARE,))
             >>> PrimitiveShape.SQUARE in config.resolved_distractor_shapes
             False
@@ -965,7 +965,7 @@ class SyntheticConfig:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import DISTRACTOR_PALETTE, Fill, SyntheticConfig
+            >>> from synth_datasets.core.config import DISTRACTOR_PALETTE, Fill, SyntheticConfig
             >>> config = SyntheticConfig(img_size=32, colors=(Fill(rgb=DISTRACTOR_PALETTE[0].rgb),))
             >>> DISTRACTOR_PALETTE[0] in config.resolved_distractor_colors
             False

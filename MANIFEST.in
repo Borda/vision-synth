@@ -10,10 +10,8 @@ recursive-include src/synth_datasets *.md
 include LICENSE
 
 # Include every packaged shape-family asset: animal silhouettes, symbol outlines, letter stroke
-# graphs. All three share one SVG schema (see synth_datasets/svgio.py).
-recursive-include src/synth_datasets/zoo *.svg
-recursive-include src/synth_datasets/symbols *.svg
-recursive-include src/synth_datasets/letters *.svg
+# graphs. All three share one SVG schema (see synth_datasets/families/svgio.py).
+recursive-include src/synth_datasets/assets *.svg
 
 # Exclude build configs
 exclude *.yml

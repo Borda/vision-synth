@@ -18,8 +18,8 @@ The class is deliberately **empty**. Two reasons, both hard:
 
 Examples:
     ```pycon
-    >>> from synth_datasets.animals import AnimalShape
-    >>> from synth_datasets.shape_enum import ShapeEnum
+    >>> from synth_datasets.families.animals import AnimalShape
+    >>> from synth_datasets.families.shape_enum import ShapeEnum
     >>> isinstance(AnimalShape.DUCK, ShapeEnum)
     True
     >>> isinstance("duck", ShapeEnum)
@@ -49,8 +49,8 @@ class ShapeEnum(str, Enum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.shape_enum import ShapeEnum
-        >>> from synth_datasets.symbols import SymbolShape
+        >>> from synth_datasets.families.shape_enum import ShapeEnum
+        >>> from synth_datasets.families.symbols import SymbolShape
         >>> issubclass(SymbolShape, ShapeEnum)
         True
         >>> SymbolShape.KITE == "kite"

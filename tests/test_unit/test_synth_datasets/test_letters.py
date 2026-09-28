@@ -6,9 +6,9 @@ import numpy as np
 import pytest
 from PIL import Image, ImageDraw
 
+from synth_datasets.core.keypoints import KeypointSchema
 from synth_datasets.families import shape_outline
-from synth_datasets.keypoints import KeypointSchema
-from synth_datasets.letters import (
+from synth_datasets.families.letters import (
     LETTER_COUNTER_GAP,
     LETTER_KEYPOINT_FLIP_IDX,
     LETTER_KEYPOINT_NAMES,
@@ -21,7 +21,7 @@ from synth_datasets.letters import (
     LetterShape,
     letter_keypoints,
 )
-from synth_datasets.primitives import PrimitiveShape
+from synth_datasets.families.primitives import PrimitiveShape
 
 #: Which `LETTER_KEYPOINT_NAMES` slots each letter actually uses, hand-reviewed and pinned as a
 #: literal from the letter's own authored stroke graph — see `letters.json`'s `strokes` table.
@@ -239,7 +239,7 @@ def _is_180_invariant(table: np.ndarray, edges: frozenset[tuple[int, int]]) -> b
 
 def _cycle_rank(name: str) -> int:
     """Return the letter's stroke graph's cycle rank: edges - nodes + connected components."""
-    from synth_datasets.letters import _LETTER_STROKES
+    from synth_datasets.families.letters import _LETTER_STROKES
 
     edges = _LETTER_STROKES[name]
     nodes = {index for edge in edges for index in edge}
@@ -300,7 +300,7 @@ def test_counter_letter_cut_count_equals_its_cycle_rank(name: str, expected_cuts
     expected count directly instead of relying on that failure mode.
 
     """
-    from synth_datasets.letters import _CUTS
+    from synth_datasets.families.letters import _CUTS
 
     assert len(_CUTS[name]) == expected_cuts == _cycle_rank(name)
 
@@ -308,7 +308,7 @@ def test_counter_letter_cut_count_equals_its_cycle_rank(name: str, expected_cuts
 @pytest.mark.parametrize("name", [name for name in LETTER_NAMES if name not in COUNTER_LETTERS])
 def test_non_counter_letter_has_no_cuts_and_zero_cycle_rank(name: str) -> None:
     """A letter with no enclosed counter has an acyclic stroke graph and no `_CUTS` entry."""
-    from synth_datasets.letters import _CUTS
+    from synth_datasets.families.letters import _CUTS
 
     assert name not in _CUTS
     assert _cycle_rank(name) == 0
@@ -392,7 +392,7 @@ def test_skeleton_edges_lie_inside_the_outline(name: str) -> None:
     `test_counter_slit_is_hairline_next_to_the_stroke_width`.
 
     """
-    from synth_datasets.letters import _CUTS, _LETTER_STROKES
+    from synth_datasets.families.letters import _CUTS, _LETTER_STROKES
 
     polygon = LETTER_POLYGONS[name]
     points = LETTER_KEYPOINTS[name]
@@ -492,7 +492,7 @@ def test_counter_cuts_sit_at_the_bottom_of_their_counter() -> None:
     catch a cut that is legal but placed somewhere visually wrong.
 
     """
-    from synth_datasets.letters import _CUTS
+    from synth_datasets.families.letters import _CUTS
 
     assert {name: dict(sorted(edges.items())) for name, edges in _CUTS.items()} == {
         "a": {(9, 11): 0.5},  # crossbar — the bottom of A's triangular counter
@@ -526,7 +526,7 @@ def test_no_letter_is_invariant_under_180_degree_reflection(name: str) -> None:
     (`letters.raw_letter_nodes`), not the wrapped outline or its normalization.
 
     """
-    from synth_datasets.letters import _LETTER_STROKES, raw_letter_nodes
+    from synth_datasets.families.letters import _LETTER_STROKES, raw_letter_nodes
 
     edges = frozenset(tuple(sorted(edge)) for edge in _LETTER_STROKES[name])
     assert not _is_180_invariant(raw_letter_nodes(name), edges)
@@ -553,7 +553,7 @@ def test_skeleton_by_value_covers_every_letter(name: str) -> None:
     `KeypointSchema.skeleton_for`.
 
     """
-    from synth_datasets.letters import _LETTER_STROKES
+    from synth_datasets.families.letters import _LETTER_STROKES
 
     own_edges = frozenset(tuple(sorted(edge)) for edge in _LETTER_STROKES[name])
     schema_edges = frozenset(tuple(sorted(edge)) for edge in LETTER_KEYPOINT_SCHEMA.skeleton_for(name))
@@ -595,7 +595,7 @@ def test_flip_idx_is_the_grid_column_mirror() -> None:
 
 def test_letter_keypoint_schema_bundles_the_family() -> None:
     """`LETTER_KEYPOINT_SCHEMA` carries the same names/skeleton/flip_idx/shape_values as the module constants."""
-    from synth_datasets.letters import _LETTER_STROKES
+    from synth_datasets.families.letters import _LETTER_STROKES
 
     assert (
         KeypointSchema(

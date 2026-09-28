@@ -5,8 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from synth_datasets.animals import ANIMAL_KEYPOINT_NAMES, AnimalShape
-from synth_datasets.config import (
+from synth_datasets.core.config import (
     DEFAULT_SHAPES,
     ClassMode,
     Color,
@@ -14,12 +13,13 @@ from synth_datasets.config import (
     Task,
     class_names,
 )
+from synth_datasets.core.generator import SyntheticGenerator, _boundary_overlap, _visible_keypoints
 from synth_datasets.families import ALL_SHAPES
-from synth_datasets.generator import SyntheticGenerator, _boundary_overlap, _visible_keypoints
-from synth_datasets.geometry import bbox_iou
-from synth_datasets.letters import LetterShape
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import SYMBOL_KEYPOINT_NAMES, SymbolShape
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_NAMES, AnimalShape
+from synth_datasets.families.geometry import bbox_iou
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_NAMES, SymbolShape
 
 from ._obb_pose import rebuild_error
 

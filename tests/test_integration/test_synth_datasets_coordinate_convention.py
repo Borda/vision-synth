@@ -19,11 +19,11 @@ from PIL import Image, ImageDraw
 
 from fused_transforms import FusedCompose
 from fused_transforms._compat import _TORCHVISION_AVAILABLE
-from synth_datasets.config import ClassMode, Color, OutputFormat, SyntheticConfig, Task, class_vocabulary
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.geometry import PIXEL_CENTRE_OFFSET, to_pixel_edge
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.writers import CocoWriter, YoloWriter
+from synth_datasets.core.config import ClassMode, Color, OutputFormat, SyntheticConfig, Task, class_vocabulary
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.export.writers import CocoWriter, YoloWriter
+from synth_datasets.families.geometry import PIXEL_CENTRE_OFFSET, to_pixel_edge
+from synth_datasets.families.primitives import PrimitiveShape
 
 if _TORCHVISION_AVAILABLE:
     from torchvision.transforms import v2 as T

@@ -1,9 +1,9 @@
 """Helpers shared by the canvas fillers and the pointwise effects.
 
-Both :mod:`~synth_datasets.backgrounds` and :mod:`~synth_datasets.degradations` hand ``uint8`` images around and both
-are handed a side stream that is ``None`` whenever the object declared it draws nothing. The two rules those facts imply
-— round and clip exactly once, and fail by name rather than by an attribute error on ``None`` — live here so the two
-modules cannot drift apart on either.
+Both :mod:`~synth_datasets.content.backgrounds` and :mod:`~synth_datasets.content.degradations` hand ``uint8`` images
+around and both are handed a side stream that is ``None`` whenever the object declared it draws nothing. The two rules
+those facts imply — round and clip exactly once, and fail by name rather than by an attribute error on ``None`` — live
+here so the two modules cannot drift apart on either.
 
 Numpy only, and nothing public: neither name is exported from the package surface.
 

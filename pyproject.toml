@@ -122,7 +122,12 @@ benchmark = [
 [tool.setuptools]
 packages.find.where = [ "src" ]
 packages.find.include = [ "fused_transforms*", "synth_datasets*" ]
-package-data.synth_datasets = [ "letters/*.svg", "symbols/*.svg", "zoo/*.md", "zoo/*.svg" ]
+package-data.synth_datasets = [
+  "assets/animals/*.md",
+  "assets/animals/*.svg",
+  "assets/letters/*.svg",
+  "assets/symbols/*.svg"
+]
 dynamic.version.attr = "fused_transforms.__about__.__version__"
 
 [tool.ruff]

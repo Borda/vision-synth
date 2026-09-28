@@ -16,7 +16,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from synth_datasets.families import shape_outline
-from synth_datasets.geometry import polygon_to_obb, rotate_polygon
+from synth_datasets.families.geometry import polygon_to_obb, rotate_polygon
 
 
 def box_heading(corners: NDArray[np.float64]) -> float:

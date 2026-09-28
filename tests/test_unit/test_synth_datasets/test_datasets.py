@@ -1,4 +1,4 @@
-"""Tests for the torch IterableDataset wrapper (synth_datasets.datasets)."""
+"""Tests for the torch IterableDataset wrapper (synth_datasets.export.datasets)."""
 
 from __future__ import annotations
 
@@ -15,8 +15,8 @@ import torch.multiprocessing as torch_mp  # noqa: E402
 from torch.utils.data import DataLoader  # noqa: E402
 
 from synth_datasets import SyntheticIterableDataset  # noqa: E402
-from synth_datasets.generator import SyntheticGenerator  # noqa: E402
-from synth_datasets.sample import Sample  # noqa: E402
+from synth_datasets.core.generator import SyntheticGenerator  # noqa: E402
+from synth_datasets.core.sample import Sample  # noqa: E402
 
 
 def test_len_reports_budget():
@@ -123,7 +123,7 @@ def test_rank_epoch_inputs_are_read_only():
 
 def test_rank_zero_epoch_zero_worker_seeds_preserve_legacy_streams(monkeypatch):
     monkeypatch.setattr(
-        "synth_datasets.datasets.get_worker_info",
+        "synth_datasets.export.datasets.get_worker_info",
         lambda: _worker_info(worker_id=1, num_workers=2),
     )
     ds = SyntheticIterableDataset(num_images=3, img_size=32, seed=7, rank=0, world_size=2, epoch=0)
@@ -150,7 +150,7 @@ def test_two_rank_two_worker_shards_keep_each_rank_count(monkeypatch):
         ds = SyntheticIterableDataset(num_images=5, img_size=32, seed=7, rank=rank, world_size=2, epoch=1)
         for worker_id in range(2):
             monkeypatch.setattr(
-                "synth_datasets.datasets.get_worker_info",
+                "synth_datasets.export.datasets.get_worker_info",
                 lambda worker_id=worker_id: _worker_info(worker_id=worker_id, num_workers=2),
             )
             count, seed = ds._worker_shard()
@@ -201,7 +201,7 @@ def test_worker_shards_cover_zero_small_and_remainder_budgets(monkeypatch, num_i
     actual_counts: list[int] = []
     for worker_id in range(3):
         monkeypatch.setattr(
-            "synth_datasets.datasets.get_worker_info",
+            "synth_datasets.export.datasets.get_worker_info",
             lambda worker_id=worker_id: _worker_info(worker_id=worker_id, num_workers=3),
         )
         count, _ = ds._worker_shard()

@@ -21,13 +21,13 @@ import torch
 
 from fused_transforms import FusedCompose
 from fused_transforms._compat import _TORCHVISION_AVAILABLE
-from synth_datasets.animals import AnimalShape
-from synth_datasets.config import Color, SyntheticConfig, Task
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.geometry import polygon_to_bbox_xyxy, to_pixel_edge
-from synth_datasets.letters import LetterShape
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import SymbolShape
+from synth_datasets.core.config import Color, SyntheticConfig, Task
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.geometry import polygon_to_bbox_xyxy, to_pixel_edge
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SymbolShape
 
 if _TORCHVISION_AVAILABLE:
     from torchvision.transforms import v2 as T

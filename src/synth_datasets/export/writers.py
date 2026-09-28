@@ -1,9 +1,9 @@
 """Serialize generated samples to COCO or YOLO dataset layouts.
 
 Both writers consume the same format-agnostic
-:class:`~synth_datasets.sample.Sample` objects and select which
+:class:`~synth_datasets.core.sample.Sample` objects and select which
 annotation fields to emit based on the requested
-:class:`~synth_datasets.config.Task`.
+:class:`~synth_datasets.core.config.Task`.
 
 COCO layout (Roboflow-style)::
 
@@ -39,17 +39,17 @@ from typing import TYPE_CHECKING, Any
 
 from PIL import Image
 
-from synth_datasets.config import ClassVocabulary, OutputFormat, Task
-from synth_datasets.geometry import PIXEL_CENTRE_OFFSET
+from synth_datasets.core.config import ClassVocabulary, OutputFormat, Task
+from synth_datasets.families.geometry import PIXEL_CENTRE_OFFSET
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from numpy.typing import NDArray
 
-    from synth_datasets.config import ClassEntry
-    from synth_datasets.keypoints import KeypointSchema
-    from synth_datasets.sample import Annotation, Sample
+    from synth_datasets.core.config import ClassEntry
+    from synth_datasets.core.keypoints import KeypointSchema
+    from synth_datasets.core.sample import Annotation, Sample
 
 _IMAGE_STEM = "img_{index:06d}"
 
@@ -57,11 +57,11 @@ _IMAGE_STEM = "img_{index:06d}"
 def _covers(entry: ClassEntry, schema: KeypointSchema) -> bool:
     """Return whether ``schema`` can describe the landmarks of the class ``entry`` names.
 
-    This used to be two functions that rebuilt structure out of a class *name*: one recreated the full color-by-shape
-    cross product to test membership, the other recovered the shape half with ``name.partition("_")``. Both were correct
-    only while no shape value and no color value contained an underscore. :class:`~synth_datasets.config.ClassEntry`
-    carries the shape itself, so the test is now what it always meant: does this class name a shape of the run's own
-    keypoint family?
+    This used to be two functions that rebuilt structure out of a class *name*: one recreated the full
+    color-by-shape cross product to test membership, the other recovered the shape half with
+    ``name.partition("_")``. Both were correct only while no shape value and no color value contained an
+    underscore. :class:`~synth_datasets.core.config.ClassEntry` carries the shape itself, so the test is now
+    what it always meant: does this class name a shape of the run's own keypoint family?
 
     A ``ClassMode.COLOR`` entry names no shape at all (``entry.shape is None``) yet is still drawn as whichever family
     the run was restricted to, so it is always covered.
@@ -83,7 +83,7 @@ def _clamp_flat(flat: list[float], img_w: float, img_h: float) -> list[float]:
 def _edge_flat(flat: list[float]) -> list[float]:
     """Convert a flat pixel-centre coordinate list to the edge space an exported file uses.
 
-    An :class:`~synth_datasets.sample.Annotation` carries outlines, oriented-box corners
+    An :class:`~synth_datasets.core.sample.Annotation` carries outlines, oriented-box corners
     and landmarks in pixel-centre space, because that is the space the point transforms in
     :mod:`~fused_transforms.targets` move them through. ``bbox_xyxy`` stays in edge space for the
     same reason -- that is the space its own transform assumes. A COCO or YOLO file has no room for
@@ -145,7 +145,7 @@ class DatasetWriter(ABC):
         vocabulary: The classes to declare, in id order — each entry keeps the shape and color it
             was derived from, which is how a writer tells which categories its keypoint schema
             covers without parsing their names.
-        keypoint_schema: The keypoint family a :attr:`~synth_datasets.config.Task.KEYPOINTS`
+        keypoint_schema: The keypoint family a :attr:`~synth_datasets.core.config.Task.KEYPOINTS`
             run draws from; required for that task and ignored for every other. It used to default
             to the animal schema for backward compatibility, which meant a directly-constructed
             symbol or letter pose writer silently emitted a 16-landmark animal header over 7- or
@@ -157,7 +157,7 @@ class DatasetWriter(ABC):
         """Store the task and vocabulary, rejecting a keypoints task with no schema to write.
 
         Raises:
-            ValueError: If ``task`` is :attr:`~synth_datasets.config.Task.KEYPOINTS` and no
+            ValueError: If ``task`` is :attr:`~synth_datasets.core.config.Task.KEYPOINTS` and no
                 ``keypoint_schema`` was given.
 
         """
@@ -211,9 +211,9 @@ class CocoWriter(DatasetWriter):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, Task, class_vocabulary
-        >>> from synth_datasets.primitives import PrimitiveShape
-        >>> from synth_datasets.writers import CocoWriter
+        >>> from synth_datasets.core.config import ClassMode, Task, class_vocabulary
+        >>> from synth_datasets.families.primitives import PrimitiveShape
+        >>> from synth_datasets.export.writers import CocoWriter
         >>> vocab = class_vocabulary(ClassMode.SHAPE, (PrimitiveShape.SQUARE,))
         >>> CocoWriter(Task.DETECTION, vocab).task.value
         'detection'
@@ -258,7 +258,7 @@ class CocoWriter(DatasetWriter):
         COCO consumer, so only the categories :func:`_covers` accepts are decorated.
 
         A category's ``skeleton`` prefers
-        :meth:`~synth_datasets.keypoints.KeypointSchema.skeleton_for` — the letter family's
+        :meth:`~synth_datasets.core.keypoints.KeypointSchema.skeleton_for` — the letter family's
         per-letter stroke edges — falling back to the family-wide ``skeleton`` for a bare-color
         category or a family whose members all share one topology (animals, symbols).
 
@@ -297,7 +297,7 @@ class CocoWriter(DatasetWriter):
         metadata records (no pixels) accumulate for the duration of the split and are serialized
         once the split is exhausted: memory is O(n) in the split's image and annotation counts, not
         constant. For a constant-memory path use the YOLO writer (one label file per image) or the
-        in-memory :class:`~synth_datasets.datasets.SyntheticIterableDataset`.
+        in-memory :class:`~synth_datasets.export.datasets.SyntheticIterableDataset`.
 
         """
         output_dir = Path(output_dir)
@@ -328,9 +328,9 @@ class YoloWriter(DatasetWriter):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, Task, class_vocabulary
-        >>> from synth_datasets.primitives import PrimitiveShape
-        >>> from synth_datasets.writers import YoloWriter
+        >>> from synth_datasets.core.config import ClassMode, Task, class_vocabulary
+        >>> from synth_datasets.families.primitives import PrimitiveShape
+        >>> from synth_datasets.export.writers import YoloWriter
         >>> vocab = class_vocabulary(ClassMode.SHAPE, (PrimitiveShape.SQUARE,))
         >>> YoloWriter(Task.OBB, vocab).task.value
         'obb'
@@ -435,7 +435,7 @@ def register_writer(fmt: OutputFormat | str, writer: type[DatasetWriter]) -> Non
     """Register the writer class serving one output format.
 
     Args:
-        fmt: The format key. An :class:`~synth_datasets.config.OutputFormat` member for the
+        fmt: The format key. An :class:`~synth_datasets.core.config.OutputFormat` member for the
             built-ins, or any string for a custom format — :func:`get_writer` accepts both, so a
             caller can pass ``fmt="voc"`` straight to
             :func:`~synth_datasets.generate_dataset` once registered.
@@ -446,7 +446,7 @@ def register_writer(fmt: OutputFormat | str, writer: type[DatasetWriter]) -> Non
 
     Examples:
         ```pycon
-        >>> from synth_datasets.writers import YoloWriter, register_writer
+        >>> from synth_datasets.export.writers import YoloWriter, register_writer
         >>> class UltralyticsWriter(YoloWriter):
         ...     pass
         >>> register_writer("ultralytics", UltralyticsWriter)
@@ -469,11 +469,11 @@ def get_writer(
     """Return the writer registered for an output format.
 
     Args:
-        fmt: Target format — an :class:`~synth_datasets.config.OutputFormat` member, its
+        fmt: Target format — an :class:`~synth_datasets.core.config.OutputFormat` member, its
             string value, or any key passed to :func:`register_writer`.
         task: Annotation task to emit.
         vocabulary: The classes to declare, in id order; see :class:`DatasetWriter`.
-        keypoint_schema: The keypoint family a :attr:`~synth_datasets.config.Task.KEYPOINTS`
+        keypoint_schema: The keypoint family a :attr:`~synth_datasets.core.config.Task.KEYPOINTS`
             run draws from; see :class:`DatasetWriter`. Required for that task, ignored otherwise.
 
     Returns:
@@ -484,9 +484,9 @@ def get_writer(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.config import ClassMode, OutputFormat, Task, class_vocabulary
-        >>> from synth_datasets.primitives import PrimitiveShape
-        >>> from synth_datasets.writers import get_writer
+        >>> from synth_datasets.core.config import ClassMode, OutputFormat, Task, class_vocabulary
+        >>> from synth_datasets.families.primitives import PrimitiveShape
+        >>> from synth_datasets.export.writers import get_writer
         >>> vocab = class_vocabulary(ClassMode.SHAPE, (PrimitiveShape.SQUARE,))
         >>> type(get_writer(OutputFormat.YOLO, Task.DETECTION, vocab)).__name__
         'YoloWriter'

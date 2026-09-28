@@ -1,9 +1,9 @@
 """Seeded synthetic-image generator producing format-agnostic samples.
 
 :class:`SyntheticGenerator` draws colored shapes on a canvas that
-:mod:`~synth_datasets.backgrounds` fills — flat grey by default — rejecting
+:mod:`~synth_datasets.content.backgrounds` fills — flat grey by default — rejecting
 placements that fall off the canvas or overlap existing objects, and returns a
-:class:`~synth_datasets.sample.Sample` carrying every annotation
+:class:`~synth_datasets.core.sample.Sample` carrying every annotation
 representation (polygon, axis-aligned box, oriented box). All randomness flows
 through a caller-supplied :class:`numpy.random.Generator`, so a fixed seed yields
 byte-identical output.
@@ -15,17 +15,17 @@ what :func:`~fused_transforms.targets.transform_keypoints` and the image resampl
 :func:`~fused_transforms.targets.transform_bbox_xyxy` assumes. The rasterizer itself draws the
 edge-space outline, since Pillow fills pixel ``floor(x)`` for a vertex at ``x``. Mixing the two up
 costs a full pixel under any reflection or quarter turn, which is why each field declares its space
-rather than sharing one; see :data:`~synth_datasets.geometry.PIXEL_CENTRE_OFFSET`.
+rather than sharing one; see :data:`~synth_datasets.families.geometry.PIXEL_CENTRE_OFFSET`.
 
-Under :attr:`~synth_datasets.config.Task.KEYPOINTS` each annotation also carries its
+Under :attr:`~synth_datasets.core.config.Task.KEYPOINTS` each annotation also carries its
 family's landmarks plus the schema naming them, derived from the placement that was already
 sampled — no extra random draw — so a seed produces the same scene whatever the configured task.
 
 Examples:
     ```pycon
     >>> import numpy as np
-    >>> from synth_datasets.config import SyntheticConfig
-    >>> from synth_datasets.generator import SyntheticGenerator
+    >>> from synth_datasets.core.config import SyntheticConfig
+    >>> from synth_datasets.core.generator import SyntheticGenerator
     >>> gen = SyntheticGenerator(SyntheticConfig(img_size=64, min_objects=2, max_objects=2))
     >>> sample = gen.sample(np.random.default_rng(0))
     >>> sample.image.shape
@@ -45,16 +45,16 @@ from typing import TYPE_CHECKING
 import numpy as np
 from PIL import Image, ImageDraw
 
-from synth_datasets.config import Fill, Task, class_vocabulary
+from synth_datasets.core.config import Fill, Task, class_vocabulary
+from synth_datasets.core.sample import _EMPTY_SCENE, Annotation, Sample, SceneRecord
 from synth_datasets.families import keypoint_schema_for, place_keypoints, shape_outline
-from synth_datasets.geometry import bbox_iou, polygon_to_bbox_xyxy, to_pixel_centre
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.sample import _EMPTY_SCENE, Annotation, Sample, SceneRecord
+from synth_datasets.families.geometry import bbox_iou, polygon_to_bbox_xyxy, to_pixel_centre
+from synth_datasets.families.primitives import PrimitiveShape
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
 
-    from synth_datasets.config import SyntheticConfig
+    from synth_datasets.core.config import SyntheticConfig
     from synth_datasets.families import Shape
 
 _BBox = tuple[float, float, float, float]
@@ -64,7 +64,7 @@ _Placement = tuple["Shape", Fill, "NDArray[np.float64]", float, "NDArray[np.floa
 
 #: COCO visibility flags emitted for a landmark: ``2`` is "labeled and visible", ``1`` is "labeled
 #: but not visible", ``0`` is "not labeled". A landmark is hidden by the canvas frame or by an absent
-#: optional point (a NaN row from :mod:`~synth_datasets.animals`), and occluded when
+#: optional point (a NaN row from :mod:`~synth_datasets.families.animals`), and occluded when
 #: ``occluders`` put an unlabelled shape over it — the placement loop rejects overlapping *labelled*
 #: objects, so one labelled shape never covers another's landmark.
 #: One side stream per consumer, in this fixed order: background, distractors, occluders,
@@ -163,13 +163,13 @@ class SyntheticGenerator:
     """Draw colored shapes into reproducible :class:`Sample` objects.
 
     Args:
-        config: Generation knobs; see :class:`~synth_datasets.config.SyntheticConfig`.
+        config: Generation knobs; see :class:`~synth_datasets.core.config.SyntheticConfig`.
 
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.config import SyntheticConfig
-        >>> from synth_datasets.generator import SyntheticGenerator
+        >>> from synth_datasets.core.config import SyntheticConfig
+        >>> from synth_datasets.core.generator import SyntheticGenerator
         >>> gen = SyntheticGenerator(SyntheticConfig(img_size=32))
         >>> a = gen.sample(np.random.default_rng(1))
         >>> b = gen.sample(np.random.default_rng(1))
@@ -184,9 +184,10 @@ class SyntheticGenerator:
         """Store config and precompute the class vocabulary and keypoint schema this run uses.
 
         The vocabulary is narrowed to ``config.shapes``, the same list every writer declares as its
-        ``categories``/``names`` block, so an annotation's ``class_id`` always resolves against the vocabulary written
-        beside it (see :func:`~synth_datasets.config.class_vocabulary`). The schema is resolved once here and stamped
-        onto every landmark-bearing annotation, so a table always travels with the family that produced it.
+        ``categories``/``names`` block, so an annotation's ``class_id`` always resolves against the vocabulary
+        written beside it (see :func:`~synth_datasets.core.config.class_vocabulary`). The schema is resolved
+        once here and stamped onto every landmark-bearing annotation, so a table always travels with the
+        family that produced it.
 
         """
         self.config = config
@@ -370,8 +371,8 @@ class SyntheticGenerator:
         Examples:
             ```pycon
             >>> import numpy as np
-            >>> from synth_datasets.config import SyntheticConfig
-            >>> from synth_datasets.generator import SyntheticGenerator
+            >>> from synth_datasets.core.config import SyntheticConfig
+            >>> from synth_datasets.core.generator import SyntheticGenerator
             >>> gen = SyntheticGenerator(SyntheticConfig(img_size=48, min_objects=1, max_objects=3))
             >>> s = gen.sample(np.random.default_rng(7))
             >>> 1 <= len(s.annotations) <= 3
@@ -480,7 +481,7 @@ class SyntheticGenerator:
         The mask is rasterized from the same outlines into a parallel one-bit image rather than
         recovered from the finished pixels, which would be unable to tell an occluder from an object
         that happened to share its colour. It is marked read-only before it leaves: a frozen
-        :class:`~synth_datasets.sample.SceneRecord` stops the field being rebound and does
+        :class:`~synth_datasets.core.sample.SceneRecord` stops the field being rebound and does
         nothing to stop a caller mutating the buffer, and a mutated mask would disagree with the
         visibility flags already computed from it.
 
@@ -509,8 +510,8 @@ class SyntheticGenerator:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.config import SyntheticConfig
-            >>> from synth_datasets.generator import SyntheticGenerator
+            >>> from synth_datasets.core.config import SyntheticConfig
+            >>> from synth_datasets.core.generator import SyntheticGenerator
             >>> gen = SyntheticGenerator(SyntheticConfig(img_size=32))
             >>> samples = list(gen.generate(3, seed=0))
             >>> len(samples)

@@ -23,7 +23,7 @@ def test_subpackage_exports_public_names() -> None:
         get_writer,
         shape_outline,
     )
-    from synth_datasets.animals import animal_keypoints
+    from synth_datasets.families.animals import animal_keypoints
 
     assert all(
         callable(obj)
@@ -99,7 +99,7 @@ def test_the_shape_base_still_rejects_a_bare_string() -> None:
 
     """
     from synth_datasets import Shape
-    from synth_datasets.animals import AnimalShape
+    from synth_datasets.families.animals import AnimalShape
 
     assert AnimalShape.DUCK == "duck"
     assert not isinstance("duck", Shape)

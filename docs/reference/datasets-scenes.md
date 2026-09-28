@@ -54,22 +54,22 @@ Four independent vocabularies supply outlines: geometric primitives, traced anim
 
 ### Per-family shape enums
 
-::: synth_datasets.primitives.PrimitiveShape
+::: synth_datasets.families.primitives.PrimitiveShape
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.animals.AnimalShape
+::: synth_datasets.families.animals.AnimalShape
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.symbols.SymbolShape
+::: synth_datasets.families.symbols.SymbolShape
     options:
         show_root_heading: true
         show_source: false
 
-::: synth_datasets.letters.LetterShape
+::: synth_datasets.families.letters.LetterShape
     options:
         show_root_heading: true
         show_source: false

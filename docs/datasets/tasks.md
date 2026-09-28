@@ -62,7 +62,7 @@ A segmentation-task sample also carries the outline, so the tighter box can be r
 
 ```python
 from fused_transforms import FusedCompose
-from synth_datasets.geometry import polygon_to_bbox_xyxy, to_pixel_edge
+from synth_datasets.families.geometry import polygon_to_bbox_xyxy, to_pixel_edge
 
 pipeline = FusedCompose(transforms, data_keys=["input", "keypoints"])
 warped_image, warped_points = pipeline(image, polygon)
@@ -115,7 +115,7 @@ Visibility follows COCO: `v=2` means the point is labeled and visible inside the
 
 ### Landmarks and the silhouette
 
-Only the **letter** family guarantees that a landmark lies inside the ink. A letter's outline *is* the set of points within half a stroke width of its keypoint skeleton, so every letter keypoint sits strictly inside the fill with half a stroke of clearance, by construction. **Symbol** landmarks are inside because the shapes are convex and their slots are structural. **Animal** landmarks carry no such rule: they are hand-placed against the silhouette, and the placement table in `synth_datasets/zoo/README.md` defines several of them as *tips* — `tail` is the tail tip, `front_limb_*`/`hind_limb_*` are limb tips. A tip on a tapering appendage sits on the boundary by intent, and at default instance sizes the boundary quantises to the outside: roughly 1% of visible animal landmarks (tails, hind limbs on `kangaroo` and `crocodile`, the `flamingo` eye) round to a pixel just off their own filled polygon, before any augmentation runs.
+Only the **letter** family guarantees that a landmark lies inside the ink. A letter's outline *is* the set of points within half a stroke width of its keypoint skeleton, so every letter keypoint sits strictly inside the fill with half a stroke of clearance, by construction. **Symbol** landmarks are inside because the shapes are convex and their slots are structural. **Animal** landmarks carry no such rule: they are hand-placed against the silhouette, and the placement table in `synth_datasets/assets/animals/README.md` defines several of them as *tips* — `tail` is the tail tip, `front_limb_*`/`hind_limb_*` are limb tips. A tip on a tapering appendage sits on the boundary by intent, and at default instance sizes the boundary quantises to the outside: roughly 1% of visible animal landmarks (tails, hind limbs on `kangaroo` and `crocodile`, the `flamingo` eye) round to a pixel just off their own filled polygon, before any augmentation runs.
 
 This matters only for a consumer that *samples* at the landmark — a heatmap target, a mask lookup, an "is this landmark occluded" test. An OKS evaluator is unaffected. If you need the inside-ink property, use the letter family, or test it yourself rather than assuming it.
 
@@ -169,7 +169,7 @@ names:
 
 `flip_idx` is the identity permutation on purpose: `left`/`right` are viewer-relative here — `left` is the limb nearer the viewer, not the animal's anatomical left — so mirroring a side profile never turns a near limb into a far one and no landmark changes index under a horizontal flip.
 
-Each pose row is `cls cx cy w h x1 y1 v1 ... x16 y16 v16` — 53 tokens, fixed-width even for a whale whose absent hind legs still emit their zeroed `0.000000 0.000000 0` triples. Each animal ships as an editable SVG asset under `synth_datasets/zoo/<animal>.svg`, carrying its outline, its keypoints (with a visible skeleton overlay), and its CC0/Public Domain Mark provenance as `zoo:`-namespaced attributes; the placement rules and hand-editing instructions live in `synth_datasets/zoo/README.md`.
+Each pose row is `cls cx cy w h x1 y1 v1 ... x16 y16 v16` — 53 tokens, fixed-width even for a whale whose absent hind legs still emit their zeroed `0.000000 0.000000 0` triples. Each animal ships as an editable SVG asset under `synth_datasets/assets/animals/<animal>.svg`, carrying its outline, its keypoints (with a visible skeleton overlay), and its CC0/Public Domain Mark provenance as `zoo:`-namespaced attributes; the placement rules and hand-editing instructions live in `synth_datasets/assets/animals/README.md`.
 
 ### Symbol keypoint schema
 

@@ -1,6 +1,6 @@
 """PyTorch ``IterableDataset`` streaming synthetic samples for training feeds.
 
-Wraps :meth:`~synth_datasets.generator.SyntheticGenerator.generate`
+Wraps :meth:`~synth_datasets.core.generator.SyntheticGenerator.generate`
 so samples can be pulled straight into a ``DataLoader`` with no disk round-trip.
 The dataset is worker-shard aware: under multi-worker loading each worker produces
 a disjoint, deterministically-seeded slice of the requested count.
@@ -12,7 +12,7 @@ cannot stack variable-length targets.
 Examples:
     ```pycon
     >>> from torch.utils.data import DataLoader
-    >>> from synth_datasets.datasets import SyntheticIterableDataset
+    >>> from synth_datasets.export.datasets import SyntheticIterableDataset
     >>> ds = SyntheticIterableDataset(num_images=4, img_size=32, seed=0)
     >>> loader = DataLoader(ds, batch_size=2, collate_fn=list)
     >>> batches = list(loader)
@@ -31,13 +31,13 @@ from typing import TYPE_CHECKING, Any, SupportsIndex
 import numpy as np
 from torch.utils.data import IterableDataset, get_worker_info
 
-from synth_datasets.config import SyntheticConfig
-from synth_datasets.generator import SyntheticGenerator
+from synth_datasets.core.config import SyntheticConfig
+from synth_datasets.core.generator import SyntheticGenerator
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from synth_datasets.sample import Sample
+    from synth_datasets.core.sample import Sample
 
 
 _StreamSeed = int | np.random.SeedSequence | None
@@ -68,7 +68,7 @@ class SyntheticIterableDataset(IterableDataset["Sample"]):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.datasets import SyntheticIterableDataset
+        >>> from synth_datasets.export.datasets import SyntheticIterableDataset
         >>> ds = SyntheticIterableDataset(num_images=3, img_size=32, seed=1)
         >>> samples = list(ds)
         >>> len(samples)

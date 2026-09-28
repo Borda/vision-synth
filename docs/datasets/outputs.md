@@ -111,7 +111,7 @@ for sample in gen.generate(1000, seed=0):  # lazy: one Sample at a time
     train_step(sample.image, sample.annotations)
 ```
 
-Or plug straight into a PyTorch `DataLoader` via `SyntheticIterableDataset` (exported from `synth_datasets.datasets`). This wrapper requires the `torch` extra; direct generation and iteration through `SyntheticGenerator` do not. Because object annotations are ragged (a variable number per image), pass a custom `collate_fn`; each batch is then a `list[Sample]`:
+Or plug straight into a PyTorch `DataLoader` via `SyntheticIterableDataset` (exported from `synth_datasets.export.datasets`). This wrapper requires the `torch` extra; direct generation and iteration through `SyntheticGenerator` do not. Because object annotations are ragged (a variable number per image), pass a custom `collate_fn`; each batch is then a `list[Sample]`:
 
 ```python
 from torch.utils.data import DataLoader

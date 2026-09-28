@@ -6,10 +6,10 @@ import numpy as np
 import pytest
 from PIL import Image, ImageDraw
 
+from synth_datasets.core.keypoints import KeypointSchema
 from synth_datasets.families import shape_outline
-from synth_datasets.keypoints import KeypointSchema
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import (
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import (
     SYMBOL_KEYPOINT_FLIP_IDX,
     SYMBOL_KEYPOINT_NAMES,
     SYMBOL_KEYPOINT_SCHEMA,
@@ -267,8 +267,8 @@ def test_every_symbol_svg_carries_a_matching_skeleton_group() -> None:
     """
     import xml.etree.ElementTree as ET
 
-    from synth_datasets.svgio import svg_tag, zoo_attr
-    from synth_datasets.symbols import _ASSET
+    from synth_datasets.families.svgio import svg_tag, zoo_attr
+    from synth_datasets.families.symbols import _ASSET
 
     for name in SYMBOL_NAMES:
         root = ET.fromstring((_ASSET / f"{name}.svg").read_text())  # noqa: S314 - our own packaged asset

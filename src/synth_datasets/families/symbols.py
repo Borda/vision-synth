@@ -3,7 +3,7 @@
 Seven simple, rotation-unambiguous 2D symbols — a kite, a trapezoid, a house, an arrow, a Latin
 cross, a teardrop, and an anchor — each hand-authored as a straight-edge polygon rather than
 traced from source art (unlike
-:mod:`~synth_datasets.animals`, these have no artwork to attribute). Three of them (arrow,
+:mod:`~synth_datasets.families.animals`, these have no artwork to attribute). Three of them (arrow,
 cross, anchor) are concave, so their segmentation polygon and oriented bounding box carry real
 information an axis-aligned box alone does not.
 
@@ -16,20 +16,20 @@ generator's random in-plane rotation. An eighth symbol must keep this invariant 
 
 Vertices are authored directly as unit-space literals (raw coordinates in a nominal
 ``[-1.3, 1.3]`` box, screen orientation — ``+x`` right, ``+y`` **down**, matching
-:mod:`~synth_datasets.animals`) and pushed through
-:func:`~synth_datasets.keypoints._normalized_pair` at import time, so the same unit-space
+:mod:`~synth_datasets.families.animals`) and pushed through
+:func:`~synth_datasets.core.keypoints._normalized_pair` at import time, so the same unit-space
 invariant the zoo loader enforces on traced art (center of mass at the origin, larger extent
 scaled to ``1``) is enforced here too rather than merely assumed of the hand-picked numbers.
 
 Every outline point keeps an unambiguous identity under rotation for the same reason the animal
-silhouettes do — see :class:`~synth_datasets.animals.AnimalShape` — but the identity comes
+silhouettes do — see :class:`~synth_datasets.families.animals.AnimalShape` — but the identity comes
 from each symbol's own distinct archetype rather than anatomical structure, which is why the
 landmark schema below uses seven generic structural slots (``center``, ``apex``, ``tail``,
 ``flank_left/right``, ``base_left/right``) instead of a shared semantic vocabulary: a "flank" means
 a kite's side corner on one shape and an arrow's barb on another, and only ``center`` — the
 outline's own area centroid (center of mass), the same point every polygon is already normalized
 to sit at the origin around, so ``center`` is exactly ``(0, 0)`` before placement — is mandatory.
-Absent slots are ``(nan, nan)``, the same row-level contract :mod:`~synth_datasets.animals`
+Absent slots are ``(nan, nan)``, the same row-level contract :mod:`~synth_datasets.families.animals`
 uses.
 
 Per-shape slot meaning (``—`` = absent, i.e. a ``(nan, nan)`` row; every ``center`` is that shape's
@@ -49,16 +49,16 @@ anchor               centroid  ring      crux      flukes             —
 
 The skeleton is a **star** from ``center`` to each of the other six slots: 6 edges over 7 nodes, so
 every optional slot is a leaf and an absent one drops exactly its own edge, orphaning nothing — the
-same property :data:`~synth_datasets.animals.ANIMAL_KEYPOINT_SKELETON` relies on.
+same property :data:`~synth_datasets.families.animals.ANIMAL_KEYPOINT_SKELETON` relies on.
 
 Pure NumPy, no image-library dependency, and no import from
-:mod:`~synth_datasets.animals`: the two families are siblings under
-:mod:`~synth_datasets.keypoints`, neither importing the other. Tables are keyed by the
+:mod:`~synth_datasets.families.animals`: the two families are siblings under
+:mod:`~synth_datasets.core.keypoints`, neither importing the other. Tables are keyed by the
 plain :class:`SymbolShape` *values*.
 
 Examples:
     ```pycon
-    >>> from synth_datasets.symbols import SYMBOL_KEYPOINTS, SYMBOL_POLYGONS
+    >>> from synth_datasets.families.symbols import SYMBOL_KEYPOINTS, SYMBOL_POLYGONS
     >>> len(SYMBOL_POLYGONS)
     7
     >>> sorted(SYMBOL_POLYGONS)[:3]
@@ -83,10 +83,10 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from synth_datasets.geometry import place_points
-from synth_datasets.keypoints import KeypointSchema, _normalized_pair
-from synth_datasets.shape_enum import ShapeEnum
-from synth_datasets.svgio import read_outline_document
+from synth_datasets.core.keypoints import KeypointSchema, _normalized_pair
+from synth_datasets.families.geometry import place_points
+from synth_datasets.families.shape_enum import ShapeEnum
+from synth_datasets.families.svgio import read_outline_document
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -103,10 +103,10 @@ class SymbolShape(ShapeEnum):
     """Analytic symbol vocabulary (definition order is the symbol class order).
 
     Seven straight-edge 2D symbols, each mirror-symmetric about its own vertical axis and belonging
-    to a distinct silhouette archetype, so — like :class:`~synth_datasets.animals.AnimalShape`
+    to a distinct silhouette archetype, so — like :class:`~synth_datasets.families.animals.AnimalShape`
     — every outline point keeps an unambiguous identity under rotation. There is no plain
     ``TRIANGLE``/``ISOSCELES_TRIANGLE`` member here: it would collide in name with
-    :attr:`~synth_datasets.primitives.PrimitiveShape.TRIANGLE` for a shape this family
+    :attr:`~synth_datasets.families.primitives.PrimitiveShape.TRIANGLE` for a shape this family
     does not need to keep.
 
     Attributes:
@@ -120,7 +120,7 @@ class SymbolShape(ShapeEnum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.symbols import SymbolShape
+        >>> from synth_datasets.families.symbols import SymbolShape
         >>> len(SymbolShape)
         7
         >>> SymbolShape("kite")
@@ -142,7 +142,7 @@ class SymbolShape(ShapeEnum):
 #: Symbol names in :class:`SymbolShape` declaration order.
 SYMBOL_NAMES: tuple[str, ...] = tuple(shape.value for shape in SymbolShape)
 
-#: Landmark names for :attr:`~synth_datasets.config.Task.KEYPOINTS` under the symbol
+#: Landmark names for :attr:`~synth_datasets.core.config.Task.KEYPOINTS` under the symbol
 #: family, in the order every keypoint table, annotation, and label row uses. See the module
 #: docstring's per-shape table for what each slot means on a given symbol; only ``center`` is
 #: mandatory.
@@ -157,7 +157,7 @@ SYMBOL_KEYPOINT_NAMES: tuple[str, ...] = (
 )
 
 #: Star skeleton: ``center`` (index 0) to each other slot. Visualization-only, like
-#: :data:`~synth_datasets.animals.ANIMAL_KEYPOINT_SKELETON`.
+#: :data:`~synth_datasets.families.animals.ANIMAL_KEYPOINT_SKELETON`.
 SYMBOL_KEYPOINT_SKELETON: tuple[tuple[int, int], ...] = ((0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6))
 
 #: Horizontal-flip permutation: ``flank_left``/``flank_right`` (indices 3, 4) and ``base_left``/
@@ -167,7 +167,7 @@ SYMBOL_KEYPOINT_SKELETON: tuple[tuple[int, int], ...] = ((0, 1), (0, 2), (0, 3),
 SYMBOL_KEYPOINT_FLIP_IDX: tuple[int, ...] = (0, 1, 2, 4, 3, 6, 5)
 
 #: The complete keypoint schema for every :class:`SymbolShape` — the one artifact
-#: :func:`~synth_datasets.config.keypoint_schema_for` and the writers need to describe a
+#: :func:`~synth_datasets.core.config.keypoint_schema_for` and the writers need to describe a
 #: symbol ``Task.KEYPOINTS`` run.
 SYMBOL_KEYPOINT_SCHEMA = KeypointSchema(
     names=SYMBOL_KEYPOINT_NAMES,
@@ -199,7 +199,7 @@ SYMBOL_KEYPOINT_SCHEMA = KeypointSchema(
 #: it ``examples/edit_shape_keypoints.py``, which can now drag a symbol's landmarks the same way it
 #: drags a duck's. The two families store the same thing (an outline plus landmarks annotating it),
 #: so storing them two different ways bought nothing.
-_ASSET: Traversable = files("synth_datasets") / "symbols"
+_ASSET: Traversable = files("synth_datasets") / "assets" / "symbols"
 
 #: Every symbol landmark is optional: a symbol uses the slots its geometry has and leaves the rest
 #: NaN — ``kite`` has no ``corner_*`` pair, ``trapezoid`` no ``tip``. See the per-shape table above.
@@ -232,12 +232,12 @@ def _load() -> tuple[dict[str, NDArray[np.float64]], dict[str, NDArray[np.float6
 
 _POLYGONS, _KEYPOINTS = _load()
 
-#: Outline table per symbol :class:`~synth_datasets.config.Shape` *value*. Every entry is
+#: Outline table per symbol :class:`~synth_datasets.core.config.Shape` *value*. Every entry is
 #: unit-normalized and read-only; scale a copy rather than mutating it. Like
-#: :data:`~synth_datasets.animals.ANIMAL_POLYGONS`, the table itself is a read-only view.
+#: :data:`~synth_datasets.families.animals.ANIMAL_POLYGONS`, the table itself is a read-only view.
 SYMBOL_POLYGONS: Mapping[str, NDArray[np.float64]] = MappingProxyType(_POLYGONS)
 
-#: Landmark table per symbol :class:`~synth_datasets.config.Shape` *value*, in
+#: Landmark table per symbol :class:`~synth_datasets.core.config.Shape` *value*, in
 #: :data:`SYMBOL_KEYPOINT_NAMES` order. Every entry is a read-only ``(7, 2)`` array in its outline's
 #: unit frame. A row is ``(nan, nan)`` for a slot the symbol does not use — see the module
 #: docstring's per-shape table.
@@ -252,7 +252,7 @@ def symbol_keypoints(
     The table is looked up in :data:`SYMBOL_KEYPOINTS`, scaled, skewed, rotated, and translated
     exactly as :func:`~synth_datasets.families.shape_outline` treats the matching outline,
     so passing the same ``center``, ``size``, ``angle``, and ``skew`` to both puts every landmark on
-    the silhouette that was drawn — mirroring :func:`~synth_datasets.animals.animal_keypoints`.
+    the silhouette that was drawn — mirroring :func:`~synth_datasets.families.animals.animal_keypoints`.
 
     Args:
         shape: A :class:`SymbolShape` member.
@@ -260,7 +260,7 @@ def symbol_keypoints(
         size: Bounding size in pixels — the same value passed to ``shape_outline``.
         angle: Rotation in radians about the shape center — likewise.
         skew: Signed fraction narrowing one pre-rotation half — likewise; see
-            :attr:`~synth_datasets.config.SyntheticConfig.asymmetry_jitter`.
+            :attr:`~synth_datasets.core.config.SyntheticConfig.asymmetry_jitter`.
 
     Returns:
         ``(7, 2)`` float array of landmark coordinates in image pixels, ordered by
@@ -272,7 +272,7 @@ def symbol_keypoints(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.symbols import SymbolShape, symbol_keypoints
+        >>> from synth_datasets.families.symbols import SymbolShape, symbol_keypoints
         >>> points = symbol_keypoints(SymbolShape.KITE, center=(50.0, 50.0), size=20.0)
         >>> points.shape
         (7, 2)

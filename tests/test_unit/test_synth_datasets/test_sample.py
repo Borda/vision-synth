@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from synth_datasets.animals import ANIMAL_KEYPOINT_SCHEMA
-from synth_datasets.keypoints import KeypointSchema
-from synth_datasets.letters import LETTER_KEYPOINT_SCHEMA
-from synth_datasets.sample import Annotation
-from synth_datasets.symbols import SYMBOL_KEYPOINT_SCHEMA
+from synth_datasets.core.keypoints import KeypointSchema
+from synth_datasets.core.sample import Annotation
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_SCHEMA
+from synth_datasets.families.letters import LETTER_KEYPOINT_SCHEMA
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_SCHEMA
 
 _BOX = (0.0, 0.0, 10.0, 10.0)
 _POLYGON = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0, 0.0, 10.0]
@@ -173,7 +173,7 @@ def test_obb_corners_is_derived_from_the_polygon() -> None:
 
     """
     from synth_datasets.families import shape_outline
-    from synth_datasets.geometry import polygon_to_obb
+    from synth_datasets.families.geometry import polygon_to_obb
 
     outline = shape_outline("rectangle", center=(50.0, 50.0), size=30.0, angle=0.7)
     ann = Annotation(0, "rectangle", [float(v) for v in outline.reshape(-1)], (0.0, 0.0, 100.0, 100.0), angle=0.7)

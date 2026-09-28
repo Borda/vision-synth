@@ -25,15 +25,13 @@ the reason the two are treated differently is worth reading before regenerating 
 
 from __future__ import annotations
 
-from synth_datasets.animals import AnimalShape
-from synth_datasets.backgrounds import (
+from synth_datasets.content.backgrounds import (
     GradientBackground,
     ImpulseNoiseBackground,
     NoiseBackground,
     TextureBackground,
 )
-from synth_datasets.config import ClassMode, Color, SyntheticConfig, Task
-from synth_datasets.degradations import (
+from synth_datasets.content.degradations import (
     JPEG,
     ColorCast,
     Contrast,
@@ -42,7 +40,9 @@ from synth_datasets.degradations import (
     Quantize,
     Vignette,
 )
-from synth_datasets.letters import LetterShape
+from synth_datasets.core.config import ClassMode, Color, SyntheticConfig, Task
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.letters import LetterShape
 
 from ._digest import stream_digest
 
@@ -86,11 +86,11 @@ _MATRIX: dict[str, tuple[SyntheticConfig, int]] = {
 #: snapshotted from the code that implements them, so they prove **stability**, not inertness: a
 #: digest here moving means a rendering change, deliberate or not, and a reviewer decides which. That
 #: is a weaker guarantee than :data:`_MATRIX`'s and a necessary one — nothing in that matrix touches
-#: :mod:`~synth_datasets.backgrounds` or
-#: :mod:`~synth_datasets.degradations` at all, so a regression inside either module moved no
+#: :mod:`~synth_datasets.content.backgrounds` or
+#: :mod:`~synth_datasets.content.degradations` at all, so a regression inside either module moved no
 #: digest before these existed.
 #:
-#: :class:`~synth_datasets.backgrounds.ImageBackground` is deliberately absent: it reads
+#: :class:`~synth_datasets.content.backgrounds.ImageBackground` is deliberately absent: it reads
 #: files this package does not ship, so pinning it would pin a fixture directory rather than the
 #: renderer. Its own tests cover it against pictures they write themselves.
 _FEATURE_MATRIX: dict[str, tuple[SyntheticConfig, int]] = {

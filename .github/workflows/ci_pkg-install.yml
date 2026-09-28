@@ -77,7 +77,7 @@ jobs:
           # (letters/symbols/zoo) fails here instead of shipping a broken wheel. The
           # editable installs in ci_testing.yml resolve these assets from the source
           # tree and therefore cannot catch it.
-          python -c "import tempfile; from synth_datasets import generate_dataset; from synth_datasets.animals import AnimalShape; from synth_datasets.letters import LetterShape; from synth_datasets.symbols import SymbolShape; counts = generate_dataset(tempfile.mkdtemp(), num_images=3, fmt='coco', img_size=64, shapes=[AnimalShape.DUCK, LetterShape.A, SymbolShape.KITE], seed=0); assert sum(counts.values()) == 3, counts"
+          python -c "import tempfile; from synth_datasets import generate_dataset; from synth_datasets.families.animals import AnimalShape; from synth_datasets.families.letters import LetterShape; from synth_datasets.families.symbols import SymbolShape; counts = generate_dataset(tempfile.mkdtemp(), num_images=3, fmt='coco', img_size=64, shapes=[AnimalShape.DUCK, LetterShape.A, SymbolShape.KITE], seed=0); assert sum(counts.values()) == 3, counts"
           package_wheel=$(basename *.whl)
           pip install "./${package_wheel}[torch]"
           python -c "import fused_transforms; print(fused_transforms.__version__)"

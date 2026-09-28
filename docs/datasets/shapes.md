@@ -100,7 +100,7 @@ The table above lists the full vocabulary; a run narrows it to its own `shapes`.
 
 ## Animal shapes
 
-Pass `shapes=` (or the CLI's `--shapes animals`) to draw the twelve animal silhouettes instead of the four geometric shapes. Each outline is asymmetric and traced from a CC0 or Public Domain Mark reference silhouette rather than hand-guessed, so every shape stays recognizable and carries real orientation under rotation. Each ships as an editable SVG under `synth_datasets/zoo/<animal>.svg` — open it in any vector editor or browser to inspect the outline, the keypoints, and the `zoo:`-namespaced provenance attributes (origin, license, attribution).
+Pass `shapes=` (or the CLI's `--shapes animals`) to draw the twelve animal silhouettes instead of the four geometric shapes. Each outline is asymmetric and traced from a CC0 or Public Domain Mark reference silhouette rather than hand-guessed, so every shape stays recognizable and carries real orientation under rotation. Each ships as an editable SVG under `synth_datasets/assets/animals/<animal>.svg` — open it in any vector editor or browser to inspect the outline, the keypoints, and the `zoo:`-namespaced provenance attributes (origin, license, attribution).
 
 | Shape       | Archetype                 |
 | ----------- | ------------------------- |
@@ -122,8 +122,8 @@ Pass `shapes=` (or the CLI's `--shapes animals`) to draw the twelve animal silho
 Name the members explicitly, or take the first `N` of them with `tuple(AnimalShape)`:
 
 ```python
-from synth_datasets.animals import AnimalShape
-from synth_datasets.config import SyntheticConfig, Task
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.core.config import SyntheticConfig, Task
 
 explicit = SyntheticConfig(
     task=Task.KEYPOINTS,
@@ -192,8 +192,8 @@ There is no plain-triangle symbol: it would collide in name with the geometric f
 `tuple(SymbolShape)` mirrors `tuple(AnimalShape)` — name the members explicitly, or take a stable prefix:
 
 ```python
-from synth_datasets.config import SyntheticConfig, Task
-from synth_datasets.symbols import SymbolShape
+from synth_datasets.core.config import SyntheticConfig, Task
+from synth_datasets.families.symbols import SymbolShape
 
 explicit = SyntheticConfig(
     task=Task.KEYPOINTS,
@@ -257,8 +257,8 @@ The 15 named keypoint slots give every letter the same landmark vocabulary (a fi
 `tuple(LetterShape)` mirrors `tuple(AnimalShape)`/`tuple(SymbolShape)` — name the members explicitly, or take a stable prefix:
 
 ```python
-from synth_datasets.config import SyntheticConfig, Task
-from synth_datasets.letters import LetterShape
+from synth_datasets.core.config import SyntheticConfig, Task
+from synth_datasets.families.letters import LetterShape
 
 explicit = SyntheticConfig(
     task=Task.KEYPOINTS,

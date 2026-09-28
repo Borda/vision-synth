@@ -8,16 +8,16 @@ import numpy as np
 import pytest
 import yaml
 
-from synth_datasets.animals import ANIMAL_KEYPOINT_NAMES, ANIMAL_KEYPOINT_SCHEMA, AnimalShape
-from synth_datasets.config import SyntheticConfig, Task, class_vocabulary
+from synth_datasets.core.config import SyntheticConfig, Task, class_vocabulary
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.core.keypoints import KeypointSchema
+from synth_datasets.core.sample import Annotation, Sample
+from synth_datasets.export.writers import YoloWriter
 from synth_datasets.families import keypoint_schema_for
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.geometry import PIXEL_CENTRE_OFFSET
-from synth_datasets.keypoints import KeypointSchema
-from synth_datasets.letters import LETTER_KEYPOINT_SCHEMA, LetterShape
-from synth_datasets.sample import Annotation, Sample
-from synth_datasets.symbols import SYMBOL_KEYPOINT_SCHEMA, SymbolShape
-from synth_datasets.writers import YoloWriter
+from synth_datasets.families.animals import ANIMAL_KEYPOINT_NAMES, ANIMAL_KEYPOINT_SCHEMA, AnimalShape
+from synth_datasets.families.geometry import PIXEL_CENTRE_OFFSET
+from synth_datasets.families.letters import LETTER_KEYPOINT_SCHEMA, LetterShape
+from synth_datasets.families.symbols import SYMBOL_KEYPOINT_SCHEMA, SymbolShape
 
 
 def _write(

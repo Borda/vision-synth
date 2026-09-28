@@ -1,20 +1,20 @@
 """The analytic shape family: outlines computed from ``size`` rather than read from an asset.
 
-This is the fourth shape family alongside :mod:`~synth_datasets.animals`,
-:mod:`~synth_datasets.symbols`, and :mod:`~synth_datasets.letters`, and the only
+This is the fourth shape family alongside :mod:`~synth_datasets.families.animals`,
+:mod:`~synth_datasets.families.symbols`, and :mod:`~synth_datasets.families.letters`, and the only
 one with no packaged artwork behind it — a square is four lines of NumPy, not a traced silhouette.
 It is also the only family with no landmark table, which is deliberate rather than an omission: a
 square is 4-fold symmetric and a circle rotation-invariant, so a fixed landmark on either has no
 identity a model could learn.
 
-Splitting the family out of :mod:`~synth_datasets.geometry` leaves that module holding only
+Splitting the family out of :mod:`~synth_datasets.families.geometry` leaves that module holding only
 family-agnostic math (rotation, box derivation, convex hull), which is what lets
 :mod:`~synth_datasets.families` import every family uniformly without the import cycle the
 old arrangement needed deferred imports to dodge.
 
 Examples:
     ```pycon
-    >>> from synth_datasets.primitives import PrimitiveShape, primitive_outline
+    >>> from synth_datasets.families.primitives import PrimitiveShape, primitive_outline
     >>> [shape.value for shape in PrimitiveShape]
     ['square', 'rectangle', 'triangle', 'circle']
     >>> primitive_outline("square", 2.0).tolist()
@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from synth_datasets.shape_enum import ShapeEnum
+from synth_datasets.families.shape_enum import ShapeEnum
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -62,7 +62,7 @@ class PrimitiveShape(ShapeEnum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.primitives import PrimitiveShape
+        >>> from synth_datasets.families.primitives import PrimitiveShape
         >>> [shape.value for shape in PrimitiveShape]
         ['square', 'rectangle', 'triangle', 'circle']
 
@@ -97,7 +97,7 @@ def primitive_outline(value: str, size: float) -> NDArray[np.float64]:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.primitives import primitive_outline
+        >>> from synth_datasets.families.primitives import primitive_outline
         >>> primitive_outline("circle", 2.0).shape
         (32, 2)
 

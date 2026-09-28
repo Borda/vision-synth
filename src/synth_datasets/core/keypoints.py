@@ -1,15 +1,16 @@
 """Keypoint-schema type and outline/landmark normalization shared by every keypoint family.
 
-:class:`KeypointSchema` is the one artifact a keypoint-bearing shape family ( :mod:`~synth_datasets.animals`,
-:mod:`~synth_datasets.symbols`) hands to the rest of the pipeline: a fixed landmark-name list, the skeleton edges a
-viewer draws between them, and the permutation a horizontal flip applies. :func:`~synth_datasets.config.class_names` and
-the writers never need to know how a family's outline or landmark table was built, only its schema.
+:class:`KeypointSchema` is the one artifact a keypoint-bearing shape family ( :mod:`~synth_datasets.families.animals`,
+:mod:`~synth_datasets.families.symbols`) hands to the rest of the pipeline: a fixed landmark-name list, the skeleton
+edges a viewer draws between them, and the permutation a horizontal flip applies.
+:func:`~synth_datasets.core.config.class_names` and the writers never need to know how a family's outline or landmark
+table was built, only its schema.
 
 The normalization helpers below place an outline at a zero area centroid (center of mass, not the vertex mean — see
 :func:`_polygon_centroid`) and a unit larger-extent, and map a landmark table through *the outline's own* transform so a
 landmark can never drift off the silhouette it annotates. They live here, underneath every shape family, so
-:mod:`~synth_datasets.animals` (SVG-traced) and :mod:`~synth_datasets.symbols` (analytic) can both use them without
-either importing the other.
+:mod:`~synth_datasets.families.animals` (SVG-traced) and :mod:`~synth_datasets.families.symbols` (analytic) can both use
+them without either importing the other.
 
 """
 
@@ -36,15 +37,15 @@ class KeypointSchema:
         flip_idx: The landmark each index becomes under a horizontal flip — Ultralytics'
             ``flip_idx`` convention. Must be a self-inverse permutation of ``range(len(names))``:
             flipping twice returns every point to itself.
-        shape_values: Every :class:`~synth_datasets.config.Shape` *value* this schema's
-            family draws from (e.g. every :class:`~synth_datasets.animals.AnimalShape`
+        shape_values: Every :class:`~synth_datasets.core.config.Shape` *value* this schema's
+            family draws from (e.g. every :class:`~synth_datasets.families.animals.AnimalShape`
             value). The writers use this to tell which ``class_names`` categories belong to this
             keypoint-bearing family — see
-            :func:`~synth_datasets.writers._keypoint_eligible_names` — independently of
+            :func:`~synth_datasets.export.writers._keypoint_eligible_names` — independently of
             which landmark names or skeleton the family itself uses.
         skeleton_by_value: Per-``shape_values``-entry skeleton override, for a family whose members
             do not all share one topology (e.g.
-            :mod:`~synth_datasets.letters`, where each letter's stroke edges *are* its
+            :mod:`~synth_datasets.families.letters`, where each letter's stroke edges *are* its
             drawn geometry, not just a viewer aid). ``None`` (the default) means every member shares
             ``skeleton`` — the behavior every family before ``letters`` relies on, unaffected by
             this field existing. When given, it need not cover every ``shape_values`` entry; a
@@ -58,7 +59,7 @@ class KeypointSchema:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.keypoints import KeypointSchema
+        >>> from synth_datasets.core.keypoints import KeypointSchema
         >>> schema = KeypointSchema(names=("a", "b"), skeleton=((0, 1),), flip_idx=(1, 0), shape_values=("x",))
         >>> schema.kpt_shape
         2

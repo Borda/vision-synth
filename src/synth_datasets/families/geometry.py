@@ -5,7 +5,7 @@ Pure NumPy, no image-library dependency and no knowledge of which shape families
 so annotations always match the rasterized pixels.
 
 The analytic shape family that used to live here moved to
-:mod:`~synth_datasets.primitives`, and the per-family outline dispatch moved to
+:mod:`~synth_datasets.families.primitives`, and the per-family outline dispatch moved to
 :mod:`~synth_datasets.families`. What is left is the math every family shares — which is
 what lets each family module import this one without the import cycle the old arrangement dodged
 with deferred imports.
@@ -13,7 +13,7 @@ with deferred imports.
 Examples:
     ```pycon
     >>> import numpy as np
-    >>> from synth_datasets.geometry import polygon_to_bbox_xyxy
+    >>> from synth_datasets.families.geometry import polygon_to_bbox_xyxy
     >>> square = np.array([[3.0, 3.0], [7.0, 3.0], [7.0, 7.0], [3.0, 7.0]])
     >>> polygon_to_bbox_xyxy(square)
     (3.0, 3.0, 7.0, 7.0)
@@ -54,7 +54,7 @@ def rotate_polygon(
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.geometry import rotate_polygon
+        >>> from synth_datasets.families.geometry import rotate_polygon
         >>> pts = np.array([[1.0, 0.0]])
         >>> out = rotate_polygon(pts, np.pi / 2)
         >>> bool(np.allclose(out, [[0.0, 1.0]]))
@@ -74,7 +74,7 @@ def _skewed(points: NDArray[np.float64], skew: float) -> NDArray[np.float64]:
     Every shape in this package but :attr:`PrimitiveShape.CIRCLE` is drawn mirror-symmetric about its
     own local vertical axis (before rotation), so its oriented bounding box would otherwise show
     identical margins on both sides of that axis — see
-    :attr:`~synth_datasets.config.SyntheticConfig.asymmetry_jitter`. This breaks that
+    :attr:`~synth_datasets.core.config.SyntheticConfig.asymmetry_jitter`. This breaks that
     symmetry per placed instance instead.
 
     Args:
@@ -145,7 +145,7 @@ def to_pixel_centre(points: NDArray[np.float64]) -> NDArray[np.float64]:
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.geometry import to_pixel_centre
+        >>> from synth_datasets.families.geometry import to_pixel_centre
         >>> to_pixel_centre(np.array([[3.0, 4.0]]))
         array([[2.5, 3.5]])
 
@@ -170,7 +170,7 @@ def to_pixel_edge(points: NDArray[np.float64]) -> NDArray[np.float64]:
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.geometry import to_pixel_edge
+        >>> from synth_datasets.families.geometry import to_pixel_edge
         >>> to_pixel_edge(np.array([[2.5, 3.5]]))
         array([[3., 4.]])
 
@@ -192,7 +192,7 @@ def polygon_to_bbox_xyxy(points: NDArray[np.float64]) -> tuple[float, float, flo
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.geometry import polygon_to_bbox_xyxy
+        >>> from synth_datasets.families.geometry import polygon_to_bbox_xyxy
         >>> polygon_to_bbox_xyxy(np.array([[1.0, 2.0], [3.0, 5.0], [0.0, 4.0]]))
         (0.0, 2.0, 3.0, 5.0)
 
@@ -212,7 +212,7 @@ def polygon_to_obb(points: NDArray[np.float64], angle: float = 0.0) -> NDArray[n
     about its centroid, its min/max extents taken, and the four corners rotated back by
     ``angle``. Every shape in this package is authored upright (mirror-symmetric about its
     local vertical axis where it has a symmetry at all — see
-    :mod:`~synth_datasets.symbols`), so the box's sides always run along and across
+    :mod:`~synth_datasets.families.symbols`), so the box's sides always run along and across
     that upright axis, matching how a human would draw the box around the object.
 
     This deliberately is *not* the minimum-area rectangle. A minimum-area box must lie flush
@@ -234,7 +234,7 @@ def polygon_to_obb(points: NDArray[np.float64], angle: float = 0.0) -> NDArray[n
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.geometry import polygon_to_obb
+        >>> from synth_datasets.families.geometry import polygon_to_obb
         >>> corners = polygon_to_obb(np.array([[0.0, 0.0], [2.0, 0.0], [2.0, 1.0], [0.0, 1.0]]))
         >>> corners.shape
         (4, 2)
@@ -276,7 +276,7 @@ def bbox_iou(box_a: tuple[float, float, float, float], box_b: tuple[float, float
 
     Examples:
         ```pycon
-        >>> from synth_datasets.geometry import bbox_iou
+        >>> from synth_datasets.families.geometry import bbox_iou
         >>> bbox_iou((0, 0, 2, 2), (1, 1, 3, 3))
         0.14285714285714285
 

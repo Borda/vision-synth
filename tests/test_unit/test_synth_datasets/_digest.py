@@ -2,8 +2,8 @@
 
 Split out of :mod:`._baseline` so it can be run against a checkout that predates the background and degradation modules:
 that module imports them to describe its feature matrix, this one imports nothing beyond
-:class:`~synth_datasets.sample.Sample`. Regenerating the pre-feature half of the snapshot means copying this file into a
-worktree at the older commit, which only works while it stays importable there.
+:class:`~synth_datasets.core.sample.Sample`. Regenerating the pre-feature half of the snapshot means copying this file
+into a worktree at the older commit, which only works while it stays importable there.
 
 The digest deliberately treats its two inputs differently, because they do not share a failure mode.
 
@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:  # pragma: no cover - import cycle only matters to a type checker
-    from synth_datasets.sample import Sample
+    from synth_datasets.core.sample import Sample
 
 #: Grid every label float is rounded onto before it enters a digest, in pixels (and in radians for
 #: an angle). Sits between two scales that are far apart: floating-point drift between machines is
@@ -91,7 +91,7 @@ def stream_digest(config: object, seed: int, stream_length: int) -> str:
         The SHA-256 hex digest over the whole stream.
 
     """
-    from synth_datasets.generator import SyntheticGenerator
+    from synth_datasets.core.generator import SyntheticGenerator
 
     digest = hashlib.sha256()
     for sample in SyntheticGenerator(config).generate(stream_length, seed=seed):  # type: ignore[arg-type]

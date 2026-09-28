@@ -4,7 +4,7 @@ Twenty-six capital letters, ``A``-``Z``, each authored the way you would sketch 
 **keypoints and the edges between them** — and then turned into something drawable by wrapping that
 skeleton in a pen stroke of constant width (:func:`_stroke_outline`). The result is **one simple,
 single-ring polygon** per letter (:data:`LETTER_POLYGONS`), exactly the kind of outline
-:mod:`~synth_datasets.animals` and :mod:`~synth_datasets.symbols` hand-author: a
+:mod:`~synth_datasets.families.animals` and :mod:`~synth_datasets.families.symbols` hand-author: a
 pile of disjoint ribbon quads, one per stroke, would give a detector several disconnected blobs
 under one class label, and a single outline never does.
 
@@ -51,7 +51,7 @@ counter. ``test_counter_cuts_sit_at_the_bottom_of_their_counter`` pins edge and 
 stroke it branches off, and :func:`_reject_tight_cuts` says so rather than letting the ring fold.
 
 The cut is purely a rendering-time transform;
-:data:`_LETTER_STROKES` (the graph :attr:`~synth_datasets.keypoints.KeypointSchema.skeleton_for`
+:data:`_LETTER_STROKES` (the graph :attr:`~synth_datasets.core.keypoints.KeypointSchema.skeleton_for`
 reports) is untouched by it, so a counter letter's skeleton still connects straight across the cut
 — that hairline is the one place, anywhere in the family, where a skeleton edge leaves the fill.
 
@@ -75,7 +75,7 @@ it is not authored at all. That is why a plain stem is two keypoints rather than
 ones that remain are exactly the corners, junctions, ends, and the points along a curve. An unused
 slot is ``(nan, nan)`` in
 :data:`LETTER_KEYPOINTS`, the same optional-landmark contract
-:mod:`~synth_datasets.animals` and :mod:`~synth_datasets.symbols` already use.
+:mod:`~synth_datasets.families.animals` and :mod:`~synth_datasets.families.symbols` already use.
 :data:`LETTER_KEYPOINT_FLIP_IDX` swaps each row's left/right slot and holds the middle column fixed
 — a property of the slot *naming* rather than of any one letter, unlike the hand-verified mappings
 either of those families carries. Note that a mirrored letter is generally a different letter (or no
@@ -85,25 +85,25 @@ animal silhouette; the field is published for format completeness.
 **Rotational-symmetry authoring rule.** A letter whose nodes and edges are together invariant under a
 180-degree rotation about its own center has keypoint-identity ambiguity under the generator's
 continuous random rotation — the shape looks the same upside down, so which node is which becomes
-unrecoverable. It is the same reason :class:`~synth_datasets.primitives.PrimitiveShape` carries no
-keypoint table for ``SQUARE``/``CIRCLE`` and :class:`~synth_datasets.symbols.SymbolShape`
+unrecoverable. It is the same reason :class:`~synth_datasets.families.primitives.PrimitiveShape` carries no
+keypoint table for ``SQUARE``/``CIRCLE`` and :class:`~synth_datasets.families.symbols.SymbolShape`
 has no plain triangle. Checking every letter found nine that are exactly invariant as regular block
 letterforms: ``B``, ``D``, ``H``, ``I``, ``N``, ``O``, ``S``, ``X``, ``Z`` — the same set real
 handwriting calls "look the same upside down". Each breaks the symmetry by moving one node off its
 default slot in :data:`_NODES`, the same technique
-:attr:`~synth_datasets.symbols.SymbolShape.KITE`'s unequal diagonal lengths already use.
+:attr:`~synth_datasets.families.symbols.SymbolShape.KITE`'s unequal diagonal lengths already use.
 :data:`_CUTS` does not affect this check: it is a rendering-only graph transform, not part of the
 logical ``(nodes, edges)`` a viewer or this check ever sees.
 
 Pure NumPy, no image-library dependency, and no import from
-:mod:`~synth_datasets.animals` or :mod:`~synth_datasets.symbols`: this is a third
-sibling under :mod:`~synth_datasets.keypoints`, importing only
-:mod:`~synth_datasets.geometry`. Tables are keyed by the plain
+:mod:`~synth_datasets.families.animals` or :mod:`~synth_datasets.families.symbols`: this is a third
+sibling under :mod:`~synth_datasets.core.keypoints`, importing only
+:mod:`~synth_datasets.families.geometry`. Tables are keyed by the plain
 :class:`LetterShape` *values*.
 
 Examples:
     ```pycon
-    >>> from synth_datasets.letters import LETTER_POLYGONS, LetterShape
+    >>> from synth_datasets.families.letters import LETTER_POLYGONS, LetterShape
     >>> len(LETTER_POLYGONS)
     26
     >>> LETTER_POLYGONS["i"].shape[1]
@@ -124,10 +124,10 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from synth_datasets.geometry import place_points
-from synth_datasets.keypoints import KeypointSchema, _normalized_pair
-from synth_datasets.shape_enum import ShapeEnum
-from synth_datasets.svgio import read_graph_document
+from synth_datasets.core.keypoints import KeypointSchema, _normalized_pair
+from synth_datasets.families.geometry import place_points
+from synth_datasets.families.shape_enum import ShapeEnum
+from synth_datasets.families.svgio import read_graph_document
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -148,7 +148,7 @@ class LetterShape(ShapeEnum):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.letters import LetterShape
+        >>> from synth_datasets.families.letters import LetterShape
         >>> len(LetterShape)
         26
         >>> LetterShape("z")
@@ -189,9 +189,9 @@ class LetterShape(ShapeEnum):
 #: Letter names in :class:`LetterShape` declaration order.
 LETTER_NAMES: tuple[str, ...] = tuple(shape.value for shape in LetterShape)
 
-#: Landmark names for :attr:`~synth_datasets.config.Task.KEYPOINTS` under the letter
+#: Landmark names for :attr:`~synth_datasets.core.config.Task.KEYPOINTS` under the letter
 #: family: the 15-node grid, row-major (see the module docstring's table). No slot is mandatory —
-#: unlike :mod:`~synth_datasets.symbols`'s ``center``, the grid has no single node every
+#: unlike :mod:`~synth_datasets.families.symbols`'s ``center``, the grid has no single node every
 #: letter touches (e.g. ``V`` never uses ``center``).
 LETTER_KEYPOINT_NAMES: tuple[str, ...] = (
     "top_left",
@@ -234,7 +234,7 @@ _GRID_EXTENT: float = _ROW_Y[-1] - _ROW_Y[0]
 #: Horizontal-flip permutation: each row's left/right column (indices ``3*row`` and ``3*row + 2``)
 #: swap, the middle column (``3*row + 1``) maps to itself. A property of the grid's own coordinates
 #: (any node in column 0 mirrors to column 2 at the same row) rather than of any one letter's shape,
-#: unlike :data:`~synth_datasets.symbols.SYMBOL_KEYPOINT_FLIP_IDX`.
+#: unlike :data:`~synth_datasets.families.symbols.SYMBOL_KEYPOINT_FLIP_IDX`.
 LETTER_KEYPOINT_FLIP_IDX: tuple[int, ...] = tuple(
     3 * (index // 3) + (2 - index % 3 if index % 3 != 1 else 1) for index in range(len(LETTER_KEYPOINT_NAMES))
 )
@@ -247,7 +247,7 @@ LETTER_KEYPOINT_FLIP_IDX: tuple[int, ...] = tuple(
 #: (NaN) in :data:`LETTER_KEYPOINTS`.
 #: Directory holding the packaged letter documents, resolved through :mod:`importlib.resources` so
 #: it works from a source checkout and from an installed wheel alike.
-_ASSET: Traversable = files("synth_datasets") / "letters"
+_ASSET: Traversable = files("synth_datasets") / "assets" / "letters"
 
 #: The document frame letters are authored in: a 1000x1000 canvas with the grid origin at its centre
 #: and one grid unit spanning :data:`_DOC_SCALE` pixels. Matches the zoo documents' canvas, so every
@@ -355,7 +355,7 @@ _LETTER_STROKES, _BULGES, _CUTS, _NODES = _read_letter_data()
 
 #: Stroke width :func:`_stroke_outline` offsets each edge by, as a fraction of the grid's own row
 #: span (:data:`_GRID_EXTENT`) — the family analog of
-#: :data:`~synth_datasets.geometry.RECT_ASPECT`. Applied before a letter's outline is
+#: :data:`~synth_datasets.families.geometry.RECT_ASPECT`. Applied before a letter's outline is
 #: renormalized to the package's unit convention, so the final on-screen thickness is close to but
 #: not exactly this fraction of the letter's own drawn extent (the outline grows slightly larger
 #: than the bare node grid once stroke width is added).
@@ -370,9 +370,9 @@ LETTER_STROKE_WIDTH: float = 0.16
 LETTER_COUNTER_GAP: float = 0.01
 
 #: Every distinct stroke edge across the whole alphabet, deduplicated and sorted — the family-wide
-#: fallback :attr:`~synth_datasets.keypoints.KeypointSchema.skeleton`. A consumer that
+#: fallback :attr:`~synth_datasets.core.keypoints.KeypointSchema.skeleton`. A consumer that
 #: reads only this field (rather than
-#: :meth:`~synth_datasets.keypoints.KeypointSchema.skeleton_for`) sees the union of every
+#: :meth:`~synth_datasets.core.keypoints.KeypointSchema.skeleton_for`) sees the union of every
 #: letter's strokes; the per-letter accuracy lives in ``skeleton_by_value`` instead.
 LETTER_KEYPOINT_SKELETON: tuple[tuple[int, int], ...] = tuple(
     sorted({(min(edge), max(edge)) for edges in _LETTER_STROKES.values() for edge in edges})
@@ -507,10 +507,10 @@ def _opened_graph(
 
     Every edge becomes a *chain* of nodes: a straight edge is the single link it already was, while a curved one (see
     :data:`_BULGES`) is subdivided along its arc into short straight links, which is what lets the rest of
-    :func:`_stroke_outline` wrap a curve while having no notion of curvature at all. Those interior nodes are synthetic
-    — invisible to :data:`LETTER_KEYPOINTS` and to the reported skeleton, which still name only the authored endpoints.
+    :func:`_stroke_outline` wrap a curve while having no notion of curvature at all. Those interior nodes are synthetic,
+    invisible to :data:`LETTER_KEYPOINTS` and to the reported skeleton, which still name only the authored endpoints.
 
-    A cut edge's chain is broken at its own arclength midpoint into two stubs ``gap`` apart instead of joined through —
+    A cut edge's chain is broken at its own arclength midpoint into two stubs ``gap`` apart instead of joined through;
     see :func:`_stroke_outline`. ``flat_capped`` collects exactly those two stub tips, the only nodes whose free end is
     capped with a straight line rather than a semicircle.
 
@@ -692,7 +692,7 @@ def _load() -> tuple[dict[str, NDArray[np.float64]], dict[str, NDArray[np.float6
 
     The outline is wrapped around the very nodes the keypoint table reports (see
     :func:`_stroke_outline`) and both pass through one shared normalization (see
-    :func:`~synth_datasets.keypoints._normalized_pair`), so a keypoint can never drift off
+    :func:`~synth_datasets.core.keypoints._normalized_pair`), so a keypoint can never drift off
     the ink the way authoring an outline and its landmarks separately could — and needs no
     correction afterwards, since every node sits a full half stroke-width inside the fill.
 
@@ -799,7 +799,7 @@ def raw_letter_nodes(name: str) -> NDArray[np.float64]:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.letters import raw_letter_nodes
+        >>> from synth_datasets.families.letters import raw_letter_nodes
         >>> raw_letter_nodes("i").shape
         (15, 2)
 
@@ -819,14 +819,14 @@ def raw_letter_nodes(name: str) -> NDArray[np.float64]:
 
 _POLYGONS, _KEYPOINTS = _load()
 
-#: Outline polygon per letter :class:`~synth_datasets.config.Shape` *value*, centered on
+#: Outline polygon per letter :class:`~synth_datasets.core.config.Shape` *value*, centered on
 #: its area centroid with larger extent ``1`` — the same unit convention
-#: :data:`~synth_datasets.animals.ANIMAL_POLYGONS` and
-#: :data:`~synth_datasets.symbols.SYMBOL_POLYGONS` use, so
+#: :data:`~synth_datasets.families.animals.ANIMAL_POLYGONS` and
+#: :data:`~synth_datasets.families.symbols.SYMBOL_POLYGONS` use, so
 #: :func:`~synth_datasets.families.shape_outline` needs no letter-specific handling.
 LETTER_POLYGONS: Mapping[str, NDArray[np.float64]] = MappingProxyType(_POLYGONS)
 
-#: Keypoint table per letter :class:`~synth_datasets.config.Shape` *value*, in
+#: Keypoint table per letter :class:`~synth_datasets.core.config.Shape` *value*, in
 #: :data:`LETTER_KEYPOINT_NAMES` order, in the same frame as :data:`LETTER_POLYGONS`. Every entry is
 #: a read-only ``(15, 2)`` array; scale a copy rather than mutating it. A row is ``(nan, nan)`` for a
 #: slot the letter does not use. A present row is exactly the node the outline was wrapped around
@@ -835,7 +835,7 @@ LETTER_POLYGONS: Mapping[str, NDArray[np.float64]] = MappingProxyType(_POLYGONS)
 LETTER_KEYPOINTS: Mapping[str, NDArray[np.float64]] = MappingProxyType(_KEYPOINTS)
 
 #: The complete keypoint schema for every :class:`LetterShape` — the one artifact
-#: :func:`~synth_datasets.config.keypoint_schema_for` and the writers need to describe a
+#: :func:`~synth_datasets.core.config.keypoint_schema_for` and the writers need to describe a
 #: letter ``Task.KEYPOINTS`` run.
 LETTER_KEYPOINT_SCHEMA = KeypointSchema(
     names=LETTER_KEYPOINT_NAMES,
@@ -854,8 +854,8 @@ def letter_keypoints(
     The table is looked up in :data:`LETTER_KEYPOINTS`, scaled, skewed, rotated, and translated
     exactly as :func:`~synth_datasets.families.shape_outline` treats
     :data:`LETTER_POLYGONS` — mirroring
-    :func:`~synth_datasets.animals.animal_keypoints` and
-    :func:`~synth_datasets.symbols.symbol_keypoints`.
+    :func:`~synth_datasets.families.animals.animal_keypoints` and
+    :func:`~synth_datasets.families.symbols.symbol_keypoints`.
 
     Args:
         shape: A :class:`LetterShape` member.
@@ -864,7 +864,7 @@ def letter_keypoints(
         size: Bounding size in pixels — likewise.
         angle: Rotation in radians about the shape center — likewise.
         skew: Signed fraction narrowing one pre-rotation half — likewise; see
-            :attr:`~synth_datasets.config.SyntheticConfig.asymmetry_jitter`.
+            :attr:`~synth_datasets.core.config.SyntheticConfig.asymmetry_jitter`.
 
     Returns:
         ``(15, 2)`` float array of keypoint coordinates in image pixels, ordered by
@@ -876,7 +876,7 @@ def letter_keypoints(
 
     Examples:
         ```pycon
-        >>> from synth_datasets.letters import LetterShape, letter_keypoints
+        >>> from synth_datasets.families.letters import LetterShape, letter_keypoints
         >>> points = letter_keypoints(LetterShape.X, center=(50.0, 50.0), size=20.0)
         >>> points.shape
         (15, 2)

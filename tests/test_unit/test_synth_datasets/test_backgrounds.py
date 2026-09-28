@@ -15,7 +15,7 @@ from collections.abc import Callable
 import numpy as np
 import pytest
 
-from synth_datasets.backgrounds import (
+from synth_datasets.content.backgrounds import (
     Background,
     GradientBackground,
     ImpulseNoiseBackground,
@@ -23,9 +23,9 @@ from synth_datasets.backgrounds import (
     SolidBackground,
     TextureBackground,
 )
-from synth_datasets.config import Color, Fill, SyntheticConfig
-from synth_datasets.degradations import Contrast
-from synth_datasets.generator import SyntheticGenerator
+from synth_datasets.content.degradations import Contrast
+from synth_datasets.core.config import Color, Fill, SyntheticConfig
+from synth_datasets.core.generator import SyntheticGenerator
 
 IMG_SIZE = 32
 

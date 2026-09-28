@@ -6,21 +6,21 @@ removes the question a ``mode="noise"`` field would create — which parameters 
 because a class that has no ``sigma`` cannot be given one, and the constructor says so rather than a
 hand-written cross-field check. It is also the extension point: a third party's own
 :class:`Background` works with no registration, matching the
-:func:`~synth_datasets.writers.register_writer` culture already in the package.
+:func:`~synth_datasets.export.writers.register_writer` culture already in the package.
 
 Every background renders from a **side stream**, never from the generator's own placement stream, so
 turning one on cannot move an object. :attr:`Background.consumes_randomness` is what
-:class:`~synth_datasets.generator.SyntheticGenerator` asks before taking that side stream at
+:class:`~synth_datasets.core.generator.SyntheticGenerator` asks before taking that side stream at
 all, which is why a background that draws nothing is handed ``None`` and must not touch it.
 
 Numpy only at module scope, plus Pillow inside the one method that needs a resampler: importing this
-module is as cheap as importing :mod:`~synth_datasets.config`, which it deliberately does
+module is as cheap as importing :mod:`~synth_datasets.core.config`, which it deliberately does
 not force to grow heavier.
 
 Examples:
     ```pycon
     >>> import numpy as np
-    >>> from synth_datasets.backgrounds import NoiseBackground, SolidBackground
+    >>> from synth_datasets.content.backgrounds import NoiseBackground, SolidBackground
     >>> SolidBackground((10, 20, 30)).render(None, 4).shape
     (4, 4, 3)
     >>> canvas = NoiseBackground(sigma=8.0).render(np.random.default_rng(0), 8)
@@ -43,7 +43,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from synth_datasets._render import require_stream, to_uint8
-from synth_datasets.config import ColorLike, Fill
+from synth_datasets.core.config import ColorLike, Fill
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -122,7 +122,7 @@ class Background(ABC):
             nothing outside the process to name.
 
         This is what the generator calls, and what ends up in
-        :attr:`~synth_datasets.sample.SceneRecord.background_source`. It is not abstract: a
+        :attr:`~synth_datasets.core.sample.SceneRecord.background_source`. It is not abstract: a
         procedural mode has no source, so the default delegates to :meth:`render` and reports
         ``None``, which means a third-party background implementing only :meth:`render` keeps
         working. Only a mode reading files outside the package overrides it.
@@ -136,13 +136,13 @@ class SolidBackground(Background):
     """One flat colour across the whole canvas — the behaviour that predates this module.
 
     Args:
-        color: The fill, as a :class:`~synth_datasets.config.Color`, an ``(r, g, b)``
-            triple, or a :class:`~synth_datasets.config.Fill`. Normalized to a ``Fill`` at
+        color: The fill, as a :class:`~synth_datasets.core.config.Color`, an ``(r, g, b)``
+            triple, or a :class:`~synth_datasets.core.config.Fill`. Normalized to a ``Fill`` at
             construction, like every other fill in the package.
 
     Examples:
         ```pycon
-        >>> from synth_datasets.backgrounds import SolidBackground
+        >>> from synth_datasets.content.backgrounds import SolidBackground
         >>> SolidBackground((20, 30, 40)).render(None, 2)[0, 0].tolist()
         [20, 30, 40]
 
@@ -193,7 +193,7 @@ class GradientBackground(Background):
 
     Examples:
         ```pycon
-        >>> from synth_datasets.backgrounds import GradientBackground
+        >>> from synth_datasets.content.backgrounds import GradientBackground
         >>> ramp = GradientBackground(direction=0.0).render(None, 4)
         >>> bool(ramp[0, 0, 0] < ramp[0, -1, 0])
         True
@@ -268,7 +268,7 @@ class NoiseBackground(Background):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.backgrounds import NoiseBackground
+        >>> from synth_datasets.content.backgrounds import NoiseBackground
         >>> NoiseBackground(sigma=4.0).render(np.random.default_rng(0), 4).shape
         (4, 4, 3)
 
@@ -310,7 +310,7 @@ class ImpulseNoiseBackground(Background):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.backgrounds import ImpulseNoiseBackground
+        >>> from synth_datasets.content.backgrounds import ImpulseNoiseBackground
         >>> canvas = ImpulseNoiseBackground(amount=0.5).render(np.random.default_rng(0), 16)
         >>> bool((canvas == 255).any() and (canvas == 0).any())
         True
@@ -376,7 +376,7 @@ class TextureBackground(Background):
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.backgrounds import TextureBackground
+        >>> from synth_datasets.content.backgrounds import TextureBackground
         >>> TextureBackground(octaves=2).render(np.random.default_rng(0), 32).shape
         (32, 32, 3)
 
@@ -501,7 +501,7 @@ class ImageBackground(Background):
     What it buys is real texture statistics — the spatial correlations, gradients and clutter of
     photographs — without any labelling cost, since the labels still come from the shapes drawn on
     top. Which file and which crop were used is reported through
-    :attr:`~synth_datasets.sample.SceneRecord.background_source`, so a sample can be traced
+    :attr:`~synth_datasets.core.sample.SceneRecord.background_source`, so a sample can be traced
     back to what it stood on.
 
     Args:

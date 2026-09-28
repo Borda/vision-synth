@@ -5,12 +5,12 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from synth_datasets.animals import AnimalShape
 from synth_datasets.families import shape_outline
-from synth_datasets.geometry import bbox_iou, polygon_to_bbox_xyxy, polygon_to_obb, rotate_polygon
-from synth_datasets.letters import LetterShape
-from synth_datasets.primitives import PrimitiveShape
-from synth_datasets.symbols import SymbolShape
+from synth_datasets.families.animals import AnimalShape
+from synth_datasets.families.geometry import bbox_iou, polygon_to_bbox_xyxy, polygon_to_obb, rotate_polygon
+from synth_datasets.families.letters import LetterShape
+from synth_datasets.families.primitives import PrimitiveShape
+from synth_datasets.families.symbols import SymbolShape
 
 from ._obb_pose import rebuild_error
 

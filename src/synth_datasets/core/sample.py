@@ -15,12 +15,12 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from synth_datasets.geometry import polygon_to_obb
+from synth_datasets.families.geometry import polygon_to_obb
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
 
-    from synth_datasets.keypoints import KeypointSchema
+    from synth_datasets.core.keypoints import KeypointSchema
 
 #: The COCO landmark visibility flags a triple may carry: ``0`` "not labeled", ``1`` "labeled but not
 #: visible", ``2`` "labeled and visible". Spelled as the accepted set rather than a ``0 <= v <= 2``
@@ -38,12 +38,12 @@ class Annotation:
 
     A landmark table is validated against its own schema on construction (see
     :meth:`__post_init__`), so every consumer — the writers,
-    :class:`~synth_datasets.datasets.SyntheticIterableDataset`, and any third-party code
+    :class:`~synth_datasets.export.datasets.SyntheticIterableDataset`, and any third-party code
     reading a :class:`Sample` — can rely on the width without re-checking it. Validating here rather
     than in a writer is what makes that guarantee hold for consumers that never touch a writer.
 
     Args:
-        class_id: Zero-based class index (see :func:`~synth_datasets.config.class_names`).
+        class_id: Zero-based class index (see :func:`~synth_datasets.core.config.class_names`).
         class_name: Human-readable class label.
         polygon: Filled-shape outline as a flat pixel-coordinate list, in **pixel-centre** space --
             the space :func:`~fused_transforms.targets.transform_keypoints` moves a point field
@@ -52,7 +52,7 @@ class Annotation:
             space -- the space :func:`~fused_transforms.targets.transform_bbox_xyxy` assumes, so a
             full ``(H, W)`` canvas spans ``[0, W] x [0, H]``. The two conventions differ by half a
             pixel each way and are not interchangeable; see
-            :data:`~synth_datasets.geometry.PIXEL_CENTRE_OFFSET`. Both dataset writers
+            :data:`~synth_datasets.families.geometry.PIXEL_CENTRE_OFFSET`. Both dataset writers
             convert the point fields back to edge space at the file boundary, so an exported COCO or
             YOLO file carries one convention throughout.
         angle: Rotation in radians the shape was placed with (counter-clockwise, ``0.0`` for an
@@ -61,7 +61,7 @@ class Annotation:
             polygon.
         keypoints: Landmarks as ``(x, y, visibility)`` triples in ``keypoint_schema`` order, or
             ``None`` for any task other than
-            :attr:`~synth_datasets.config.Task.KEYPOINTS`. Visibility follows COCO: ``2``
+            :attr:`~synth_datasets.core.config.Task.KEYPOINTS`. Visibility follows COCO: ``2``
             for a point inside the canvas, ``0`` for one clipped away by the frame — a ``0`` point
             carries ``(0.0, 0.0)`` rather than its off-canvas coordinates. Visible coordinates are
             in pixel-centre space like ``polygon``; the zeroed placeholder is a flag value and
@@ -69,7 +69,7 @@ class Annotation:
         keypoint_schema: The keypoint-bearing family ``keypoints`` was drawn from, which names and
             sizes the table. Required whenever ``keypoints`` is given, ``None`` otherwise. Carrying
             it here is what lets any consumer — the writers,
-            :class:`~synth_datasets.datasets.SyntheticIterableDataset`, third-party code —
+            :class:`~synth_datasets.export.datasets.SyntheticIterableDataset`, third-party code —
             interpret a table without being told separately which family produced it.
 
     Raises:
@@ -79,8 +79,8 @@ class Annotation:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.animals import ANIMAL_KEYPOINT_SCHEMA
-        >>> from synth_datasets.sample import Annotation
+        >>> from synth_datasets.families.animals import ANIMAL_KEYPOINT_SCHEMA
+        >>> from synth_datasets.core.sample import Annotation
         >>> ann = Annotation(0, "square", [0.0, 0.0, 2.0, 0.0, 2.0, 2.0, 0.0, 2.0],
         ...                  (0.0, 0.0, 2.0, 2.0))
         >>> ann.class_name
@@ -112,7 +112,7 @@ class Annotation:
         The box is the shape's axis-aligned box in its own pre-rotation frame, rotated by
         :attr:`angle` — its sides run along and across the shape's upright (symmetry) axis, not
         the minimum-area rectangle's hull-edge direction (see
-        :func:`~synth_datasets.geometry.polygon_to_obb`).
+        :func:`~synth_datasets.families.geometry.polygon_to_obb`).
 
         Derived from :attr:`polygon` on first access rather than stored. It used to be computed for
         every object at generation time, which meant every detection, segmentation and keypoint run
@@ -126,7 +126,7 @@ class Annotation:
 
         Examples:
             ```pycon
-            >>> from synth_datasets.sample import Annotation
+            >>> from synth_datasets.core.sample import Annotation
             >>> square = [0.0, 0.0, 2.0, 0.0, 2.0, 2.0, 0.0, 2.0]
             >>> ann = Annotation(0, "square", square, (0.0, 0.0, 2.0, 2.0))
             >>> len(ann.obb_corners)
@@ -208,7 +208,7 @@ class SceneRecord:
 
     Examples:
         ```pycon
-        >>> from synth_datasets.sample import SceneRecord
+        >>> from synth_datasets.core.sample import SceneRecord
         >>> SceneRecord().occluder_mask is None
         True
 
@@ -227,7 +227,7 @@ class SceneRecord:
 
         ``ndarray.__reduce__`` does not preserve the ``WRITEABLE`` flag, so a mask that was read-only
         when it was written comes back writable — and this is the ordinary path, not an exotic one:
-        :class:`~synth_datasets.datasets.SyntheticIterableDataset` is a torch
+        :class:`~synth_datasets.export.datasets.SyntheticIterableDataset` is a torch
         ``IterableDataset``, so every sample crosses a pickle boundary under ``num_workers > 0``.
         Without this the freeze would be a guarantee that held only in the process that made it.
 
@@ -266,7 +266,7 @@ class Sample:
     Examples:
         ```pycon
         >>> import numpy as np
-        >>> from synth_datasets.sample import Sample
+        >>> from synth_datasets.core.sample import Sample
         >>> img = np.zeros((4, 4, 3), dtype=np.uint8)
         >>> Sample(img, [], width=4, height=4).width
         4

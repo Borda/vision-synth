@@ -2,10 +2,10 @@
 
 Both existing guards for this boundary are runtime and deletable: `test_no_torch_import.py` imports the package in a
 subprocess and checks `sys.modules`, and the CI `synth-datasets-no-torch` leg silences `datasets.py`'s own torch import
-with a `--ignore=src/synth_datasets/datasets.py` flag rather than a rule. Neither would notice a *new* module quietly
-gaining a torch or fused_transforms import until someone happens to run a torch-full test session, or the `--ignore`
-flag is remembered to be updated. This walks the AST of every module instead, so the boundary holds by construction and
-works with torch absent.
+with a `--ignore=src/synth_datasets/export/datasets.py` flag rather than a rule. Neither would notice a *new* module
+quietly gaining a torch or fused_transforms import until someone happens to run a torch-full test session, or the
+`--ignore` flag is remembered to be updated. This walks the AST of every module instead, so the boundary holds by
+construction and works with torch absent.
 
 """
 

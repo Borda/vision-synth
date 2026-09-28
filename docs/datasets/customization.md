@@ -309,7 +309,7 @@ What was covered is published on the sample rather than left implicit:
 
 ```python
 from synth_datasets import SyntheticConfig, SyntheticGenerator
-from synth_datasets.animals import AnimalShape
+from synth_datasets.families.animals import AnimalShape
 
 config = SyntheticConfig(
     img_size=96,
@@ -351,7 +351,7 @@ None
 Most shapes are drawn mirror-symmetric about their own vertical axis in canonical orientation (every geometric shape, every symbol, most letters), so their oriented bounding box otherwise always shows identical left/right margins — real oriented objects (vehicles, ships) rarely are. `asymmetry_jitter` (default `0.0`, a fraction in `[0, 0.5)`) narrows a randomly chosen half — left or right of that axis, before rotation — of each placed object by up to that fraction, independently per instance. The animal silhouettes and roughly two-thirds of the letters are already asymmetric on their own (a letter's own strokes rarely balance left-right the way a symbol's outline is authored to), so the jitter is redundant orientation variety for them rather than the sole source of it — it still applies uniformly to every shape but `circle`, which is excluded for the separate reason below:
 
 ```pycon
->>> from synth_datasets.config import SyntheticConfig
+>>> from synth_datasets.core.config import SyntheticConfig
 >>> SyntheticConfig(asymmetry_jitter=0.15).asymmetry_jitter
 0.15
 
@@ -417,7 +417,7 @@ Every shape family — the analytic primitives, the animals, the symbols, the le
 
 ```python
 from synth_datasets import SHAPE_FAMILIES, family_of
-from synth_datasets.animals import AnimalShape
+from synth_datasets.families.animals import AnimalShape
 
 summary = [(f.name, len(f.members), f.has_keypoints) for f in SHAPE_FAMILIES]
 print(summary)
@@ -474,7 +474,7 @@ UltralyticsWriter
 
 ### Editing the packaged assets
 
-All three asset-backed families are read by one parser (`synth_datasets.svgio`) and edited by one tool:
+All three asset-backed families are read by one parser (`synth_datasets.families.svgio`) and edited by one tool:
 
 ```bash
 python examples/edit_shape_keypoints.py duck      # an animal silhouette

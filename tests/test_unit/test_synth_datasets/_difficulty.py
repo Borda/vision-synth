@@ -28,12 +28,12 @@ from dataclasses import dataclass, replace
 import numpy as np
 from PIL import Image, ImageDraw
 
-from synth_datasets.backgrounds import NoiseBackground, TextureBackground
-from synth_datasets.config import SyntheticConfig
-from synth_datasets.degradations import JPEG, GaussianBlur
-from synth_datasets.generator import SyntheticGenerator
-from synth_datasets.letters import LetterShape
-from synth_datasets.sample import Sample
+from synth_datasets.content.backgrounds import NoiseBackground, TextureBackground
+from synth_datasets.content.degradations import JPEG, GaussianBlur
+from synth_datasets.core.config import SyntheticConfig
+from synth_datasets.core.generator import SyntheticGenerator
+from synth_datasets.core.sample import Sample
+from synth_datasets.families.letters import LetterShape
 
 #: Canvas the bands are measured on. Large enough that the hard band's 0.03 size ratio is a ~8-pixel
 #: glyph — the small-object regime the generator could not produce before this work — and small
