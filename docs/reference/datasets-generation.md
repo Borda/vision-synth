@@ -27,6 +27,15 @@ For narrative guides, start with [Synthetic data generation](../datasets/index.m
         show_root_heading: true
         show_source: false
 
+### Command line
+
+`vision-synth generate` (the `cli` extra) calls this function; see [command line](../datasets/outputs.md#command-line).
+
+::: synth_datasets.cli.generate
+    options:
+        show_root_heading: true
+        show_source: false
+
 ## Configuration
 
 `SyntheticConfig` is the single configuration object. `generate_dataset` accepts either a full config or its individual fields, but not both in one call.
@@ -37,6 +46,11 @@ For narrative guides, start with [Synthetic data generation](../datasets/index.m
         show_source: false
 
 ::: synth_datasets.SplitRatios
+    options:
+        show_root_heading: true
+        show_source: false
+
+::: synth_datasets.core.config.as_canvas_size
     options:
         show_root_heading: true
         show_source: false

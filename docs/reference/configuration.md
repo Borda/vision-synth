@@ -29,7 +29,9 @@ pipe = Compose.from_params(
 
 The direct path supports rotation, uniform/per-axis scale, x/y shear, x/y pixel translation, H/V flips, brightness, and contrast. It samples direct geometric parameters independently per item; the `randomness` value is stored but does not change that direct sampling behavior.
 
-`brightness=0.1` and `contrast=0.1` are active features: each describes a multiplicative factor range centered on `1.0`. They are not reserved parameters.
+`brightness=0.1` and `contrast=0.1` are active features: each describes a multiplicative factor range centered on `1.0`, here `[0.9, 1.1]`. Pass a `(low, high)` tuple instead to set the factor range directly, matching the tuple form of `rotation=` and `scale=`. Both work for any channel count, including grayscale and multi-spectral inputs.
+
+`rotation_p` and `scale_p` gate rotation and the scale family independently, each with its own draw per sample, and the operations always run in the order rotation, scale, shear, translate, whether or not they are gated.
 
 ## Declarative specs
 

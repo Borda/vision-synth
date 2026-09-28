@@ -183,7 +183,24 @@ ndarray (4, 128, 128, 3) float32
 
 </details>
 
-The `"numpy"` backend returns channel-last `NHWC`; use `"numpy_hwc"` or `"torch"` to select a different output contract.
+`"numpy"` and `"numpy_hwc"` are two names for the same contract: channel-last `(B, H, W, C)`, except that a batch of one is squeezed to `(H, W, C)`. If downstream code always expects a batch axis, restore it with `array[None]` when the batch size is one. Use `"torch"` (or leave `output_backend` unset) to keep the `(B, C, H, W)` tensor.
+
+## Common configurations
+
+`Compose` takes many keyword options, but most pipelines set only a few. Start from the row that matches your job:
+
+| Goal                                | Keywords to set                                                                   |
+| ----------------------------------- | --------------------------------------------------------------------------------- |
+| Image classification                | none — the defaults suffice                                                       |
+| Detection with axis-aligned boxes   | `data_keys=["input", "bbox_xyxy"]`; ragged targets via `augment_detection_batch`  |
+| Segmentation                        | `data_keys=["input", "mask"]` (`mask_interpolation="nearest"` is the default)     |
+| Pose / keypoints                    | `data_keys=["input", "keypoints"]`, plus `keypoint_flip_index=` when flips run    |
+| Reproducible runs                   | `generator=torch.Generator().manual_seed(seed)`; see the reproducibility guide    |
+| Comparing against a native pipeline | `reorder=ReorderPolicy.NONE`                                                      |
+| GPU throughput                      | `compile=True`, optionally `pipeline_dtype="bfloat16"`; benchmark before adopting |
+| NumPy consumer                      | `output_backend="numpy"`                                                          |
+
+`print(pipe)` shows the fusion plan the pipeline built, and `pipe.fusion_plan` returns it as a string.
 
 ## Next steps
 

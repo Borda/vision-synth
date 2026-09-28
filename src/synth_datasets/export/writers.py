@@ -600,25 +600,25 @@ def _plan_moves(
             dst = dst_dir / src.name
             # Judged by the entry the filesystem finds, so a respelled alias of a replaced path counts as replaced.
             stored = _on_disk(root, dst, listings)
-            present = stored is not None and stored not in replaced
-            dst_is_dir = present and _is_dir(stored)
-            if _is_dir(src) and dst_is_dir:
+            if stored is not None and stored in replaced:
+                stored = None  # being replaced, so free to move onto
+            if stored is None:
+                moves.append((src, dst))
+            elif _is_dir(src) and _is_dir(stored):
                 pending.append((src, stored))
-            elif present:
+            else:
                 raise ValueError(
                     f"refusing to replace {dst}: it is not this writer's, and the new {src.name!r} cannot be moved "
                     "over it; move it out of the way"
                 )
-            else:
-                moves.append((src, dst))
     return moves
 
 
 class _Listings:
     """Directory listings read once per planning phase, so planning costs one read per directory, not per path.
 
-    Planning runs before anything moves, so what a directory held when first read is what it still holds. The
-    inode index, needed only to resolve an alias, is built on first use.
+    Planning runs before anything moves, so what a directory held when first read is what it still holds. The inode
+    index, needed only to resolve an alias, is built on first use.
 
     """
 
@@ -629,8 +629,8 @@ class _Listings:
     def names(self, parent: Path) -> frozenset[str] | None:
         """Return the names ``parent`` lists, or ``None`` when it does not exist or is not a directory.
 
-        Any other failure to read it (a permission or I/O error) propagates: reading an unreadable directory as
-        empty would plan its files as new paths and skip their backup.
+        Any other failure to read it (a permission or I/O error) propagates: reading an unreadable directory as empty
+        would plan its files as new paths and skip their backup.
 
         """
         if parent not in self._names:
@@ -654,10 +654,10 @@ class _Listings:
 def _stored_name(parent: Path, part: str, listings: _Listings | None = None) -> str | None:
     """Return the name ``parent / part`` is stored under, or ``None`` when nothing is there.
 
-    That is ``part`` itself, unless the filesystem matched it to an entry spelled differently — a case-insensitive
-    one finds ``train`` under ``Train``, and a normalizing one ``é`` under its decomposed form. The alias is read from
-    the filesystem (the listed entry with the same inode), never assumed from the names, so a case-sensitive
-    filesystem keeps ``Train`` and ``train`` apart. ``listings`` shares directory reads across one planning phase.
+    That is ``part`` itself, unless the filesystem matched it to an entry spelled differently — a case-insensitive one
+    finds ``train`` under ``Train``, and a normalizing one ``é`` under its decomposed form. The alias is read from the
+    filesystem (the listed entry with the same inode), never assumed from the names, so a case-sensitive filesystem
+    keeps ``Train`` and ``train`` apart. ``listings`` shares directory reads across one planning phase.
 
     """
     listings = listings if listings is not None else _Listings()
@@ -694,8 +694,8 @@ def _on_disk(root: Path, path: Path, listings: _Listings | None = None) -> Path 
 def _outermost_present(root: Path, paths: Iterable[Path], listings: _Listings | None = None) -> list[Path]:
     """Return the ``paths`` that exist, as stored, with aliases and duplicates merged and any under another dropped.
 
-    Two spellings the filesystem resolves to one entry (``images/train`` and ``images/Train`` on a case-insensitive
-    one) are one path to replace, so it is backed up once.
+    Two spellings the filesystem resolves to one entry (``images/train`` and ``images/Train`` on a case-insensitive one)
+    are one path to replace, so it is backed up once.
 
     """
     stored = (_on_disk(root, path, listings) for path in paths)
@@ -731,9 +731,9 @@ def _swap(root: Path, targets: list[Path], moves: list[tuple[Path, Path]], backu
         try:
             _roll_back(root, targets, moves, backup)
             # Re-listed, not remembered: an interrupt may have landed between a rename and anything that tracked it.
-            saved = [backup / target.relative_to(root) for target in targets]
-            accounted = all(_exists(target) or _exists(copy) for target, copy in zip(targets, saved, strict=True))
-            restored = all(_exists(target) and not _exists(copy) for target, copy in zip(targets, saved, strict=True))
+            copies = [backup / target.relative_to(root) for target in targets]
+            accounted = all(_exists(target) or _exists(copy) for target, copy in zip(targets, copies, strict=True))
+            restored = all(_exists(target) and not _exists(copy) for target, copy in zip(targets, copies, strict=True))
         except BaseException as rollback_err:
             # Unknown state (a failed rename, or a path whose metadata cannot be read) keeps everything where it is.
             _raise_naming(
@@ -799,8 +799,8 @@ def _raise_naming(err: BaseException, message: str, backup: Path | None) -> NoRe
     """Re-raise ``err`` so the error names the kept ``backup``, if one was kept.
 
     An ``Exception`` becomes a ``RuntimeError`` carrying the message, chained to it. Anything else — a
-    ``KeyboardInterrupt``, a ``SystemExit`` — is re-raised as it is, so it keeps meaning what it means, with the
-    message attached as a note where the interpreter supports notes.
+    ``KeyboardInterrupt``, a ``SystemExit`` — is re-raised as it is, so it keeps meaning what it means, with the message
+    attached as a note where the interpreter supports notes.
 
     """
     marker = _owner_marker(backup, BACKUP_PREFIX) if backup is not None else _Marker()

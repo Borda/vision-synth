@@ -15,6 +15,8 @@ Dataset limits come first below; everything from [Compatibility at a glance](#co
 
     Common TorchVision transforms such as `RandomCrop`, `CenterCrop`, and `Resize` are not registered target-aware operations. A target-aware call refuses them before they can change only the image; the image-only path may still invoke a native passthrough.
 
+    `data_keys` itself is validated too: an entry outside `input`, `mask`, `bbox_xyxy`, `bbox_xywh`, `keypoints`, and `rboxes` raises `ValueError` with a did-you-mean hint (`"boxes"` suggests `"bbox_xyxy"`), because an unrecognized target would skip the geometry and misalign silently.
+
     Use only explicitly supported geometric transforms in a multi-target pipeline. Otherwise, apply the operation through a native target-aware pipeline or transform every target yourself. See [Auxiliary targets](guides/auxiliary-targets.md).
 
 ## Synthetic dataset limits
@@ -43,7 +45,7 @@ Both writers convert point fields back to pixel-edge space at the file boundary,
 | Question                                          | Honest answer                                                                                                                                                                                      |
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Is `Compose` a drop-in native compose class?      | No. It accepts transform objects from supported backends through its own tensor-first contract.                                                                                                    |
-| What is the normal image format?                  | A floating PyTorch tensor shaped `(B, C, H, W)`. Fused geometry does not generally accept PIL images or unbatched `(C, H, W)` tensors.                                                             |
+| What is the normal image format?                  | A floating PyTorch tensor shaped `(B, C, H, W)`. Fused geometry does not accept PIL images, and an unbatched `(C, H, W)` tensor raises `ValueError` suggesting `x[None]`.                          |
 | Is Albumentations NumPy input supported?          | Yes. `image=HWC_array` works on its own, and with `data_keys` declared the same call carries masks, boxes, keypoints and rotated boxes. Albumentations' label processors are still not replicated. |
 | Are all upstream transforms fused?                | No. Built-in adapters use finite registries. Unknown transforms become passthrough barriers or are refused.                                                                                        |
 | Does fused output equal native output?            | Not universally. Sampling, coordinate conventions, interpolation, padding, clipping, and operation order can differ.                                                                               |

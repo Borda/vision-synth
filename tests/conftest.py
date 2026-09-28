@@ -61,47 +61,47 @@ def disable_interactive_prompts() -> None:
 @pytest.fixture
 def image8x8_batch1() -> torch.Tensor:
     """Return a (1, 3, 8, 8) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(1, 3, 8, 8)
 
 
 @pytest.fixture
 def image8x8_batch2() -> torch.Tensor:
     """Return a (2, 3, 8, 8) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(2, 3, 8, 8)
 
 
 @pytest.fixture
 def image16x16_batch1() -> torch.Tensor:
     """Return a (1, 3, 16, 16) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(1, 3, 16, 16)
 
 
 @pytest.fixture
 def image16x16_batch2() -> torch.Tensor:
     """Return a (2, 3, 16, 16) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(2, 3, 16, 16)
 
 
 @pytest.fixture
 def image32x32_batch2() -> torch.Tensor:
     """Return a (2, 3, 32, 32) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(2, 3, 32, 32)
 
 
 @pytest.fixture
 def image32x32_batch4() -> torch.Tensor:
     """Return a (4, 3, 32, 32) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(4, 3, 32, 32)
 
 
 @pytest.fixture
 def image64x64_batch2() -> torch.Tensor:
     """Return a (2, 3, 64, 64) float32 image tensor."""
-    torch = pytest.importorskip("torch")
+    torch = pytest.importorskip("torch", exc_type=ModuleNotFoundError)
     return torch.rand(2, 3, 64, 64)

@@ -42,6 +42,8 @@ pip install "vision-synth[albumentations]"
 pip install "vision-synth[all]"
 ```
 
+For the `vision-synth generate` command line, add the `cli` extra: `pip install "vision-synth[cli]"`.
+
 ## 🎨 Synthetic datasets
 
 Dataset generation lives in the standalone `synth_datasets` package (`import synth_datasets`), which never imports torch and needs no extra. There is no alias for it on the augmentation package; `synth_datasets` is the only import path.
@@ -79,21 +81,22 @@ Swap `fmt="yolo"`, `task="obb"`, or `class_mode="color"` for other layouts, task
 
 ### What the generator can do
 
-| Capability         | What is implemented                                                                                                                                                  |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Annotation tasks   | Detection, instance segmentation, oriented bounding boxes, and keypoints / pose.                                                                                     |
-| Output formats     | COCO per-split `_annotations.coco.json`, or YOLO normalized text labels plus `data.yaml`.                                                                            |
-| Shape vocabularies | Geometric primitives, traced animal silhouettes, symbols, and stroke letters, each a registered family.                                                              |
-| Class schemes      | `class_mode="shape"`, `"color"`, or `"shape_color"`; COCO categories are 1-based on disk and YOLO classes 0-based.                                                   |
-| Keypoint schemas   | Per-family landmark tables with COCO visibility flags, for animals, symbols, and letters. Geometric primitives have no pose schema.                                  |
-| Backgrounds        | Flat, gradient, Gaussian or impulse noise, value-noise texture, or crops of your own pictures.                                                                       |
-| Baked degradations | Gaussian blur and noise, JPEG, contrast, color cast, vignette, and quantization, applied once into the exported pixels.                                              |
-| Unlabelled clutter | `distractors` behind and `occluders` over the labelled objects; boxes and polygons keep full-object geometry.                                                        |
-| Splits             | Train/validation/test via split ratios, defaulting to 70/20/10.                                                                                                      |
-| Reproducibility    | A fixed seed plus configuration reproduces generation in one environment. Background, clutter, and degradation knobs draw from side streams, so placement is stable. |
-| Streaming          | `SyntheticGenerator.generate(n, seed=...)` yields samples; `SyntheticIterableDataset` feeds a PyTorch `DataLoader` (needs the `torch` extra).                        |
-| Extension          | `register_writer` adds an output format, and new shape families or keypoint schemas can be registered.                                                               |
-| Dependencies       | Direct generation uses Pillow and NumPy only — no torch, no source images, no optional augmentation backend.                                                         |
+| Capability         | What is implemented                                                                                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Annotation tasks   | Detection, instance segmentation, oriented bounding boxes, and keypoints / pose.                                                                                                               |
+| Output formats     | COCO per-split `_annotations.coco.json`, or YOLO normalized text labels plus `data.yaml`.                                                                                                      |
+| Shape vocabularies | Geometric primitives, traced animal silhouettes, symbols, and stroke letters, each a registered family.                                                                                        |
+| Class schemes      | `class_mode="shape"`, `"color"`, or `"shape_color"`; COCO categories are 1-based on disk and YOLO classes 0-based.                                                                             |
+| Keypoint schemas   | Per-family landmark tables with COCO visibility flags, for animals, symbols, and letters. Geometric primitives have no pose schema.                                                            |
+| Backgrounds        | Flat, gradient, Gaussian or impulse noise, value-noise texture, or crops of your own pictures.                                                                                                 |
+| Baked degradations | Gaussian blur and noise, JPEG, contrast, color cast, vignette, and quantization, applied once into the exported pixels.                                                                        |
+| Unlabelled clutter | `distractors` behind and `occluders` over the labelled objects; boxes and polygons keep full-object geometry.                                                                                  |
+| Splits             | Train/validation/test via split ratios, defaulting to 70/20/10.                                                                                                                                |
+| Reproducibility    | A fixed seed plus configuration reproduces generation in one environment. Background, clutter, and degradation knobs draw from side streams, so placement is stable.                           |
+| Streaming          | `SyntheticGenerator.generate(n, seed=...)` yields samples; `SyntheticIterableDataset` feeds a PyTorch `DataLoader` (needs the `torch` extra).                                                  |
+| Command line       | `vision-synth generate ./ds 1000 --fmt yolo --task obb --shapes duck,camel` (needs the `cli` extra).                                                                                           |
+| Extension          | `register_writer` adds an output format; subclass `Background` or `Degradation` for new canvases and effects. A new shape family is added in the package source (see the customization guide). |
+| Dependencies       | Direct generation uses Pillow and NumPy only — no torch, no source images, no optional augmentation backend.                                                                                   |
 
 ### Difficulty is ordinary configuration
 

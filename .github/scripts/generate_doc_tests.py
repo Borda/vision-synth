@@ -26,8 +26,13 @@ OUTPUT_DIR = ROOT / "tests" / "integration"
 
 
 def _markdown_sources() -> list[Path]:
-    """Return README and documentation files containing Python examples."""
-    candidates = [ROOT / "README.md", *sorted((ROOT / "docs").rglob("*.md"))]
+    """Return README and published documentation files containing Python examples.
+
+    ``docs/adr/`` is excluded from the site (``exclude_docs`` in ``mkdocs.yml``), so its examples are not tested either.
+
+    """
+    docs = ROOT / "docs"
+    candidates = [ROOT / "README.md", *sorted(p for p in docs.rglob("*.md") if docs / "adr" not in p.parents)]
     return [path for path in candidates if (examples := detect_python_examples(path)).has_code or examples.has_session]
 
 

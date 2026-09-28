@@ -75,7 +75,7 @@ print(len(names), coco_ids[0], names[coco_ids[0] - 1])
 
 </details>
 
-Coordinate conventions differ too: polygons and oriented-box corners are in pixel-centre space, axis-aligned boxes in pixel-edge space, and COCO carries OBB corners inside `segmentation`. See [Annotation formats](../datasets/outputs.md) before writing a target converter.
+Coordinate conventions differ between memory and disk. On an in-memory `Sample`, polygons and oriented-box corners are in pixel-centre space and axis-aligned boxes in pixel-edge space; the COCO and YOLO writers convert every point field to pixel-edge space at the file boundary, so an exported file uses one convention throughout. COCO carries OBB corners inside `segmentation`. See [Annotation formats](../datasets/outputs.md) before writing a target converter.
 
 ## Keep splits and seeds stable
 

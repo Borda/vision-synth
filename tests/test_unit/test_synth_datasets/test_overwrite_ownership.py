@@ -216,6 +216,7 @@ def test_an_overwrite_that_fails_during_generation_keeps_the_earlier_dataset(tmp
 
     The new dataset is written into a staging directory first, so the old one is deleted only after the new one is
     complete; before, ``overwrite`` deleted first and the lazy failure then lost both.
+
     """
     generate_dataset(tmp_path, num_images=4, fmt=fmt, **_COMMON)
     before = _snapshot(tmp_path)
@@ -371,8 +372,9 @@ _OWNER = ".vision-synth-owner.json"
 class _FailOnCall:
     """Wrap ``real`` so the calls numbered in ``fail_at`` raise ``error``, just before the real call or just after it.
 
-    ``after=True`` is the interrupt that lands once a rename has happened but before the code that made it could
-    record it.
+    ``after=True`` is the interrupt that lands once a rename has happened but before the code that made it could record
+    it.
+
     """
 
     def __init__(self, real, *fail_at, error=OSError, after=False):
@@ -427,6 +429,7 @@ def test_a_replacing_write_swaps_through_a_backup_and_leaves_nothing_behind(tmp_
     """Every earlier path is renamed into the backup and every staged entry into place; on success nothing is left.
 
     Pins the rename count the fault-injection cases below index into.
+
     """
     _three_split_yolo(tmp_path)
     counter = _FailOnCall(os.replace)
@@ -453,11 +456,12 @@ def test_a_swap_stopped_at_any_rename_is_rolled_back_completely_and_the_next_wri
 ):
     """Whatever stops the swap, wherever, every earlier file is back in place and no reserved directory is left.
 
-    A rollback verified complete by re-listing removes the emptied backup with ``os.rmdir`` alone, which cannot
-    delete a file, so the next write is not blocked by an empty leftover.
+    A rollback verified complete by re-listing removes the emptied backup with ``os.rmdir`` alone, which cannot delete a
+    file, so the next write is not blocked by an empty leftover.
 
-    ``after-rename`` is the case the in-memory bookkeeping missed: a Ctrl+C between a rename into the backup and
-    the line recording it left that path untracked, and the rollback then deleted the backup holding its only copy.
+    ``after-rename`` is the case the in-memory bookkeeping missed: a Ctrl+C between a rename into the backup and the
+    line recording it left that path untracked, and the rollback then deleted the backup holding its only copy.
+
     """
     _three_split_yolo(tmp_path)
     before = _snapshot(tmp_path)
@@ -485,6 +489,7 @@ def test_a_coco_swap_rolls_back_whole_directory_promotions(tmp_path, monkeypatch
     """COCO splits are promoted as whole directories rather than merged; a stopped swap still loses nothing.
 
     Four backups (train, val, test, manifest) then three promotions (train, val, manifest).
+
     """
     generate_dataset(tmp_path, num_images=8, fmt="coco", split_ratios=SplitRatios(0.5, 0.25, 0.25), **_COMMON)
     before = _snapshot(tmp_path)
@@ -774,12 +779,13 @@ def test_an_unmarked_reserved_dir_is_unrecognized_and_never_called_disposable(tm
     message = _refusal(tmp_path)
 
     assert "not created by vision-synth" in message
-    assert "delet" not in message.lower()
+    assert "delete" not in message.lower()
     assert _snapshot(tmp_path) == before
 
 
 def test_a_legacy_split_with_a_reserved_name_is_unrecognized_and_untouched(tmp_path):
-    """A split an older release wrote as ``.Vision-Synth-Staging-1`` is refused as unrecognized, never as disposable."""
+    """A split an older release wrote as ``.Vision-Synth-Staging-1`` is refused as unrecognized, never as
+    disposable."""
     generate_dataset(tmp_path, num_images=4, fmt="coco", **_COMMON)
     (tmp_path / ".Vision-Synth-Staging-1").mkdir()
     (tmp_path / ".Vision-Synth-Staging-1" / "_annotations.coco.json").write_text("{}", encoding="utf-8")
@@ -789,7 +795,7 @@ def test_a_legacy_split_with_a_reserved_name_is_unrecognized_and_untouched(tmp_p
     message = _refusal(tmp_path)
 
     assert "not created by vision-synth" in message
-    assert "delet" not in message.lower()
+    assert "delete" not in message.lower()
     assert _snapshot(tmp_path) == before
 
 
@@ -804,7 +810,8 @@ def test_the_discard_prefix_is_reserved_for_split_names(name):
 
 
 def _apply_restore_plan(root: Path) -> None:
-    """Carry out the backup's restore steps mechanically, from the structured plan the refusal message is built from."""
+    """Carry out the backup's restore steps mechanically, from the structured plan the refusal message is built
+    from."""
     (backup,) = [path for path in root.iterdir() if path.name.startswith(".vision-synth-backup")]
     plan = writers._restore_plan(backup, _marker(backup))
     for rel in plan.replace:
@@ -827,8 +834,9 @@ def _die_instead_of_rolling_back(*args, **kwargs):
 def test_following_the_restore_steps_after_a_kill_mid_swap_loses_nothing(tmp_path, monkeypatch, fail_at, after):
     """Killed at any swap rename with no rollback, the refusal's per-path steps rebuild the earlier dataset exactly.
 
-    A path not yet backed up still holds its only original; the old guidance deleted it before moving a backup copy
-    that did not exist.
+    A path not yet backed up still holds its only original; the old guidance deleted it before moving a backup copy that
+    did not exist.
+
     """
     _three_split_yolo(tmp_path)
     before = _snapshot(tmp_path)
@@ -1032,6 +1040,7 @@ def test_planning_reads_each_directory_once_however_many_paths_are_listed(tmp_pa
     """Directory reads stay bounded by the number of directories: 800 listed files cost what 200 do.
 
     Planning used to list a path's parent once per path, so a file-level manifest made it quadratic.
+
     """
     small = _directory_reads_for_a_file_level_overwrite(tmp_path / "small", 200, monkeypatch)
     large = _directory_reads_for_a_file_level_overwrite(tmp_path / "large", 800, monkeypatch)
@@ -1045,8 +1054,9 @@ def test_planning_reads_each_directory_once_however_many_paths_are_listed(tmp_pa
 def test_an_unreadable_directory_aborts_planning_instead_of_reading_as_absent(tmp_path, monkeypatch, error):
     """A directory that cannot be listed is an error, never an empty one.
 
-    Reading it as absent would plan the listed files as new paths, skip their backup, and lose the originals if the
-    swap then failed.
+    Reading it as absent would plan the listed files as new paths, skip their backup, and lose the originals if the swap
+    then failed.
+
     """
     common = {**_COMMON, "fmt": "yolo", "split_ratios": SplitRatios.custom({"train": 1.0})}
     generate_dataset(tmp_path, num_images=4, **common)
@@ -1113,6 +1123,7 @@ def test_a_rollback_that_cannot_stat_a_staged_path_stops_instead_of_moving_an_or
     """An unreadable staged ``data.yaml`` is unknown, not absent: the rollback stops and moves nothing onto it.
 
     Reading it as absent made the rollback move the original ``data.yaml`` into staging, where nothing looked.
+
     """
     _three_split_yolo(tmp_path)
     before = _snapshot(tmp_path)
@@ -1209,14 +1220,22 @@ def _interrupted_backup(root: Path) -> Path:
     return backup
 
 
-def test_an_unreadable_marker_is_ownership_unknown_not_unrecognized(tmp_path):
+def test_an_unreadable_marker_is_ownership_unknown_not_unrecognized(tmp_path, monkeypatch):
     """A marker that exists but cannot be opened says nothing either way: no action is suggested on its directory."""
-    backup = _interrupted_backup(tmp_path)
-    (backup / _OWNER).chmod(0)
+    _interrupted_backup(tmp_path)
+    real_open = open
+
+    # Denied through ``open`` rather than ``chmod(0)``: Windows only sets a read-only flag and root ignores the mode,
+    # so the file would stay readable there and the test would check nothing.
+    def denying_open(file, *args, **kwargs):
+        if os.fspath(file).endswith(_OWNER):
+            raise PermissionError(errno.EACCES, "Permission denied")
+        return real_open(file, *args, **kwargs)
+
+    monkeypatch.setattr(writers, "open", denying_open, raising=False)
 
     message = _refusal(tmp_path)
 
-    (backup / _OWNER).chmod(0o600)
     assert "ownership unknown" in message
     assert "not created by vision-synth" not in message
     assert _lost_files(tmp_path, _snapshot(tmp_path)) == []

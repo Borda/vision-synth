@@ -83,8 +83,9 @@ def test_antialias_rejects_an_installed_but_unimportable_kornia(monkeypatch: pyt
 def test_standalone_legacy_pickle_keeps_its_old_fast_path_rendering() -> None:
     """A pre-flag standalone segment restores with the fast path, whatever padding mode its state carries.
 
-    Under ``padding_mode="per_transform"`` a segment stores the transform's own mode (here ``reflection``); deriving
-    the flag from that sent a legacy pickle down the matrix path and changed its pixels.
+    Under ``padding_mode="per_transform"`` a segment stores the transform's own mode (here ``reflection``); deriving the
+    flag from that sent a legacy pickle down the matrix path and changed its pixels.
+
     """
     pipe = Compose([T.RandomRotation((45, 45))])
     segment = pipe._segments[0]

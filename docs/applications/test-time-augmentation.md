@@ -142,7 +142,7 @@ True
 
 The forward rotation replaces the box with the axis-aligned hull of its rotated corners, and the inverse rotation takes the hull of *that* larger rectangle. Two hull operations at 25 degrees inflate the area by roughly three times. Merging boxes across rotated test-time views therefore needs oriented boxes or mask-based merging, not this round trip.
 
-Masks and keypoints do not have this problem: they are sampled or mapped pointwise, so they recover to sampling precision under any supported transform.
+Keypoints do not have this problem: they are mapped pointwise, so the inverse recovers them to floating-point precision. Masks do not inflate either, but they recover only where the forward view kept the content on the canvas. A rotation, translation, or zoom-in pushes some pixels outside the output grid; the forward warp replaces what it cannot sample with `mask_fill`, and the inverse cannot bring those pixels back. Before merging mask predictions across views, compute each view's valid region — push an all-ones mask through the same forward and inverse matrices — and average only over pixels that every contributing view actually saw.
 
 ## One segment only
 

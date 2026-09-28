@@ -38,13 +38,13 @@ print(counts)
 
 </details>
 
-`SyntheticConfig` knobs: `img_size`, `min_objects`/`max_objects`, `min_size_ratio`/`max_size_ratio`, `overlap_iou`, `boundary_tolerance`, `rotate`, `asymmetry_jitter`, `background`, `degrade`, `distractors`, `distractor_shapes`, `distractor_colors`, `occluders`, `class_mode`, `task`, `shapes`, `colors`. Overlapping candidates (IoU above `overlap_iou`) and out-of-bounds candidates (more than `boundary_tolerance` outside the frame) are rejected during placement.
+`SyntheticConfig` knobs: `img_size`, `min_objects`/`max_objects`, `min_size_ratio`/`max_size_ratio`, `overlap_iou`, `boundary_tolerance`, `rotate`, `asymmetry_jitter`, `background`, `degrade`, `distractors`, `distractor_shapes`, `distractor_colors`, `occluders`, `class_mode`, `task`, `shapes`, `colors`. `img_size` is an `int` for a square canvas or a `(width, height)` pair for a rectangular one; the object size ratios apply to the shorter side. Overlapping candidates (IoU above `overlap_iou`) and out-of-bounds candidates (more than `boundary_tolerance` outside the frame) are rejected during placement.
 
-`task` and `class_mode` are config fields only. `generate_dataset` takes no `task=` argument of its own — pass it as a keyword and it flows into the config, or set it on a `SyntheticConfig` you build yourself, but not both. Earlier releases accepted it in both places and cross-checked them, which meant a `None` sentinel, a conflict error, and a paragraph explaining which one won; one owner removes all three.
+`task` and `class_mode` are config fields only. `generate_dataset` takes no `task=` argument of its own — pass it as a keyword and it flows into the config, or set it on a `SyntheticConfig` you build yourself, but not both.
 
 ### Choosing a background
 
-`background` accepts a plain fill — a `Color`, an `(r, g, b)` triple, or a `Fill` — or one of the background types, which carry their own parameters and render themselves. The mode *is* the type: a `NoiseBackground` has a `sigma` and a `TextureBackground` does not, so there is no combination of mode and parameter that has to be rejected by hand.
+`background` accepts a plain fill — a `Color` or its name (`"red"`), an `(r, g, b)` triple, or a `Fill` — or one of the background types, which carry their own parameters and render themselves. The mode *is* the type: a `NoiseBackground` has a `sigma` and a `TextureBackground` does not, so there is no combination of mode and parameter that has to be rejected by hand.
 
 | type                     | parameters                                              | what it changes                                                     |
 | ------------------------ | ------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -53,6 +53,8 @@ print(counts)
 | `NoiseBackground`        | `base`, `sigma`                                         | per-pixel Gaussian grain, which removes the trivial edge detector   |
 | `ImpulseNoiseBackground` | `base`, `amount`, `salt_ratio`                          | salt-and-pepper pixels, heavy-tailed and blur-resistant             |
 | `TextureBackground`      | `base`, `amplitude`, `frequency`, `octaves`, `quantize` | value noise at a chosen scale, so false positives become possible   |
+
+On a rectangular canvas, `TextureBackground.frequency` counts features across the shorter side, and `GradientBackground(radial=True)` centres on the canvas centre along each axis.
 
 Each picture below is a pair: on the left the canvas that mode painted, on the right that same canvas with the objects drawn onto it and their exported `bbox_xyxy` in yellow. The left half is there because a texture or a photographic crop stops being readable once shapes cover it.
 
@@ -411,6 +413,58 @@ print(class_names(ClassMode.SHAPE_COLOR, DEFAULT_SHAPES, gold.colors)[:2])
 
 </details>
 
+### Writing your own background or degradation
+
+`Background` and `Degradation` are abstract base classes, so a new canvas or camera effect is a subclass rather than a new config field. A background implements `render(rng, img_size)` and returns a writable `(height, width, 3)` `uint8` array; a degradation implements `apply(image, rng)` and returns a new array of the same shape. The generator passes `img_size` as a plain `int` for a square canvas and as `(width, height)` for a rectangular one; `as_canvas_size` turns either spelling into `(width, height)`. Override `consumes_randomness` to return `False` when the class draws nothing random: the generator then hands it `None` instead of a side stream.
+
+```python
+import numpy as np
+from numpy.typing import NDArray
+
+from synth_datasets import Background, Degradation, SyntheticConfig, SyntheticGenerator
+from synth_datasets.core.config import as_canvas_size
+
+
+class StripeBackground(Background):
+    """Vertical grey stripes, eight pixels wide."""
+
+    @property
+    def consumes_randomness(self) -> bool:
+        return False  # deterministic, so the generator hands render() no stream
+
+    def render(self, rng: np.random.Generator | None, img_size: int | tuple[int, int]) -> NDArray[np.uint8]:
+        width, height = as_canvas_size(img_size)
+        columns = ((np.arange(width) // 8) % 2 * 80 + 60).astype(np.uint8)
+        return np.ascontiguousarray(np.broadcast_to(columns[None, :, None], (height, width, 3)))
+
+
+class Invert(Degradation):
+    """Photographic negative."""
+
+    @property
+    def consumes_randomness(self) -> bool:
+        return False
+
+    def apply(self, image: NDArray[np.uint8], rng: np.random.Generator | None) -> NDArray[np.uint8]:
+        return 255 - image
+
+
+config = SyntheticConfig(img_size=(96, 48), background=StripeBackground(), degrade=(Invert(),))
+sample = next(iter(SyntheticGenerator(config).generate(1, seed=0)))
+print(sample.image.shape)
+```
+
+<details>
+<summary>A rectangular canvas painted by the custom background</summary>
+
+```
+(48, 96, 3)
+```
+
+</details>
+
+Both classes draw from their own side stream, never from the placement stream, so switching one on never moves an object at a fixed seed.
+
 ## Extending the vocabulary
 
 Every shape family — the analytic primitives, the animals, the symbols, the letters — is registered once in `synth_datasets.families`, and every other module reads that registry rather than naming the families itself:
@@ -438,7 +492,7 @@ A `ShapeFamily` carries its members, an outline accessor, and — for a keypoint
 
 ### Registering an output format
 
-`OutputFormat` is a closed enum, but the writer table behind it is not. `register_writer` accepts any key, and `generate_dataset(fmt=...)` will then resolve it:
+`OutputFormat` is a closed enum, but the writer table behind it is not. `register_writer` accepts any key, and `generate_dataset(fmt=...)` then resolves it like a built-in format. A custom writer that overrides `owned_paths` also gets the built-ins' refusal to write into a populated destination and their `overwrite=True` replacement; calling `self.record_output(splits, output_dir)` at the end of `write` records those paths in the `.vision-synth.json` manifest, which is what lets a later `overwrite` remove a split this run no longer writes:
 
 ```python
 from synth_datasets import (

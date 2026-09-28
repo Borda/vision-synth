@@ -131,9 +131,10 @@ keypoints 10
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | Repeat the same data           | `seed=0`; keep configuration and environment fixed                                                                    |
 | Change dataset size            | `num_images=...` (total across splits)                                                                                |
-| Change image resolution        | `img_size=...` (square canvas side in pixels)                                                                         |
+| Change image resolution        | `img_size=...` (an `int` side, or `(width, height)`)                                                                  |
 | Increase difficulty            | Object size, `background`, `degrade`, `distractors`, `occluders`; see [difficulty bands](difficulty.md)               |
 | Choose classes and silhouettes | `shapes`, `colors`, `class_mode`; see [shape families](shapes.md)                                                     |
+| Generate from the shell        | `vision-synth generate` (the `cli` extra); see [command line](outputs.md#command-line)                                |
 | Feed a custom training loop    | `SyntheticGenerator` or `SyntheticIterableDataset`; see [streaming](outputs.md#in-memory-streaming-and-training-feed) |
 
 All generation APIs accept either a full `SyntheticConfig` or its individual fields. With `generate_dataset`, pass one form only: `config=...` cannot be combined with content keywords such as `task=` or `img_size=`. Dataset generation does not train a model or schedule a curriculum; follow [Prototyping and convergence checks](prototyping.md) for those experiments.

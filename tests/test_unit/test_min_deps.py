@@ -25,7 +25,9 @@ from types import ModuleType
 import pytest
 
 tomlkit = pytest.importorskip(
-    "tomlkit", reason="min_deps.py needs tomlkit; the oldest-deps CI leg installs it on demand"
+    "tomlkit",
+    reason="min_deps.py needs tomlkit; the oldest-deps CI leg installs it on demand",
+    exc_type=ModuleNotFoundError,
 )
 
 _ROOT = Path(__file__).resolve().parents[2]

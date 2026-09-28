@@ -39,18 +39,32 @@ def _load_experiment(name: str):
 @pytest.fixture(scope="module")
 def bench_memory():
     """Load the memory benchmark once for timeline-accounting checks."""
-    pytest.importorskip("resource", reason="bench_memory requires the POSIX resource module")
-    pytest.importorskip("albumentations", reason="bench_memory imports the Albumentations benchmark path")
-    pytest.importorskip("kornia.augmentation", reason="bench_memory imports the Kornia benchmark path")
-    pytest.importorskip("torchvision.transforms.v2", reason="bench_memory imports the TorchVision benchmark path")
-    pytest.importorskip("rich", reason="bench_memory imports Rich table output")
+    pytest.importorskip(
+        "resource", reason="bench_memory requires the POSIX resource module", exc_type=ModuleNotFoundError
+    )
+    pytest.importorskip(
+        "albumentations", reason="bench_memory imports the Albumentations benchmark path", exc_type=ModuleNotFoundError
+    )
+    pytest.importorskip(
+        "kornia.augmentation", reason="bench_memory imports the Kornia benchmark path", exc_type=ModuleNotFoundError
+    )
+    pytest.importorskip(
+        "torchvision.transforms.v2",
+        reason="bench_memory imports the TorchVision benchmark path",
+        exc_type=ModuleNotFoundError,
+    )
+    pytest.importorskip("rich", reason="bench_memory imports Rich table output", exc_type=ModuleNotFoundError)
     return _load_experiment("bench_memory")
 
 
 @pytest.fixture(scope="module")
 def bench_rfdetr_shape():
     """Load the detection-shape benchmark once for endpoint checks."""
-    pytest.importorskip("albumentations", reason="bench_rfdetr_shape benchmarks Albumentations detection pipelines")
+    pytest.importorskip(
+        "albumentations",
+        reason="bench_rfdetr_shape benchmarks Albumentations detection pipelines",
+        exc_type=ModuleNotFoundError,
+    )
     return _load_experiment("bench_rfdetr_shape")
 
 

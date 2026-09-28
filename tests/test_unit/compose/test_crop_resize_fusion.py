@@ -306,7 +306,7 @@ class TestCropResizeSegmentForward:
     @pytest.fixture
     def kornia_crop_segment(self) -> CropResizeSegment:
         """Return a CropResizeSegment backed by Kornia RandomResizedCrop."""
-        pytest.importorskip("kornia")
+        pytest.importorskip("kornia", exc_type=ModuleNotFoundError)
         transform = kornia_aug.RandomResizedCrop(size=(64, 64), scale=(0.5, 1.0))
         adapter = KorniaAdapter()
         return CropResizeSegment(transform, adapter)
@@ -314,7 +314,7 @@ class TestCropResizeSegmentForward:
     @pytest.fixture
     def tv_v1_crop_segment(self) -> CropResizeSegment:
         """Return a CropResizeSegment backed by TorchVision v1 RandomResizedCrop."""
-        pytest.importorskip("torchvision")
+        pytest.importorskip("torchvision", exc_type=ModuleNotFoundError)
         transform = tv_trans.RandomResizedCrop(size=(64, 64))
         adapter = TorchVisionAdapter()
         return CropResizeSegment(transform, adapter)

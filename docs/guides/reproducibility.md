@@ -143,7 +143,7 @@ from torch.utils.data import DataLoader, get_worker_info
 
 
 def seed_augmentation_worker(worker_id: int) -> None:
-    """Seed Python, NumPy, and stored Albumentations transforms in one worker."""
+    """Seed Python, NumPy, the pipeline generator, and Albumentations transforms in one worker."""
     del worker_id
     worker_seed = torch.initial_seed() % (2**32)
     random.seed(worker_seed)
@@ -154,6 +154,10 @@ def seed_augmentation_worker(worker_id: int) -> None:
         return
 
     pipeline = worker_info.dataset.augment
+    # A caller-owned generator is pickled into every worker with the same state,
+    # so without this each worker replays one identical parameter stream.
+    if pipeline.generator is not None:
+        pipeline.generator.manual_seed(worker_seed)
     for index, transform in enumerate(pipeline.original_transforms):
         set_seed = getattr(transform, "set_random_seed", None)
         if callable(set_seed):
@@ -172,7 +176,7 @@ loader = DataLoader(
 
 Adapt the `dataset.augment` lookup to your dataset. Constructing a fresh pipeline inside every `__getitem__` call has a different state and cost model; document that choice if you use it.
 
-For `SyntheticIterableDataset`, reproducibility also includes distributed identity. Pass `rank`, `world_size`, and an immutable `epoch`; `num_images` is the count produced by each rank, and worker sharding adds the worker id to the stream namespace. Construct a fresh dataset and `DataLoader` per epoch with `persistent_workers=False`, as shown in [the streaming dataset recipe](../datasets/outputs.md#distributed-ranks-and-epochs). The dataset does not inspect the process group or provide `set_epoch()`, so persistent workers cannot receive a new epoch implicitly.
+For `SyntheticIterableDataset`, reproducibility also includes distributed identity. Pass an immutable `epoch`; `rank` and `world_size` come from the initialized `torch.distributed` process group unless passed explicitly. `num_images` is the count produced by each rank, and every stream is seeded from `SeedSequence(seed, spawn_key=(rank, epoch, worker_id))`. Construct a fresh dataset and `DataLoader` per epoch with `persistent_workers=False`, as shown in [the streaming dataset recipe](../datasets/outputs.md#distributed-ranks-and-epochs). The dataset has no `set_epoch()`, so persistent workers cannot receive a new epoch implicitly.
 
 ## Reorder and execution settings are part of the experiment
 

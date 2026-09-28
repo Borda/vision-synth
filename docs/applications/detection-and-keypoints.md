@@ -121,7 +121,7 @@ print(augmented_targets[0]["labels"].tolist())
 
 </details>
 
-The adapter pads only inside the call and returns one target mapping per input image, including empty `(0, 4)` box and `(0,)` label tensors. Keep arbitrary per-instance metadata outside this boundary and apply the returned keep decision yourself, or reject it before calling the helper; silently dropping a field would corrupt alignment.
+The adapter pads only inside the call and returns one target mapping per input image, including empty `(0, 4)` box and `(0,)` label tensors. It returns no keep mask or instance indices, and it rejects any field outside `boxes`, `labels`, `area`, `iscrowd`, and `image_id`. To carry other per-instance metadata — track identifiers, scores — use the dense route from [The postprocessing you own](#the-postprocessing-you-own) instead: run the pipeline with `data_keys=["input", "bbox_xyxy"]`, compute the keep mask yourself (as shown there, or with `instance_keep_mask`), and index every per-instance array with that one mask.
 
 ## Rotation inflates axis-aligned boxes
 

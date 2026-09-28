@@ -187,8 +187,8 @@ def _is_triple(value: object) -> bool:
 def _as_colors(colors: object) -> object:
     """Return a colour option as the tuple of colours ``SyntheticConfig`` takes, from any spelling it was given in.
 
-    Comma-separated names are split, a lone ``(r, g, b)`` triple becomes a one-colour tuple, and a list triple becomes
-    a tuple, since :meth:`~synth_datasets.core.config.Fill.parse` reads a triple only as a tuple.
+    Comma-separated names are split, a lone ``(r, g, b)`` triple becomes a one-colour tuple, and a list triple becomes a
+    tuple, since :meth:`~synth_datasets.core.config.Fill.parse` reads a triple only as a tuple.
 
     """
     if isinstance(colors, str):
