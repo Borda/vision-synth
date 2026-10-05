@@ -1,0 +1,3689 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Historical benchmark results for vision-synth, with CPU latency, batch scaling, primitive routing cost, and measurement limitations.">
+      
+      
+        <meta name="author" content="Jiri Borovec">
+      
+      
+        <link rel="canonical" href="https://borda.github.io/vision-synth/research/benchmarks/">
+      
+      
+        <link rel="prev" href="../parity-tolerances/">
+      
+      
+        <link rel="next" href="../methodology/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Benchmarks - vision-synth</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="vision-synth">
+  <meta property="og:title" content="Benchmarks">
+  <meta property="og:description" content="Historical benchmark results for vision-synth, with CPU latency, batch scaling, primitive routing cost, and measurement limitations.">
+  <meta property="og:url" content="https://borda.github.io/vision-synth/research/benchmarks/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Benchmarks">
+  <meta name="twitter:description" content="Historical benchmark results for vision-synth, with CPU latency, batch scaling, primitive routing cost, and measurement limitations.">
+  <link rel="alternate" type="text/plain" href="https://borda.github.io/vision-synth/llms.txt" title="LLM documentation index">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#benchmarks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="vision-synth" class="md-header__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vision-synth
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Benchmarks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
+        Get started
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-get-started"
+        aria-label="Navigation: Get started"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-get-started">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/installation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Install
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/quickstart/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quickstart
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/how-fusion-works/"
+            class="md-tabs__menu-link"
+            
+          >
+            How fusion works
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/capabilities/"
+            class="md-tabs__menu-link"
+            
+          >
+            Capabilities
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../known-limitations/"
+            class="md-tabs__menu-link"
+            
+          >
+            Known limitations
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../guides/backend-pipelines/" class="md-tabs__link">
+        Guides
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-guides"
+        aria-label="Navigation: Guides"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-guides">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/backend-pipelines/"
+            class="md-tabs__menu-link"
+            
+          >
+            Backend pipelines
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Declarative configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/auxiliary-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Auxiliary targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/introspection/"
+            class="md-tabs__menu-link"
+            
+          >
+            Introspection
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/reproducibility/"
+            class="md-tabs__menu-link"
+            
+          >
+            Reproducibility
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../datasets/" class="md-tabs__link">
+        Synthetic datasets
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-synthetic-datasets"
+        aria-label="Navigation: Synthetic datasets"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-synthetic-datasets">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/prototyping/"
+            class="md-tabs__menu-link"
+            
+          >
+            Prototyping and convergence checks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/shapes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Shape families
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/tasks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Tasks and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/outputs/"
+            class="md-tabs__menu-link"
+            
+          >
+            Annotation formats
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/difficulty/"
+            class="md-tabs__menu-link"
+            
+          >
+            Difficulty bands
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../datasets/customization/"
+            class="md-tabs__menu-link"
+            
+          >
+            Customization and extension
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../applications/" class="md-tabs__link">
+        Applications
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-applications"
+        aria-label="Navigation: Applications"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-applications">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/synthetic-data-experiments/"
+            class="md-tabs__menu-link"
+            
+          >
+            Synthetic data experiments
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/generate-and-augment/"
+            class="md-tabs__menu-link"
+            
+          >
+            Generate and augment
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/classification/"
+            class="md-tabs__menu-link"
+            
+          >
+            Classification
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/segmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Segmentation and dense targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/detection-and-keypoints/"
+            class="md-tabs__menu-link"
+            
+          >
+            Detection and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/test-time-augmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Test-time augmentation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/performance-planning/"
+            class="md-tabs__menu-link"
+            
+          >
+            Performance planning
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--active md-tabs__item--nested">
+      <a href="../quality-and-fidelity/" class="md-tabs__link">
+        Research
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-research"
+        aria-label="Navigation: Research"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-research">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../quality-and-fidelity/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quality and fidelity
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../parity-tolerances/"
+            class="md-tabs__menu-link"
+            
+          >
+            Measured tolerances
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="./"
+            class="md-tabs__menu-link md-tabs__menu-link--active"
+            aria-current="page"
+          >
+            Benchmarks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../methodology/"
+            class="md-tabs__menu-link"
+            
+          >
+            Methodology
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../reference/core/" class="md-tabs__link">
+        API reference
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-api-reference"
+        aria-label="Navigation: API reference"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-api-reference">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/core/"
+            class="md-tabs__menu-link"
+            
+          >
+            Core pipeline
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/types-and-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Types and targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/advanced/"
+            class="md-tabs__menu-link"
+            
+          >
+            Advanced internals
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-generation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset generation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-scenes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset scenes and outputs
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="vision-synth" class="md-nav__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vision-synth
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/how-fusion-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How fusion works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../known-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/backend-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarative configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/auxiliary-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auxiliary targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/introspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../datasets/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/prototyping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/difficulty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Difficulty bands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../applications/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/synthetic-data-experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic data experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/generate-and-augment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate and augment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation and dense targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/detection-and-keypoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/test-time-augmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-time augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/performance-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality-and-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality and fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parity-tolerances/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measured tolerances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-preparation-comparison-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU preparation comparison — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corrected-detector-shaped-cpu-endpoint-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corrected detector-shaped CPU endpoint — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#antialias-cpu-cost-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Antialias CPU cost — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corrected-cpu-tensor-memory-sweep-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corrected CPU tensor-memory sweep — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-bank-score-17861x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed-bank score: 1.7861x
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exhaustive-cpu-pipeline-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exhaustive CPU pipeline latency
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-batch-scaling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU batch scaling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primitive-versus-generic-affine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitive versus generic Affine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historical-cpu-tensor-memory-output-withdrawn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical CPU tensor-memory output (withdrawn)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Historical CPU tensor-memory output (withdrawn)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#memory-counter-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory-counter boundaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historical-cuda-batch-sweep-september-5-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical CUDA batch sweep (September 5, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Historical CUDA batch sweep (September 5, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#engine-choice-on-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Engine choice on device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fusion-value-on-device-by-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fusion value on device, by backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-three-sequences-lose-2x-3x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why three sequences lose 2x-3x
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reproduce-this-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproduce this run
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/types-and-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-scenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset scenes and outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-preparation-comparison-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU preparation comparison — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corrected-detector-shaped-cpu-endpoint-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corrected detector-shaped CPU endpoint — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#antialias-cpu-cost-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Antialias CPU cost — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corrected-cpu-tensor-memory-sweep-september-6-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corrected CPU tensor-memory sweep — September 6, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-bank-score-17861x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed-bank score: 1.7861x
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exhaustive-cpu-pipeline-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exhaustive CPU pipeline latency
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-batch-scaling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CPU batch scaling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primitive-versus-generic-affine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitive versus generic Affine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historical-cpu-tensor-memory-output-withdrawn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical CPU tensor-memory output (withdrawn)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Historical CPU tensor-memory output (withdrawn)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#memory-counter-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory-counter boundaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historical-cuda-batch-sweep-september-5-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical CUDA batch sweep (September 5, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Historical CUDA batch sweep (September 5, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#engine-choice-on-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Engine choice on device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fusion-value-on-device-by-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fusion value on device, by backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-three-sequences-lose-2x-3x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why three sequences lose 2x-3x
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reproduce-this-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproduce this run
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="benchmarks">Benchmarks<a class="headerlink" href="#benchmarks" title="Permanent link">&para;</a></h1>
+<p>Fusion is most useful when a pipeline contains several compatible geometric transforms. It is not a universal speedup: a single transform, color-heavy workload, or particular backend and batch size can be neutral or slower. The historical suite below was collected on <strong>July 12, 2026</strong>; the separately labeled CPU preparation comparison was collected on <strong>September 6, 2026</strong>.</p>
+<p>The figures are historical measurements for the environments below, not performance promises for every workload or the current revision. The memory table is retained as an audit trail but is withdrawn as evidence because its original timeline accounting interpreted profiler events incorrectly. The current memory tool is action-aware, and the current RF-DETR probe has reproducible variants at a common model-ready endpoint, but it does not replay shared geometry. Fresh, separately scoped CPU sweeps appear below; historical device ratios remain unvalidated for this revision. See <a href="../methodology/">Methodology</a> for the publication gate.</p>
+<h2 id="cpu-preparation-comparison-september-6-2026">CPU preparation comparison — September 6, 2026<a class="headerlink" href="#cpu-preparation-comparison-september-6-2026" title="Permanent link">&para;</a></h2>
+<p>The CV remediation compares committed baseline <code>1b454ed</code> with the Wave 3 implementation. On this host, reusing native Albumentations matrix preparation reduced repeated adapter conversions while retaining the tensor path's float32 rounding and random-draw order.</p>
+<table>
+<thead>
+<tr>
+<th>Batch</th>
+<th>Preparation before / after (ms)</th>
+<th>Preparation ratio</th>
+<th>Image + boxes before / after (ms)</th>
+<th>Endpoint ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0.0513 / 0.0323</td>
+<td>1.59x</td>
+<td>0.675 / 0.592</td>
+<td>1.14x</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0.462 / 0.194</td>
+<td>2.38x</td>
+<td>4.175 / 3.782</td>
+<td>1.10x</td>
+</tr>
+<tr>
+<td>32</td>
+<td>1.890 / 0.792</td>
+<td>2.39x</td>
+<td>16.381 / 14.663</td>
+<td>1.12x</td>
+</tr>
+</tbody>
+</table>
+<p>Each cell is the median of three run medians. All three batch-32 preparation runs improved. Raw per-run medians, p95 values, profiles and source identity are in the <a href="../../assets/benchmarks/cv-wave3-preparation-before.json">before</a> and <a href="../../assets/benchmarks/cv-wave3-preparation-after.json">after</a> records.</p>
+<p>Configuration: CPU, one Torch thread, RGB <code>224 x 224</code>, float32 BCHW images, one dense pixel-edge box per image, <code>execution="torch"</code>; <code>Rotate(limit=15, p=0.7)</code>, <code>Affine(scale=(0.9, 1.1), p=0.8)</code>, <code>HorizontalFlip(p=0.5)</code>. Each independent pipeline seeds NumPy, Torch and each Albumentations transform with <code>17</code>; five warmups precede 30 timed calls per run. Host: macOS 26.6.2 arm64, Torch 2.10.0, Albumentations 2.0.8, NumPy 2.2.6.</p>
+<p>The complete endpoint includes augmentation and box routing. It excludes decode, host/device transfers, model execution and training. These ratios are local measurements for this chain; antialiasing is disabled. No accelerator or model-quality improvement is inferred.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">NO_ALBUMENTATIONS_UPDATE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>python<span class="w"> </span>experiments/bench_albu_preparation.py<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>experiments/results/preparation.json<span class="w"> </span>--revision<span class="w"> </span>YOUR_SOURCE_REVISION
+</span></code></pre></div>
+<p>Use the same environment, script and otherwise idle host for both source trees; <code>PYTHONPATH</code> can select an exported baseline. The private preparation probe attributes internal cost and may need updating when that implementation changes.</p>
+<h2 id="corrected-detector-shaped-cpu-endpoint-september-6-2026">Corrected detector-shaped CPU endpoint — September 6, 2026<a class="headerlink" href="#corrected-detector-shaped-cpu-endpoint-september-6-2026" title="Permanent link">&para;</a></h2>
+<p><code>experiments/bench_rfdetr_shape.py</code> ran its complete 16-row sweep: two chains, 640/1024-pixel canvases, four variants, 20 warmups and 200 timed calls. Each endpoint holds a CPU float32 BCHW image in <code>[0, 1]</code>, clipped/filtered float32 boxes and aligned int64 labels. The timed NumPy-input rows include conversion to that model-ready endpoint. A detector forward/backward pass is not timed.</p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>Two ops, 640 (ms)</th>
+<th>Two ops, 1024 (ms)</th>
+<th>Four ops, 640 (ms)</th>
+<th>Four ops, 1024 (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native Albumentations</td>
+<td>0.751</td>
+<td>1.300</td>
+<td>1.999</td>
+<td>2.588</td>
+</tr>
+<tr>
+<td>Fused cv2, NumPy input</td>
+<td>0.659</td>
+<td>1.005</td>
+<td>0.712</td>
+<td>0.991</td>
+</tr>
+<tr>
+<td>Fused Torch, NumPy input</td>
+<td>5.368</td>
+<td>12.727</td>
+<td>5.412</td>
+<td>12.887</td>
+</tr>
+<tr>
+<td>Fused cv2, tensor input</td>
+<td>0.836</td>
+<td>1.546</td>
+<td>0.778</td>
+<td>1.311</td>
+</tr>
+</tbody>
+</table>
+<p>The cv2 NumPy-input ratio is about 1.14x/1.29x for two ops, and 2.81x/2.61x for four ops at 640/1024. This sweep used 12 Torch and 16 OpenCV threads. Independent sweeps on this shared host varied; these are single-sweep observations, not guaranteed gains. The tensor-input row starts after image conversion and has a different input boundary. Variants are independently reproducible; they do not replay shared sampled geometry, so these timings cannot establish image fidelity or model quality. <a href="../../assets/benchmarks/cv-wave3-rfdetr.json">Raw p95, endpoint, seed and source records</a>.</p>
+<p>Before augmentation, a 640/1024 RGB uint8 image occupies 1,228,800/3,145,728 bytes; the corresponding float32 model image occupies 4,915,200/12,582,912 bytes. Twelve float32 boxes and int64 labels add 192 and 96 bytes before filtering. These are tensor/array payload sizes, not measured allocations or host/device transfer counts. Accelerator transfers require a device trace; none was collected here.</p>
+<h2 id="antialias-cpu-cost-september-6-2026">Antialias CPU cost — September 6, 2026<a class="headerlink" href="#antialias-cpu-cost-september-6-2026" title="Permanent link">&para;</a></h2>
+<p>Per-sample filtering fixes neighbor-dependent blur and has an explicit cost. A fixed full-canvas Kornia crop from RGB224 to 56 pixels measured:</p>
+<table>
+<thead>
+<tr>
+<th>Batch</th>
+<th>Flag off (ms)</th>
+<th>Flag on (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0.288</td>
+<td>0.739</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0.515</td>
+<td>4.247</td>
+</tr>
+<tr>
+<td>32</td>
+<td>1.394</td>
+<td>14.992</td>
+</tr>
+</tbody>
+</table>
+<p>One Torch thread, five warmups, 30 calls, three repeats; each table cell is the median of run medians. A separate heterogeneous batch-32 probe measured 0.018 ms for scale estimation and 6.355 ms for the full prefilter. Its CPU profile counted 50 scalar extractions; this identifies potential synchronization sites but does not measure accelerator synchronization latency. The simple implementation filters active rows separately so each Gaussian support matches standalone execution. Exact-support grouping is a possible future optimization if this opt-in cost blocks a measured workload.</p>
+<p>Run <code>experiments/bench_antialias.py</code> with Kornia installed. <a href="../../assets/benchmarks/cv-wave3-antialias.json">Raw timings and CPU profile counts</a>. These measurements demonstrate cost; they do not establish model accuracy or accelerator performance.</p>
+<h2 id="corrected-cpu-tensor-memory-sweep-september-6-2026">Corrected CPU tensor-memory sweep — September 6, 2026<a class="headerlink" href="#corrected-cpu-tensor-memory-sweep-september-6-2026" title="Permanent link">&para;</a></h2>
+<p>The action-aware tool completed all 72 native/fused rows: six sequences, three backends, batches 1 and 8, RGB256, three warmups, 12 Torch and 16 OpenCV threads. All rows returned counters. Representative three-geometric-operation rows:</p>
+<table>
+<thead>
+<tr>
+<th>Backend / batch</th>
+<th>Native / fused live peak (MiB)</th>
+<th>Native / fused CREATE count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kornia / 1</td>
+<td>2.751 / 1.500</td>
+<td>271 / 28</td>
+</tr>
+<tr>
+<td>kornia / 8</td>
+<td>21.002 / 16.002</td>
+<td>429 / 260</td>
+</tr>
+<tr>
+<td>torchvision / 1</td>
+<td>4.250 / 2.250</td>
+<td>35 / 23</td>
+</tr>
+<tr>
+<td>torchvision / 8</td>
+<td>30.500 / 16.002</td>
+<td>35 / 231</td>
+</tr>
+</tbody>
+</table>
+<p><a href="../../assets/benchmarks/cv-wave3-memory.json">All live/incremental peaks, preexisting bytes, CREATE counts, tracemalloc and RSS deltas</a>. These are Torch tensor-timeline metrics, not total process memory. NumPy/OpenCV allocations are outside that timeline; near-zero Albumentations tensor peaks do not mean zero memory use. RSS deltas and tracemalloc describe different scopes and are not substitutes for transient total-process peaks. The profiler warned about an allocation made before profiling whose size was unknown, so baseline accounting is limited to visible events.</p>
+<p>Run <code>NO_ALBUMENTATIONS_UPDATE=1 python experiments/bench_memory.py --devices '["cpu"]' --batch-sizes '[1,8]' --warmup 3 --json</code>. Old memory ratios below remain withdrawn. No CUDA/MPS memory result was collected.</p>
+<details class="abstract">
+<summary>Historical test environment</summary>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Operating system</td>
+<td>macOS 26.5.2, arm64</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>3.12.13</td>
+</tr>
+<tr>
+<td><code>vision-synth</code></td>
+<td>0.9.0.dev0</td>
+</tr>
+<tr>
+<td>PyTorch</td>
+<td>2.10.0</td>
+</tr>
+<tr>
+<td>TorchVision</td>
+<td>0.25.0</td>
+</tr>
+<tr>
+<td>Kornia</td>
+<td>0.8.2</td>
+</tr>
+<tr>
+<td>Albumentations</td>
+<td>2.0.8</td>
+</tr>
+<tr>
+<td>Input</td>
+<td>256 x 256 images; tensor inputs are BCHW <code>float32</code></td>
+</tr>
+<tr>
+<td>CPU batch semantics</td>
+<td>Albumentations applies CPU images sequentially within each batch</td>
+</tr>
+<tr>
+<td>CUDA in this July run</td>
+<td>Unavailable</td>
+</tr>
+</tbody>
+</table>
+<p>The CPU model string was not available inside the execution environment. The full latency-and-batch run detected CPU only, so this page makes no MPS latency claim. The separate memory script did execute MPS paths, but its MPS counter is not a reliable transient-peak measurement; see <a href="#memory-counter-boundaries">Memory-counter boundaries</a>. CUDA was measured separately on <strong>September 5, 2026</strong> on different hardware; see <a href="#historical-cuda-batch-sweep-september-5-2026">Historical CUDA batch sweep</a>.</p>
+</details>
+<h2 id="fixed-bank-score-17861x">Fixed-bank score: 1.7861x<a class="headerlink" href="#fixed-bank-score-17861x" title="Permanent link">&para;</a></h2>
+<p><code>experiments/optimize_score.py</code> measures 45 native/fused pairs on CPU, batch one, with 256 x 256 inputs. It includes single-operation baselines, pure geometric chains, and mixed geometric/color chains across all three backends.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>real_score=1.7861
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>theoretical_target=2.3752
+</span></code></pre></div>
+<p><code>real_score</code> is the geometric mean of <code>native latency / fused latency</code> for this fixed synthetic bank. In plain language: on that bank, the fused path had a 1.7861x geometric-mean latency advantage. It is not an estimate of a typical user workload.</p>
+<p>The current CI perf gate publishes <code>perf-details-&lt;history-leg&gt;.json</code> and <code>perf-details-pr.json</code> with every complete score pass, each case's native/fused latency and boost, and the runner name, OS, job, and source SHA. Each benchmark job summary also shows median per-case timings. Albumentations' transform-owned RNG is seeded for each pass; this makes its own draw sequences reproducible but does not make native and fused pipelines replay identical parameters.</p>
+<p><code>theoretical_target</code> is the geometric mean number of geometric operations in the bank. It is a warp-count reference, not a speed ceiling: backend overhead, exact-operation fast paths, color work, caching, and wrapper costs all matter.</p>
+<h2 id="exhaustive-cpu-pipeline-latency">Exhaustive CPU pipeline latency<a class="headerlink" href="#exhaustive-cpu-pipeline-latency" title="Permanent link">&para;</a></h2>
+<p><code>experiments/bench_augmentation_pipelines.py</code> ran every one of its 28 sequences for native and fused implementations across Albumentations, Kornia, and TorchVision: <strong>168 timed variants</strong>. Each variant had 20 warmups and 100 timed repetitions. The table groups the per-sequence native/fused ratios with a geometric mean; <code>&gt;1x</code> means the fused path was faster.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th style="text-align: right;">All 28 sequences</th>
+<th style="text-align: right;">Single geometric (<code>a</code>)</th>
+<th style="text-align: right;">Geometric chains (<code>b</code>)</th>
+<th style="text-align: right;">Color-only (<code>c</code>)</th>
+<th style="text-align: right;">Mixed (<code>d</code>)</th>
+<th style="text-align: right;">Wins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Albumentations</td>
+<td style="text-align: right;">1.26x</td>
+<td style="text-align: right;">1.03x</td>
+<td style="text-align: right;">1.70x</td>
+<td style="text-align: right;">1.02x</td>
+<td style="text-align: right;">1.27x</td>
+<td style="text-align: right;">27 / 28</td>
+</tr>
+<tr>
+<td>Kornia</td>
+<td style="text-align: right;">1.56x</td>
+<td style="text-align: right;">1.12x</td>
+<td style="text-align: right;">6.60x</td>
+<td style="text-align: right;">1.01x</td>
+<td style="text-align: right;">1.17x</td>
+<td style="text-align: right;">19 / 28</td>
+</tr>
+<tr>
+<td>TorchVision</td>
+<td style="text-align: right;">1.69x</td>
+<td style="text-align: right;">0.94x</td>
+<td style="text-align: right;">8.03x</td>
+<td style="text-align: right;">1.06x</td>
+<td style="text-align: right;">1.35x</td>
+<td style="text-align: right;">16 / 28</td>
+</tr>
+</tbody>
+</table>
+<p>The category averages are descriptive only: they give equal log-space weight to every sequence and are not weighted by user traffic or production mix.</p>
+<table>
+<thead>
+<tr>
+<th>Representative sequence</th>
+<th>Backend</th>
+<th style="text-align: right;">Native / fused mean latency</th>
+<th style="text-align: right;">Ratio</th>
+<th>Reading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single rotate</td>
+<td>Kornia</td>
+<td style="text-align: right;">0.502 / 0.512 ms</td>
+<td style="text-align: right;">0.98x</td>
+<td>Slight fused loss.</td>
+</tr>
+<tr>
+<td>Single rotate</td>
+<td>TorchVision</td>
+<td style="text-align: right;">0.785 / 0.816 ms</td>
+<td style="text-align: right;">0.96x</td>
+<td>Slight fused loss.</td>
+</tr>
+<tr>
+<td>Three geometric transforms</td>
+<td>Kornia</td>
+<td style="text-align: right;">1.214 / 0.209 ms</td>
+<td style="text-align: right;">5.80x</td>
+<td>Clear chain benefit.</td>
+</tr>
+<tr>
+<td>Three geometric transforms</td>
+<td>TorchVision</td>
+<td style="text-align: right;">1.593 / 0.216 ms</td>
+<td style="text-align: right;">7.36x</td>
+<td>Clear chain benefit.</td>
+</tr>
+<tr>
+<td>Five geometric transforms with warps</td>
+<td>Kornia</td>
+<td style="text-align: right;">4.750 / 0.339 ms</td>
+<td style="text-align: right;">14.03x</td>
+<td>Large backend-specific gain.</td>
+</tr>
+<tr>
+<td>Five geometric transforms with warps</td>
+<td>TorchVision</td>
+<td style="text-align: right;">3.829 / 0.237 ms</td>
+<td style="text-align: right;">16.16x</td>
+<td>Large backend-specific gain.</td>
+</tr>
+<tr>
+<td>Mixed 4 geometric + 3 color, aggressive reorder</td>
+<td>Kornia</td>
+<td style="text-align: right;">4.431 / 3.574 ms</td>
+<td style="text-align: right;">1.24x</td>
+<td>Moderate gain.</td>
+</tr>
+<tr>
+<td>Mixed 4 geometric + 3 color, aggressive reorder</td>
+<td>TorchVision</td>
+<td style="text-align: right;">2.351 / 0.972 ms</td>
+<td style="text-align: right;">2.42x</td>
+<td>Gain depends on the sequence.</td>
+</tr>
+</tbody>
+</table>
+<p>The benchmark also regenerated native/fused visual comparisons for every sequence. Those images are a sanity aid, not a proof of equivalence; see <a href="../quality-and-fidelity/">Quality and fidelity</a> for the distinction.</p>
+<h2 id="cpu-batch-scaling">CPU batch scaling<a class="headerlink" href="#cpu-batch-scaling" title="Permanent link">&para;</a></h2>
+<p><code>experiments/bench_gpu_batch.py</code> completed its normal CPU sweep: seven representative sequences, three backends, batch sizes 1, 8, and 32, ten warmups, and 30 timed samples per variant. The figures below are geometric means of the seven <strong>median</strong> native/fused latency ratios.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th style="text-align: right;">Batch 1</th>
+<th style="text-align: right;">Batch 8</th>
+<th style="text-align: right;">Batch 32</th>
+<th style="text-align: right;">Fused wins at batch 32</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kornia</td>
+<td style="text-align: right;">2.99x</td>
+<td style="text-align: right;">1.73x</td>
+<td style="text-align: right;">1.62x</td>
+<td style="text-align: right;">5 / 7</td>
+</tr>
+<tr>
+<td>TorchVision</td>
+<td style="text-align: right;">3.06x</td>
+<td style="text-align: right;">0.85x</td>
+<td style="text-align: right;">0.63x</td>
+<td style="text-align: right;">1 / 7</td>
+</tr>
+<tr>
+<td>Albumentations</td>
+<td style="text-align: right;">1.52x</td>
+<td style="text-align: right;">1.51x</td>
+<td style="text-align: right;">1.51x</td>
+<td style="text-align: right;">7 / 7</td>
+</tr>
+</tbody>
+</table>
+<p>This sweep exposes an important limitation: TorchVision was favorable for the sampled batch-one workloads, but was slower in most sampled batch-8 and batch-32 workloads. Do not assume an improvement merely because a pipeline is fused.</p>
+<table>
+<thead>
+<tr>
+<th>Representative sequence</th>
+<th>Backend / batch</th>
+<th style="text-align: right;">Native / fused median latency</th>
+<th style="text-align: right;">Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Three geometric transforms</td>
+<td>Kornia / 1</td>
+<td style="text-align: right;">1.163 / 0.319 ms</td>
+<td style="text-align: right;">3.65x</td>
+</tr>
+<tr>
+<td>Five geometric transforms with warps</td>
+<td>TorchVision / 1</td>
+<td style="text-align: right;">3.506 / 0.308 ms</td>
+<td style="text-align: right;">11.38x</td>
+</tr>
+<tr>
+<td>Mixed 3 geometric + 3 color, aggressive reorder</td>
+<td>Kornia / 8</td>
+<td style="text-align: right;">8.494 / 8.118 ms</td>
+<td style="text-align: right;">1.05x</td>
+</tr>
+<tr>
+<td>Geometric plus crop/resize</td>
+<td>TorchVision / 8</td>
+<td style="text-align: right;">1.310 / 1.805 ms</td>
+<td style="text-align: right;">0.73x</td>
+</tr>
+<tr>
+<td>Single rotate</td>
+<td>Kornia / 32</td>
+<td style="text-align: right;">5.284 / 5.347 ms</td>
+<td style="text-align: right;">0.99x</td>
+</tr>
+</tbody>
+</table>
+<h2 id="primitive-versus-generic-affine">Primitive versus generic Affine<a class="headerlink" href="#primitive-versus-generic-affine" title="Permanent link">&para;</a></h2>
+<p><code>experiments/bench_primitive_vs_affine.py</code> used 20 warmups and 100 timed repetitions. It explains why exact-operation shortcuts matter: a generic Affine call can be near parity for one operation, but it can also cost far more than a dedicated flip or rotation. Conversely, one combined Affine can replace multiple expensive resampling passes in a chain.</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th style="text-align: right;">Measured ratio</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Albumentations Rotate 30 degrees: Affine / primitive</td>
+<td style="text-align: right;">1.02x</td>
+<td>Near parity.</td>
+</tr>
+<tr>
+<td>Albumentations HFlip: Affine / primitive</td>
+<td style="text-align: right;">17.69x</td>
+<td>The generic route is much more expensive.</td>
+</tr>
+<tr>
+<td>Albumentations VFlip: Affine / primitive</td>
+<td style="text-align: right;">17.84x</td>
+<td>The generic route is much more expensive.</td>
+</tr>
+<tr>
+<td>Kornia Rotate 30 degrees: Affine / primitive</td>
+<td style="text-align: right;">1.23x</td>
+<td>Small generic-route cost.</td>
+</tr>
+<tr>
+<td>TorchVision Rotate 30 degrees: Affine / primitive</td>
+<td style="text-align: right;">3.87x</td>
+<td>Meaningful generic-route cost.</td>
+</tr>
+<tr>
+<td>Albumentations two-operation chain: combined / native</td>
+<td style="text-align: right;">0.70x</td>
+<td>One combined call was faster.</td>
+</tr>
+<tr>
+<td>Albumentations five-operation chain: combined / native</td>
+<td style="text-align: right;">0.37x</td>
+<td>Benefit grew with chain length.</td>
+</tr>
+<tr>
+<td>Albumentations six-operation chain: combined / native</td>
+<td style="text-align: right;">0.33x</td>
+<td>Combined cost remained relatively flat.</td>
+</tr>
+</tbody>
+</table>
+<p>For the first five rows, a ratio near 1 is parity and a ratio above 1 means the generic Affine route costs more. For the chain rows, a lower combined/native ratio is better.</p>
+<h2 id="historical-cpu-tensor-memory-output-withdrawn">Historical CPU tensor-memory output (withdrawn)<a class="headerlink" href="#historical-cpu-tensor-memory-output-withdrawn" title="Permanent link">&para;</a></h2>
+<p><code>experiments/bench_memory.py --json</code> used its normal six-sequence CPU and MPS sweep, batches 1 and 8, and three warmups. The values below are the historical output retained for traceability; they must not be interpreted as current peak-memory or allocation evidence. The current tool now interprets profiler actions explicitly, separating live peak, incremental peak above preexisting memory, baseline bytes, and physical <code>CREATE</code> events; unavailable counters are recorded as null with an error. The corrected September 6 CPU sweep above supplies new tensor-counter evidence; it does not rehabilitate these historical ratios.</p>
+<table>
+<thead>
+<tr>
+<th>Backend / batch</th>
+<th style="text-align: right;">Fused / native peak</th>
+<th style="text-align: right;">Fused / native allocations</th>
+<th style="text-align: right;">Lower peak samples</th>
+<th style="text-align: right;">Lower allocation samples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kornia / 1</td>
+<td style="text-align: right;">0.44x</td>
+<td style="text-align: right;">0.24x</td>
+<td style="text-align: right;">6 / 6</td>
+<td style="text-align: right;">6 / 6</td>
+</tr>
+<tr>
+<td>Kornia / 8</td>
+<td style="text-align: right;">0.38x</td>
+<td style="text-align: right;">0.57x</td>
+<td style="text-align: right;">6 / 6</td>
+<td style="text-align: right;">6 / 6</td>
+</tr>
+<tr>
+<td>TorchVision / 1</td>
+<td style="text-align: right;">0.18x</td>
+<td style="text-align: right;">0.86x</td>
+<td style="text-align: right;">6 / 6</td>
+<td style="text-align: right;">5 / 6</td>
+</tr>
+<tr>
+<td>TorchVision / 8</td>
+<td style="text-align: right;">0.33x</td>
+<td style="text-align: right;">3.50x</td>
+<td style="text-align: right;">6 / 6</td>
+<td style="text-align: right;">0 / 6</td>
+</tr>
+</tbody>
+</table>
+<p>The historical output appeared to show lower profiler-reported peak tensor memory in every sampled CPU Kornia and TorchVision comparison, but that conclusion is not currently supported. It also appeared not to consistently reduce allocation count. Neither observation should guide capacity or performance decisions until a fresh sweep is run with the corrected tool.</p>
+<table>
+<thead>
+<tr>
+<th>Sequence</th>
+<th>Backend / batch</th>
+<th style="text-align: right;">Native / fused reported peak</th>
+<th style="text-align: right;">Fused / native peak</th>
+<th style="text-align: right;">Fused / native allocations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Three geometric transforms</td>
+<td>Kornia / 1</td>
+<td style="text-align: right;">5.5 / 2.3 MB</td>
+<td style="text-align: right;">0.41x</td>
+<td style="text-align: right;">0.11x</td>
+</tr>
+<tr>
+<td>Three geometric transforms</td>
+<td>TorchVision / 8</td>
+<td style="text-align: right;">117.5 / 38.0 MB</td>
+<td style="text-align: right;">0.32x</td>
+<td style="text-align: right;">5.49x</td>
+</tr>
+<tr>
+<td>Five geometric transforms with warps</td>
+<td>TorchVision / 8</td>
+<td style="text-align: right;">284.8 / 38.0 MB</td>
+<td style="text-align: right;">0.13x</td>
+<td style="text-align: right;">4.15x</td>
+</tr>
+<tr>
+<td>Mixed 4 geometric + 3 color</td>
+<td>Kornia / 8</td>
+<td style="text-align: right;">582.5 / 433.1 MB</td>
+<td style="text-align: right;">0.74x</td>
+<td style="text-align: right;">0.60x</td>
+</tr>
+<tr>
+<td>Geometric plus crop/resize</td>
+<td>TorchVision / 8</td>
+<td style="text-align: right;">75.9 / 24.5 MB</td>
+<td style="text-align: right;">0.32x</td>
+<td style="text-align: right;">4.09x</td>
+</tr>
+</tbody>
+</table>
+<h3 id="memory-counter-boundaries">Memory-counter boundaries<a class="headerlink" href="#memory-counter-boundaries" title="Permanent link">&para;</a></h3>
+<ul>
+<li>CPU peak and allocation events came from a Torch profiler memory timeline; they do not capture every allocation made by native code. The historical run used the old sign-based accounting; current action-aware output is not represented by the tables above.</li>
+<li>Native Albumentations uses NumPy/OpenCV, so its <code>0.0 MB</code> Torch-profiler rows are not evidence of zero memory use and are excluded from the comparison.</li>
+<li>MPS reports an allocation delta, not a reliable transient peak. Its full-run records are preserved as diagnostics, not summarized as a memory claim.</li>
+<li>CUDA was unavailable in the July run and has a different allocator counter; a separate historical CUDA latency sweep appears below.</li>
+<li>Allocation counts depend on the profiler and dependency versions. They can increase even when peak tensor memory falls.</li>
+</ul>
+<h2 id="historical-cuda-batch-sweep-september-5-2026">Historical CUDA batch sweep (September 5, 2026)<a class="headerlink" href="#historical-cuda-batch-sweep-september-5-2026" title="Permanent link">&para;</a></h2>
+<p>The July run had no GPU, so every figure above is CPU. This section is a separate, later run on different hardware and records historical CUDA numbers from <code>experiments/bench_gpu_batch.py --batch-sizes 1 8 32 64 --warmup 10 --measure 30</code>, with 308 measured cases and 28 recorded skips. It is evidence from that dated environment, not a current-head or current-runner claim.</p>
+<details class="abstract">
+<summary>CUDA test environment</summary>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accelerator</td>
+<td>NVIDIA L4</td>
+</tr>
+<tr>
+<td>Operating system</td>
+<td>Linux x86_64 (Google Colab)</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>3.13.15</td>
+</tr>
+<tr>
+<td><code>vision-synth</code></td>
+<td>0.12.0.dev0</td>
+</tr>
+<tr>
+<td>PyTorch</td>
+<td>2.11.0+cu128</td>
+</tr>
+<tr>
+<td>Input</td>
+<td>256 x 256 images; tensor inputs are BCHW <code>float32</code></td>
+</tr>
+<tr>
+<td>Device residency</td>
+<td>Device tensors are allocated on the device</td>
+</tr>
+</tbody>
+</table>
+<p>Native Albumentations has no GPU path and is recorded as a skip on CUDA rather than a slow row. The 28 skips are those cases.</p>
+</details>
+<p><strong>Read the device-residency row before the numbers.</strong> <code>torch.rand(..., device=cuda)</code> allocates the input on the GPU, so no host-to-device copy falls inside the timed region. These are the device path's best case; any workload that starts on the host pays a transfer on top.</p>
+<h3 id="engine-choice-on-device">Engine choice on device<a class="headerlink" href="#engine-choice-on-device" title="Permanent link">&para;</a></h3>
+<p>This package's CPU engine (<code>execution="cv2"</code>, NumPy) against its own device engine (<code>execution="torch"</code>, one batched <code>grid_sample</code>), median ms in that historical run:</p>
+<table>
+<thead>
+<tr>
+<th>sequence</th>
+<th>b32 CPU</th>
+<th>b32 CUDA</th>
+<th>b64 CPU</th>
+<th>b64 CUDA</th>
+<th>b64 result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a01_rotate</code></td>
+<td>7.59</td>
+<td>7.80</td>
+<td>15.18</td>
+<td>14.64</td>
+<td>tie</td>
+</tr>
+<tr>
+<td><code>b02_geom_3</code></td>
+<td>12.88</td>
+<td>9.18</td>
+<td>25.88</td>
+<td>17.82</td>
+<td>CUDA 1.45x</td>
+</tr>
+<tr>
+<td><code>b04_geom_5</code></td>
+<td>13.20</td>
+<td>12.86</td>
+<td>25.82</td>
+<td>25.23</td>
+<td>tie</td>
+</tr>
+<tr>
+<td><code>b05_geom_5_warp</code></td>
+<td>26.26</td>
+<td>26.62</td>
+<td>59.63</td>
+<td>52.64</td>
+<td>CUDA 1.13x</td>
+</tr>
+<tr>
+<td><code>d02_mixed_g3c3</code></td>
+<td>49.33</td>
+<td>107.07</td>
+<td>97.90</td>
+<td>197.88</td>
+<td>CUDA 2.02x worse</td>
+</tr>
+<tr>
+<td><code>d03_mixed_g4c3</code></td>
+<td>49.24</td>
+<td>112.51</td>
+<td>99.46</td>
+<td>206.75</td>
+<td>CUDA 2.08x worse</td>
+</tr>
+<tr>
+<td><code>e01_geo_crop_fuse</code></td>
+<td>18.61</td>
+<td>38.85</td>
+<td>36.33</td>
+<td>107.24</td>
+<td>CUDA 2.95x worse</td>
+</tr>
+</tbody>
+</table>
+<p>No batch size separates the wins from the losses; the split is by what the chain contains. This historical measurement informed ADR-005 keeping host data on cv2 rather than routing it to the device. Revalidate the conclusion on the current revision and deployment hardware before treating it as an active performance rule.</p>
+<h3 id="fusion-value-on-device-by-backend">Fusion value on device, by backend<a class="headerlink" href="#fusion-value-on-device-by-backend" title="Permanent link">&para;</a></h3>
+<p>Fused against that backend's own native implementation, on CUDA:</p>
+<table>
+<thead>
+<tr>
+<th>backend</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kornia</td>
+<td>1.09x-2.79x faster on multi-op chains; 0.83x-0.89x on the single-op <code>a01_rotate</code></td>
+</tr>
+<tr>
+<td>TorchVision</td>
+<td>0.26x-0.93x — slower nearly everywhere, one exception at <code>b05_geom_5_warp</code> b64 1.23x</td>
+</tr>
+</tbody>
+</table>
+<p>Fusion needs more than one operation to fuse, which is why the single-op rotate loses. The TorchVision device result is not explained by that and is an open item.</p>
+<h3 id="why-three-sequences-lose-2x-3x">Why three sequences lose 2x-3x<a class="headerlink" href="#why-three-sequences-lose-2x-3x" title="Permanent link">&para;</a></h3>
+<p>One cause. Every losing sequence contains exactly one <strong>passthrough segment</strong>; every tying sequence contains none.</p>
+<p><code>AlbumentationsAdapter.call_nonfused</code> performs one device-to-host copy, <code>batch</code> sequential host-side transforms, and one host-to-device copy — per passthrough segment, per call. On CUDA that is a full round trip of the batch plus a device sync, which is why the penalty grows with batch while the fused warp gets cheaper per image.</p>
+<table>
+<thead>
+<tr>
+<th>sequence</th>
+<th>segments</th>
+<th>the passthrough is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>b04_geom_5</code></td>
+<td>1: fused affine</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>d02</code> / <code>d03</code></td>
+<td>3: fused affine, fused colour, passthrough</td>
+<td><code>HueSaturationValue</code></td>
+</tr>
+<tr>
+<td><code>e01_geo_crop_fuse</code></td>
+<td>2: fused affine, passthrough</td>
+<td><code>RandomResizedCrop</code></td>
+</tr>
+</tbody>
+</table>
+<p>Geometry and colour fuse correctly. One passthrough is enough to erase the warp's advantage — but the two passthroughs arrive for different reasons, and only one of them is a limitation of what can be fused.</p>
+<p><code>HueSaturationValue</code> is registered <code>POINTWISE</code>: reorderable, but non-linear in RGB, so it composes into neither a <code>FusedColorSegment</code> colour matrix nor a per-channel LUT. It has no fused segment because it cannot have one in the current design. That is a documented limitation, not a gap.</p>
+<p>The historical <code>RandomResizedCrop</code> row used an image-only passthrough. Current <code>execution="torch"</code> routes that registered crop through <code>CropResizeSegment</code> even for image-only calls; auxiliary targets also select the routed crop. The historical CUDA loss therefore does not measure the current route. <code>execution="cv2"</code> and <code>"auto"</code> retain the native image-only crop policy.</p>
+<p>Kornia and TorchVision can combine a compatible crop with preceding geometry into one <code>_FusedGeoCropSegment</code>. Albumentations can retain separate fused-affine and crop segments. Inspect the current plan and profile the complete chain: a remaining CPU-only operation such as <code>HueSaturationValue</code> still causes transfers on accelerator input, even with <code>execution="torch"</code>. The <a href="../../guides/reproducibility/">transfer-aware recipe</a> makes that boundary explicit; no current-device speedup is inferred from the old table.</p>
+<h2 id="reproduce-this-run">Reproduce this run<a class="headerlink" href="#reproduce-this-run" title="Permanent link">&para;</a></h2>
+<p>Synchronize the optional benchmark dependencies, then run every experiment:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uv<span class="w"> </span>run<span class="w"> </span>--all-extras<span class="w"> </span>--group<span class="w"> </span>benchmark<span class="w"> </span>python<span class="w"> </span>experiments/optimize_score.py
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>uv<span class="w"> </span>run<span class="w"> </span>--all-extras<span class="w"> </span>--group<span class="w"> </span>benchmark<span class="w"> </span>python<span class="w"> </span>experiments/bench_augmentation_pipelines.py
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>uv<span class="w"> </span>run<span class="w"> </span>--all-extras<span class="w"> </span>--group<span class="w"> </span>benchmark<span class="w"> </span>python<span class="w"> </span>experiments/bench_primitive_vs_affine.py
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>uv<span class="w"> </span>run<span class="w"> </span>--all-extras<span class="w"> </span>--group<span class="w"> </span>benchmark<span class="w"> </span>python<span class="w"> </span>experiments/bench_gpu_batch.py
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>uv<span class="w"> </span>run<span class="w"> </span>--all-extras<span class="w"> </span>--group<span class="w"> </span>benchmark<span class="w"> </span>python<span class="w"> </span>experiments/bench_memory.py<span class="w"> </span>--json
+</span></code></pre></div>
+<p>The scripts write JSON and visual sanity outputs under <code>experiments/results/</code>. That directory is gitignored because results are host-specific scratch output. For a paper, release, or public performance claim, retain the raw JSON, command, commit SHA, dependency versions, and hardware metadata alongside the claim. For a stronger protocol, follow <a href="../methodology/">Methodology</a>.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../parity-tolerances/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Measured tolerances">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Measured tolerances
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../methodology/" class="md-footer__link md-footer__link--next" aria-label="Next: Methodology">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Methodology
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025–2026 Jiri Borovec
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/Borda/vision-synth" target="_blank" rel="noopener" title="vision-synth on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/nav_dropdown.js"></script>
+      
+        <script src="../../javascripts/pycon_copy.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

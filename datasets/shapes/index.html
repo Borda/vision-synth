@@ -1,0 +1,3399 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The geometric, animal, symbol, and letter shape vocabularies, with a visual reference for every shape.">
+      
+      
+        <meta name="author" content="Jiri Borovec">
+      
+      
+        <link rel="canonical" href="https://borda.github.io/vision-synth/datasets/shapes/">
+      
+      
+        <link rel="prev" href="../prototyping/">
+      
+      
+        <link rel="next" href="../tasks/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Shape families - vision-synth</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="vision-synth">
+  <meta property="og:title" content="Shape families">
+  <meta property="og:description" content="The geometric, animal, symbol, and letter shape vocabularies, with a visual reference for every shape.">
+  <meta property="og:url" content="https://borda.github.io/vision-synth/datasets/shapes/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Shape families">
+  <meta name="twitter:description" content="The geometric, animal, symbol, and letter shape vocabularies, with a visual reference for every shape.">
+  <link rel="alternate" type="text/plain" href="https://borda.github.io/vision-synth/llms.txt" title="LLM documentation index">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shape-families" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="vision-synth" class="md-header__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vision-synth
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Shape families
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
+        Get started
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-get-started"
+        aria-label="Navigation: Get started"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-get-started">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/installation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Install
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/quickstart/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quickstart
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/how-fusion-works/"
+            class="md-tabs__menu-link"
+            
+          >
+            How fusion works
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/capabilities/"
+            class="md-tabs__menu-link"
+            
+          >
+            Capabilities
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../known-limitations/"
+            class="md-tabs__menu-link"
+            
+          >
+            Known limitations
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../guides/backend-pipelines/" class="md-tabs__link">
+        Guides
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-guides"
+        aria-label="Navigation: Guides"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-guides">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/backend-pipelines/"
+            class="md-tabs__menu-link"
+            
+          >
+            Backend pipelines
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Declarative configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/auxiliary-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Auxiliary targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/introspection/"
+            class="md-tabs__menu-link"
+            
+          >
+            Introspection
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/reproducibility/"
+            class="md-tabs__menu-link"
+            
+          >
+            Reproducibility
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--active md-tabs__item--nested">
+      <a href="../" class="md-tabs__link">
+        Synthetic datasets
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-synthetic-datasets"
+        aria-label="Navigation: Synthetic datasets"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-synthetic-datasets">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../prototyping/"
+            class="md-tabs__menu-link"
+            
+          >
+            Prototyping and convergence checks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="./"
+            class="md-tabs__menu-link md-tabs__menu-link--active"
+            aria-current="page"
+          >
+            Shape families
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../tasks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Tasks and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../outputs/"
+            class="md-tabs__menu-link"
+            
+          >
+            Annotation formats
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../difficulty/"
+            class="md-tabs__menu-link"
+            
+          >
+            Difficulty bands
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../customization/"
+            class="md-tabs__menu-link"
+            
+          >
+            Customization and extension
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../applications/" class="md-tabs__link">
+        Applications
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-applications"
+        aria-label="Navigation: Applications"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-applications">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/synthetic-data-experiments/"
+            class="md-tabs__menu-link"
+            
+          >
+            Synthetic data experiments
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/generate-and-augment/"
+            class="md-tabs__menu-link"
+            
+          >
+            Generate and augment
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/classification/"
+            class="md-tabs__menu-link"
+            
+          >
+            Classification
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/segmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Segmentation and dense targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/detection-and-keypoints/"
+            class="md-tabs__menu-link"
+            
+          >
+            Detection and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/test-time-augmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Test-time augmentation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/performance-planning/"
+            class="md-tabs__menu-link"
+            
+          >
+            Performance planning
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../research/quality-and-fidelity/" class="md-tabs__link">
+        Research
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-research"
+        aria-label="Navigation: Research"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-research">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/quality-and-fidelity/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quality and fidelity
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/parity-tolerances/"
+            class="md-tabs__menu-link"
+            
+          >
+            Measured tolerances
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/benchmarks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Benchmarks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/methodology/"
+            class="md-tabs__menu-link"
+            
+          >
+            Methodology
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../reference/core/" class="md-tabs__link">
+        API reference
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-api-reference"
+        aria-label="Navigation: API reference"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-api-reference">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/core/"
+            class="md-tabs__menu-link"
+            
+          >
+            Core pipeline
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/types-and-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Types and targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/advanced/"
+            class="md-tabs__menu-link"
+            
+          >
+            Advanced internals
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-generation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset generation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-scenes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset scenes and outputs
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="vision-synth" class="md-nav__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vision-synth
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/how-fusion-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How fusion works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../known-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/backend-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarative configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/auxiliary-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auxiliary targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/introspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prototyping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapes-colors-and-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shapes, colors, and classes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shapes, colors, and classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shape-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shape reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#animal-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Animal shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Animal shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-animals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting animals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#symbol-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symbol shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Symbol shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-symbols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting symbols
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#letter-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Letter shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Letter shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-letters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting letters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../difficulty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Difficulty bands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../applications/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/synthetic-data-experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic data experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/generate-and-augment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate and augment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation and dense targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/detection-and-keypoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/test-time-augmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-time augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/performance-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/quality-and-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality and fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/parity-tolerances/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measured tolerances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/types-and-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-scenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset scenes and outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapes-colors-and-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shapes, colors, and classes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shapes, colors, and classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shape-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shape reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#animal-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Animal shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Animal shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-animals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting animals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#symbol-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symbol shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Symbol shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-symbols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting symbols
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#letter-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Letter shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Letter shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-letters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting letters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="shape-families">Shape families<a class="headerlink" href="#shape-families" title="Permanent link">&para;</a></h1>
+<h2 id="shapes-colors-and-classes">Shapes, colors, and classes<a class="headerlink" href="#shapes-colors-and-classes" title="Permanent link">&para;</a></h2>
+<p>Shapes are drawn on a gray canvas at random positions, sizes, and rotations, in three colors (<code>red</code>, <code>green</code>, <code>blue</code>). The shape vocabulary has four families: four <strong>geometric</strong> shapes (<code>square</code>, <code>rectangle</code>, <code>triangle</code>, <code>circle</code>), twelve <strong>animal</strong> silhouettes (<code>duck</code>, <code>elephant</code>, <code>giraffe</code>, <code>fish</code>, <code>rabbit</code>, <code>camel</code>, <code>eagle</code>, <code>penguin</code>, <code>whale</code>, <code>kangaroo</code>, <code>flamingo</code>, <code>crocodile</code> — see <a href="#animal-shapes">Animal shapes</a>), seven <strong>symbol</strong> shapes (<code>kite</code>, <code>trapezoid</code>, <code>house</code>, <code>arrow</code>, <code>cross</code>, <code>teardrop</code>, <code>anchor</code> — see <a href="#symbol-shapes">Symbol shapes</a>), and twenty-six <strong>letter</strong> stroke figures (<code>a</code>–<code>z</code> — see <a href="#letter-shapes">Letter shapes</a>). Only the geometric four are drawn unless you opt in.</p>
+<h3 id="shape-reference">Shape reference<a class="headerlink" href="#shape-reference" title="Permanent link">&para;</a></h3>
+<p>A field-guide-style lookup of every shape and its plain axis-aligned detection box (yellow, on a dark keyline that carries the contrast this white page does not give yellow), upright at its own authored orientation exactly as drawn — not sampled from the generator, so no random color, rotation, or <code>asymmetry_jitter</code>. Every symbol and animal is authored mirror-symmetric about its own vertical axis, so this is what keeps a reference recognizable: an <code>arrow</code> pointing up, a <code>house</code> with its roof up, a <code>kite</code> on its long axis. The box here is the detection box at this fixed reference position — and since the oriented box (see <a href="../tasks/#tasks">Tasks</a>) is derived in the shape's own upright frame, it is also exactly what the OBB task exports at this unrotated pose; the generator's rotated samples carry the same box turned rigidly with the shape. Animals, symbols, and letters also show their keypoint schema (dots and skeleton) in orange, matching the animated previews' occluded-keypoint color.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Geometric</label><label for="__tabbed_1_2">Symbols</label><label for="__tabbed_1_3">Animals</label><label for="__tabbed_1_4">Letters</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Reference</th>
+<th>Shape</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="square" src="../../assets/shape-references/geometry-square.png" /></td>
+<td><code>square</code></td>
+<td>Axis-aligned, 4-fold symmetric — under rotation its OBB stays axis-aligned too.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="rectangle" src="../../assets/shape-references/geometry-rectangle.png" /></td>
+<td><code>rectangle</code></td>
+<td>Non-square — under rotation its OBB carries real orientation.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="triangle" src="../../assets/shape-references/geometry-triangle.png" /></td>
+<td><code>triangle</code></td>
+<td>Equilateral, apex up — 3-fold rotationally symmetric, so the silhouette alone reads the same every 120 degrees.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="circle" src="../../assets/shape-references/geometry-circle.png" /></td>
+<td><code>circle</code></td>
+<td>Rotation-invariant — its OBB collapses to the axis-aligned box at every angle.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Reference</th>
+<th>Shape</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="kite" src="../../assets/shape-references/symbols-kite.png" /></td>
+<td><code>kite</code></td>
+<td>Diamond with unequal top/bottom diagonals — convex.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="trapezoid" src="../../assets/shape-references/symbols-trapezoid.png" /></td>
+<td><code>trapezoid</code></td>
+<td>Isosceles trapezoid, short side up — convex.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="house" src="../../assets/shape-references/symbols-house.png" /></td>
+<td><code>house</code></td>
+<td>Square body with a triangular roof — convex.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="arrow" src="../../assets/shape-references/symbols-arrow.png" /></td>
+<td><code>arrow</code></td>
+<td>Up-pointing arrow with two barbs — concave.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="cross" src="../../assets/shape-references/symbols-cross.png" /></td>
+<td><code>cross</code></td>
+<td>Latin cross, lower arm longer — concave.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="teardrop" src="../../assets/shape-references/symbols-teardrop.png" /></td>
+<td><code>teardrop</code></td>
+<td>Round top tapering to a bottom point — convex.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="anchor" src="../../assets/shape-references/symbols-anchor.png" /></td>
+<td><code>anchor</code></td>
+<td>Ring, stock, shaft, and two flukes — concave.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Reference</th>
+<th>Shape</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="duck" src="../../assets/shape-references/animals-duck.png" /></td>
+<td><code>duck</code></td>
+<td>upright-bird</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="elephant" src="../../assets/shape-references/animals-elephant.png" /></td>
+<td><code>elephant</code></td>
+<td>bulky-quadruped</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="giraffe" src="../../assets/shape-references/animals-giraffe.png" /></td>
+<td><code>giraffe</code></td>
+<td>tall-thin</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="fish" src="../../assets/shape-references/animals-fish.png" /></td>
+<td><code>fish</code></td>
+<td>streamlined</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="rabbit" src="../../assets/shape-references/animals-rabbit.png" /></td>
+<td><code>rabbit</code></td>
+<td>compact-eared</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="camel" src="../../assets/shape-references/animals-camel.png" /></td>
+<td><code>camel</code></td>
+<td>bulky-quadruped-humped</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="eagle" src="../../assets/shape-references/animals-eagle.png" /></td>
+<td><code>eagle</code></td>
+<td>upright-bird</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="penguin" src="../../assets/shape-references/animals-penguin.png" /></td>
+<td><code>penguin</code></td>
+<td>upright-bird</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="whale" src="../../assets/shape-references/animals-whale.png" /></td>
+<td><code>whale</code></td>
+<td>streamlined-aquatic-large</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="kangaroo" src="../../assets/shape-references/animals-kangaroo.png" /></td>
+<td><code>kangaroo</code></td>
+<td>hopping-marsupial</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="flamingo" src="../../assets/shape-references/animals-flamingo.png" /></td>
+<td><code>flamingo</code></td>
+<td>long-legged-wader</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="crocodile" src="../../assets/shape-references/animals-crocodile.png" /></td>
+<td><code>crocodile</code></td>
+<td>sprawling-reptile</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Reference</th>
+<th>Shape</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="a" src="../../assets/shape-references/letters-a.png" /></td>
+<td><code>a</code></td>
+<td>5 strokes — lambda legs + crossbar</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="b" src="../../assets/shape-references/letters-b.png" /></td>
+<td><code>b</code></td>
+<td>11 strokes — two bowls off a stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="c" src="../../assets/shape-references/letters-c.png" /></td>
+<td><code>c</code></td>
+<td>6 strokes — open ring</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="d" src="../../assets/shape-references/letters-d.png" /></td>
+<td><code>d</code></td>
+<td>9 strokes — one bowl off a stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="e" src="../../assets/shape-references/letters-e.png" /></td>
+<td><code>e</code></td>
+<td>5 strokes — three bars off a stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="f" src="../../assets/shape-references/letters-f.png" /></td>
+<td><code>f</code></td>
+<td>4 strokes — two bars off a stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="g" src="../../assets/shape-references/letters-g.png" /></td>
+<td><code>g</code></td>
+<td>7 strokes — open ring with an inward hook</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="h" src="../../assets/shape-references/letters-h.png" /></td>
+<td><code>h</code></td>
+<td>5 strokes — two verticals + crossbar</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="i" src="../../assets/shape-references/letters-i.png" /></td>
+<td><code>i</code></td>
+<td>5 strokes — I-beam, even serifs</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="j" src="../../assets/shape-references/letters-j.png" /></td>
+<td><code>j</code></td>
+<td>6 strokes — barred stem with a round hook</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="k" src="../../assets/shape-references/letters-k.png" /></td>
+<td><code>k</code></td>
+<td>4 strokes — spine + two diagonals</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="l" src="../../assets/shape-references/letters-l.png" /></td>
+<td><code>l</code></td>
+<td>2 strokes — spine + base bar</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="m" src="../../assets/shape-references/letters-m.png" /></td>
+<td><code>m</code></td>
+<td>4 strokes — two verticals + inner V</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="n" src="../../assets/shape-references/letters-n.png" /></td>
+<td><code>n</code></td>
+<td>3 strokes — two verticals + diagonal</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="o" src="../../assets/shape-references/letters-o.png" /></td>
+<td><code>o</code></td>
+<td>8 strokes — closed oval ring</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="p" src="../../assets/shape-references/letters-p.png" /></td>
+<td><code>p</code></td>
+<td>7 strokes — one upper bowl off a stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="q" src="../../assets/shape-references/letters-q.png" /></td>
+<td><code>q</code></td>
+<td>9 strokes — oval ring + descending tail</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="r" src="../../assets/shape-references/letters-r.png" /></td>
+<td><code>r</code></td>
+<td>8 strokes — upper bowl + leg off a stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="s" src="../../assets/shape-references/letters-s.png" /></td>
+<td><code>s</code></td>
+<td>8 strokes — upright figure-eight</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="t" src="../../assets/shape-references/letters-t.png" /></td>
+<td><code>t</code></td>
+<td>3 strokes — top bar + stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="u" src="../../assets/shape-references/letters-u.png" /></td>
+<td><code>u</code></td>
+<td>5 strokes — open-top bowl</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="v" src="../../assets/shape-references/letters-v.png" /></td>
+<td><code>v</code></td>
+<td>2 strokes — narrow diagonal pair</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="w" src="../../assets/shape-references/letters-w.png" /></td>
+<td><code>w</code></td>
+<td>4 strokes — double V</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="x" src="../../assets/shape-references/letters-x.png" /></td>
+<td><code>x</code></td>
+<td>4 strokes — center + 4 corners</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="y" src="../../assets/shape-references/letters-y.png" /></td>
+<td><code>y</code></td>
+<td>3 strokes — V + stem</td>
+</tr>
+<tr>
+<td style="text-align: center;"><img alt="z" src="../../assets/shape-references/letters-z.png" /></td>
+<td><code>z</code></td>
+<td>6 strokes — bar-diagonal-bar, crossed</td>
+</tr>
+</tbody>
+</table>
+<p>Nine letters (<code>b</code>, <code>d</code>, <code>h</code>, <code>i</code>, <code>n</code>, <code>o</code>, <code>s</code>, <code>x</code>, <code>z</code>) have one node deliberately placed off the default grid, because their regular block form would be exactly invariant under a 180-degree rotation — see <a href="#letter-shapes">Letter shapes</a>.</p>
+</div>
+</div>
+</div>
+<p>Each reference is scaled independently to the largest size that keeps its own outline inside the frame, so a thin shape (the triangle) and a tall one (the giraffe) each fill their own frame rather than sharing one scale sized for the largest shape. Regenerate these with <code>python examples/render_shape_reference.py</code> (writes into <code>docs/assets/shape-references/</code>, one <code>&lt;prefix&gt;&lt;shape&gt;.png</code> file per shape; <code>--families symbols</code> to regenerate just one family).</p>
+<p><code>class_mode</code> selects how object classes are derived:</p>
+<table>
+<thead>
+<tr>
+<th><code>class_mode</code></th>
+<th>Classes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shape</code></td>
+<td>all 49 shape names, in vocabulary order</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td>red, green, blue</td>
+</tr>
+<tr>
+<td><code>shape_color</code></td>
+<td>Cartesian product, e.g. <code>red_square</code> (147 classes)</td>
+</tr>
+</tbody>
+</table>
+<p>The table above lists the full vocabulary; a run narrows it to its own <code>shapes</code>. Both the declared classes and the ids stamped on annotations narrow together, so a giraffes-only run declares one class and numbers it <code>0</code> — every dataset is internally consistent, and every annotation's id resolves against the <code>categories</code> (COCO) or <code>names</code> (YOLO) block written beside it. The flip side is that an id means different things in differently-scoped runs, so compare two datasets by class <strong>name</strong>, never by raw id. The color axis narrows the same way: the <code>color</code> and <code>shape_color</code> modes number the run's own <code>colors</code>, in the order given, so a blue-only run (<code>colors=("blue",)</code>) declares one class, <code>blue</code>, with id <code>0</code>, and a custom <code>(r, g, b)</code> fill gets an id like any named color, named by its hex value (<code>(255, 215, 0)</code> becomes <code>ffd700</code>).</p>
+<p><code>rectangle</code> (non-square) plus a random per-shape rotation give oriented boxes real orientation; a circle is rotation-invariant, so its OBB collapses to the axis-aligned box. Every animal silhouette is asymmetric, so all twelve carry orientation — and so does every symbol and every letter; three of the seven symbols (<code>arrow</code>, <code>cross</code>, <code>anchor</code>) are concave, so their segmentation polygon carries shape information any box alone does not — every letter is concave too, one connected outline wrapped around its own keypoint skeleton rather than a hand-authored polygon (see <a href="#letter-shapes">Letter shapes</a>).</p>
+<h2 id="animal-shapes">Animal shapes<a class="headerlink" href="#animal-shapes" title="Permanent link">&para;</a></h2>
+<p>Pass <code>shapes=</code> (or the CLI's <code>--shapes animals</code>) to draw the twelve animal silhouettes instead of the four geometric shapes. Each outline is asymmetric and traced from a CC0 or Public Domain Mark reference silhouette rather than hand-guessed, so every shape stays recognizable and carries real orientation under rotation. Each ships as an editable SVG under <code>synth_datasets/assets/animals/&lt;animal&gt;.svg</code> — open it in any vector editor or browser to inspect the outline, the keypoints, and the <code>zoo:</code>-namespaced provenance attributes (origin, license, attribution).</p>
+<table>
+<thead>
+<tr>
+<th>Shape</th>
+<th>Archetype</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>duck</code></td>
+<td>upright-bird</td>
+</tr>
+<tr>
+<td><code>elephant</code></td>
+<td>bulky-quadruped</td>
+</tr>
+<tr>
+<td><code>giraffe</code></td>
+<td>tall-thin</td>
+</tr>
+<tr>
+<td><code>fish</code></td>
+<td>streamlined</td>
+</tr>
+<tr>
+<td><code>rabbit</code></td>
+<td>compact-eared</td>
+</tr>
+<tr>
+<td><code>camel</code></td>
+<td>bulky-quadruped-humped</td>
+</tr>
+<tr>
+<td><code>eagle</code></td>
+<td>upright-bird</td>
+</tr>
+<tr>
+<td><code>penguin</code></td>
+<td>upright-bird</td>
+</tr>
+<tr>
+<td><code>whale</code></td>
+<td>streamlined-aquatic-large</td>
+</tr>
+<tr>
+<td><code>kangaroo</code></td>
+<td>hopping-marsupial</td>
+</tr>
+<tr>
+<td><code>flamingo</code></td>
+<td>long-legged-wader</td>
+</tr>
+<tr>
+<td><code>crocodile</code></td>
+<td>sprawling-reptile</td>
+</tr>
+</tbody>
+</table>
+<h3 id="selecting-animals">Selecting animals<a class="headerlink" href="#selecting-animals" title="Permanent link">&para;</a></h3>
+<p>Name the members explicitly, or take the first <code>N</code> of them with <code>tuple(AnimalShape)</code>:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.families.animals</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnimalShape</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">Task</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">explicit</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">shapes</span><span class="o">=</span><span class="p">(</span><span class="n">AnimalShape</span><span class="o">.</span><span class="n">DUCK</span><span class="p">,</span> <span class="n">AnimalShape</span><span class="o">.</span><span class="n">GIRAFFE</span><span class="p">),</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>  <span class="c1"># explicit</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">assert</span> <span class="n">explicit</span><span class="o">.</span><span class="n">shapes</span> <span class="o">==</span> <span class="p">(</span><span class="n">AnimalShape</span><span class="o">.</span><span class="n">DUCK</span><span class="p">,</span> <span class="n">AnimalShape</span><span class="o">.</span><span class="n">GIRAFFE</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">first_four</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">shapes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">AnimalShape</span><span class="p">)[:</span><span class="mi">4</span><span class="p">],</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>  <span class="c1"># duck, elephant, giraffe, fish</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="k">assert</span> <span class="n">first_four</span><span class="o">.</span><span class="n">shapes</span> <span class="o">==</span> <span class="p">(</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">AnimalShape</span><span class="o">.</span><span class="n">DUCK</span><span class="p">,</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">AnimalShape</span><span class="o">.</span><span class="n">ELEPHANT</span><span class="p">,</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">AnimalShape</span><span class="o">.</span><span class="n">GIRAFFE</span><span class="p">,</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">AnimalShape</span><span class="o">.</span><span class="n">FISH</span><span class="p">,</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="p">)</span>  <span class="c1"># same 4 species every call, per the declaration-order guarantee below</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">all_animals</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="n">shapes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">AnimalShape</span><span class="p">),</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="p">)</span>  <span class="c1"># all twelve</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_animals</span><span class="o">.</span><span class="n">shapes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span>
+</span></code></pre></div>
+<p>Slicing <code>tuple(AnimalShape)</code> takes a prefix of the declaration order, so the same <code>n</code> names the same species on every call — a thirteenth animal could only extend the tail of that list. <code>shapes</code> itself is a plain <code>tuple[Shape, ...]</code> — where <code>Shape</code> is the base class every family's enum derives from, re-exported from <a href="../customization/#extending-the-vocabulary"><code>data.families</code></a> — so <code>tuple(SymbolShape)</code> and <code>tuple(LetterShape)</code> work identically for the other two keypoint-bearing families (see <a href="#symbol-shapes">Symbol shapes</a> and <a href="#letter-shapes">Letter shapes</a>).</p>
+<p>All four tasks work on animal shapes; <code>keypoints</code> is available for the animal, symbol, and letter families — not the geometric shapes, which have no keypoint tables:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Detection</label><label for="__tabbed_2_2">Segmentation</label><label for="__tabbed_2_3">OBB</label><label for="__tabbed_2_4">Keypoints / pose</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="Synthetic detection sample with animal silhouettes" src="../../assets/datasets/tasks/animals-detection.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic segmentation sample with animal silhouettes" src="../../assets/datasets/tasks/animals-segmentation.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic OBB sample with animal silhouettes" src="../../assets/datasets/tasks/animals-obb.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic keypoint sample with animal silhouettes" src="../../assets/datasets/tasks/animals-keypoints.webp" /></p>
+</div>
+</div>
+</div>
+<p>Regenerate these clips with <code>python examples/animate_synthetic_dataset.py --shapes animals --task all</code>.</p>
+<h2 id="symbol-shapes">Symbol shapes<a class="headerlink" href="#symbol-shapes" title="Permanent link">&para;</a></h2>
+<p>Pass <code>shapes=</code> (or the CLI's <code>--shapes symbols</code>) to draw seven analytic 2D symbols instead of the four geometric shapes. Unlike the animals, these are computed from formulas rather than traced from source art — there is no artwork to attribute — but each is still asymmetric enough to keep a real orientation under rotation, and each is drawn mirror-symmetric about its own vertical axis (see <a href="../tasks/#symbol-keypoint-schema">Symbol keypoint schema</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Shape</th>
+<th>Outline</th>
+<th>Convex?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kite</code></td>
+<td>diamond with unequal top/bottom diagonals</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>trapezoid</code></td>
+<td>isosceles trapezoid, short side up</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>house</code></td>
+<td>square body with a triangular roof</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>arrow</code></td>
+<td>up-pointing arrow with two barbs</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>cross</code></td>
+<td>Latin cross, lower arm longer</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>teardrop</code></td>
+<td>round top tapering to a bottom point</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>anchor</code></td>
+<td>ring, stock, shaft, and two flukes</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>There is no plain-triangle symbol: it would collide in name with the geometric family's <code>triangle</code> for a shape this family does not need to keep. <code>arrow</code>, <code>cross</code>, and <code>anchor</code> are concave, so their segmentation polygon carries real shape information a box does not.</p>
+<h3 id="selecting-symbols">Selecting symbols<a class="headerlink" href="#selecting-symbols" title="Permanent link">&para;</a></h3>
+<p><code>tuple(SymbolShape)</code> mirrors <code>tuple(AnimalShape)</code> — name the members explicitly, or take a stable prefix:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">Task</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.families.symbols</span><span class="w"> </span><span class="kn">import</span> <span class="n">SymbolShape</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">explicit</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">shapes</span><span class="o">=</span><span class="p">(</span><span class="n">SymbolShape</span><span class="o">.</span><span class="n">KITE</span><span class="p">,</span> <span class="n">SymbolShape</span><span class="o">.</span><span class="n">ANCHOR</span><span class="p">),</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>  <span class="c1"># explicit</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">assert</span> <span class="n">explicit</span><span class="o">.</span><span class="n">shapes</span> <span class="o">==</span> <span class="p">(</span><span class="n">SymbolShape</span><span class="o">.</span><span class="n">KITE</span><span class="p">,</span> <span class="n">SymbolShape</span><span class="o">.</span><span class="n">ANCHOR</span><span class="p">)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">first_three</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">shapes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">SymbolShape</span><span class="p">)[:</span><span class="mi">3</span><span class="p">],</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">)</span>  <span class="c1"># kite, trapezoid, house</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="k">assert</span> <span class="n">first_three</span><span class="o">.</span><span class="n">shapes</span> <span class="o">==</span> <span class="p">(</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="n">SymbolShape</span><span class="o">.</span><span class="n">KITE</span><span class="p">,</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="n">SymbolShape</span><span class="o">.</span><span class="n">TRAPEZOID</span><span class="p">,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">SymbolShape</span><span class="o">.</span><span class="n">HOUSE</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="p">)</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="n">all_symbols</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>    <span class="n">shapes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">SymbolShape</span><span class="p">),</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p">)</span>  <span class="c1"># all seven</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_symbols</span><span class="o">.</span><span class="n">shapes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span>
+</span></code></pre></div>
+<p>A dataset can draw from the animal family, the symbol family, or the letter family under <code>keypoints</code>, but never more than one at once — see <a href="../tasks/#symbol-keypoint-schema">Symbol keypoint schema</a> and <a href="../tasks/#letter-keypoint-schema">Letter keypoint schema</a> for why.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Detection</label><label for="__tabbed_3_2">Segmentation</label><label for="__tabbed_3_3">OBB</label><label for="__tabbed_3_4">Keypoints / pose</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="Synthetic detection sample with symbol shapes" src="../../assets/datasets/tasks/symbols-detection.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic segmentation sample with symbol shapes" src="../../assets/datasets/tasks/symbols-segmentation.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic OBB sample with symbol shapes" src="../../assets/datasets/tasks/symbols-obb.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic keypoint sample with symbol shapes" src="../../assets/datasets/tasks/symbols-keypoints.webp" /></p>
+</div>
+</div>
+</div>
+<p>Regenerate these clips with <code>python examples/animate_synthetic_dataset.py --shapes symbols --task all</code>.</p>
+<h2 id="letter-shapes">Letter shapes<a class="headerlink" href="#letter-shapes" title="Permanent link">&para;</a></h2>
+<p>Pass <code>shapes=</code> (or the CLI's <code>--shapes letters</code>) to draw twenty-six capital-letter figures (<code>a</code>–<code>z</code>) instead of the four geometric shapes. Like every other family, a letter is one filled outline polygon — but unlike the hand-authored outlines of <code>symbols</code>/<code>animals</code>, it is derived. Each letter is authored the way you would sketch one, as a set of <strong>keypoints and the edges between them</strong>, and the drawable shape is produced by wrapping that skeleton in a pen stroke of constant width.</p>
+<p>Authoring skeleton-first is what makes the landmarks trustworthy. Because the polygon <em>is</em> the set of points within half a stroke width of the skeleton, <strong>every keypoint and every edge between two keypoints lies strictly inside the letter</strong>, with half a stroke width of clearance — a keypoint can never land on the boundary or outside the ink, and a skeleton edge can never cut across empty space. Joining a letter's keypoints in skeleton order therefore sketches that letter <em>through its own fill</em>.</p>
+<p>Every stroke tip is capped with a semicircle and every convex corner rounded, so no letter has a sharp point anywhere on it; only the concave side of a turn stays angular, where the two strokes' bodies already cover the corner and rounding it would bulge the outline outward across the inside of the turn.</p>
+<p>An edge may itself be a shallow circular arc rather than a straight segment, which is what makes <code>o</code>/<code>c</code>/<code>g</code>/<code>s</code>'s bowls read as bowls instead of octagons; letters with no curve in a block face (<code>a e f h i k l m n t v w x y z</code>) stay straight throughout. How deep an arc may go is bounded by the promise above rather than by taste: the annotated skeleton joins two keypoints with a <em>straight</em> line, so an edge bowed far enough for its own chord to leave the stroke is rejected when the asset loads, as is a curved edge that a counter opens on.</p>
+<p>Seven letters (<code>a</code>, <code>b</code>, <code>d</code>, <code>o</code>, <code>p</code>, <code>q</code>, <code>r</code>) have an enclosed counter. A single polygon ring cannot hold a true hole, so the graph edge that closes each counter's loop is split into two flat-capped stubs separated by a hairline before wrapping — that opens the loop while leaving a slit far too thin to read as a gap, keeping the counter intact (<code>o</code>'s hole, <code>a</code>'s crossbar pocket) inside one simple, non-self-intersecting ring. Where the slit goes is a letterform decision: a bowl hung off a stem (<code>b</code>, <code>d</code>, <code>p</code>, <code>r</code>) breaks on the edge leaving that stem and as near it as fits, so the bowl reads as a curve just touching a vertical line, while a free-standing ring breaks along its bottom — left of centre for <code>o</code>, bottom-right for <code>q</code> beside where its tail joins. That hairline is the single place in the whole family where a skeleton edge leaves the fill.</p>
+<p>The 15 named keypoint slots give every letter the same landmark vocabulary (a fixed count per dataset is a hard requirement of both annotation formats), and their default coordinates form a regular 3-column x 5-row grid — but a letter is free to place any of its own nodes anywhere, which is what shapes <code>b</code>/<code>d</code>/<code>p</code>/<code>q</code>/<code>r</code>'s bowls, <code>o</code>'s oval, and <code>q</code>'s outward tail. Nine letters (<code>b</code>, <code>d</code>, <code>h</code>, <code>i</code>, <code>n</code>, <code>o</code>, <code>s</code>, <code>x</code>, <code>z</code>) also use that freedom to break an exact 180-degree rotational symmetry their regular block form would otherwise carry — the same "look the same upside down" set real handwriting has, and the same kind of fix <code>SymbolShape.KITE</code>'s unequal diagonal lengths already make for the symbol family. See the <a href="#shape-reference">Letters</a> tab above for every letter's stroke count.</p>
+<h3 id="selecting-letters">Selecting letters<a class="headerlink" href="#selecting-letters" title="Permanent link">&para;</a></h3>
+<p><code>tuple(LetterShape)</code> mirrors <code>tuple(AnimalShape)</code>/<code>tuple(SymbolShape)</code> — name the members explicitly, or take a stable prefix:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">Task</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.families.letters</span><span class="w"> </span><span class="kn">import</span> <span class="n">LetterShape</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">explicit</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">shapes</span><span class="o">=</span><span class="p">(</span><span class="n">LetterShape</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">LetterShape</span><span class="o">.</span><span class="n">O</span><span class="p">),</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>  <span class="c1"># explicit</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">assert</span> <span class="n">explicit</span><span class="o">.</span><span class="n">shapes</span> <span class="o">==</span> <span class="p">(</span><span class="n">LetterShape</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">LetterShape</span><span class="o">.</span><span class="n">O</span><span class="p">)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">first_three</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">shapes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">LetterShape</span><span class="p">)[:</span><span class="mi">3</span><span class="p">],</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">)</span>  <span class="c1"># a, b, c</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="k">assert</span> <span class="n">first_three</span><span class="o">.</span><span class="n">shapes</span> <span class="o">==</span> <span class="p">(</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="n">LetterShape</span><span class="o">.</span><span class="n">A</span><span class="p">,</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="n">LetterShape</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">LetterShape</span><span class="o">.</span><span class="n">C</span><span class="p">,</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="p">)</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">all_letters</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="n">task</span><span class="o">=</span><span class="n">Task</span><span class="o">.</span><span class="n">KEYPOINTS</span><span class="p">,</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    <span class="n">shapes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">LetterShape</span><span class="p">),</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="p">)</span>  <span class="c1"># all twenty-six</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_letters</span><span class="o">.</span><span class="n">shapes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">26</span>
+</span></code></pre></div>
+<p>All four tasks work on letter shapes, and every output format behaves exactly as it does for the other three families — one <code>segmentation</code> ring per COCO annotation, one flat coordinate ring per YOLO-seg row — since a letter is a single polygon like any other shape by the time it reaches a writer.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Detection</label><label for="__tabbed_4_2">Segmentation</label><label for="__tabbed_4_3">OBB</label><label for="__tabbed_4_4">Keypoints / pose</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="Synthetic detection sample with letter shapes" src="../../assets/datasets/tasks/letters-detection.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic segmentation sample with letter shapes" src="../../assets/datasets/tasks/letters-segmentation.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic OBB sample with letter shapes" src="../../assets/datasets/tasks/letters-obb.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Synthetic keypoint sample with letter shapes" src="../../assets/datasets/tasks/letters-keypoints.webp" /></p>
+</div>
+</div>
+</div>
+<p>Regenerate these clips with <code>python examples/animate_synthetic_dataset.py --shapes letters --task all</code>.</p>
+<p>Every clip on this page shows its whole family: the generator picks each object's shape uniformly, so a family preview would otherwise be a lucky subset — twenty-six letters need roughly a hundred drawn objects between them before the last one turns up. Each vocabulary therefore sets its own object count and clip length, and the script then walks its seed forward until the stream it renders really does contain every member, printing the seed it settled on.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../prototyping/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Prototyping and convergence checks">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Prototyping and convergence checks
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../tasks/" class="md-footer__link md-footer__link--next" aria-label="Next: Tasks and keypoints">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Tasks and keypoints
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025–2026 Jiri Borovec
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/Borda/vision-synth" target="_blank" rel="noopener" title="vision-synth on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/nav_dropdown.js"></script>
+      
+        <script src="../../javascripts/pycon_copy.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

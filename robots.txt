@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://borda.github.io/vision-synth/sitemap.xml

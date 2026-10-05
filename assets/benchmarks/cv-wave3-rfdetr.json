@@ -1,0 +1,188 @@
+{
+  "environment": {
+    "revision": "1b454ed611b85fede91591228a69b6ee42deb897",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.10.19",
+    "torch": "2.10.0",
+    "albumentations": "2.0.8",
+    "numpy": "2.2.6",
+    "torch_threads": 12,
+    "opencv_threads": 16
+  },
+  "config": {
+    "num_instances": 12,
+    "min_instance_size": 1.0,
+    "min_instance_visibility": 0.1,
+    "warmup_calls": 20,
+    "timed_calls": 200,
+    "seed_policy": {
+      "global_seed": 0,
+      "albumentations_transform_seed": 0,
+      "comparison": "per-variant reproducible; no shared sampled-geometry replay"
+    },
+    "endpoint": {
+      "image": {
+        "dtype": "float32",
+        "range": [0.0, 1.0],
+        "layout": "BCHW",
+        "device": "cpu"
+      },
+      "boxes": {
+        "dtype": "float32",
+        "layout": "N4",
+        "device": "cpu"
+      },
+      "labels": {
+        "dtype": "int64",
+        "layout": "N",
+        "device": "cpu"
+      }
+    },
+    "input_boundaries": {
+      "albumentations": "HWC uint8 NumPy image with NumPy boxes and labels",
+      "fuse_cv2": "HWC uint8 NumPy image with NumPy boxes and labels",
+      "fuse_torch": "HWC uint8 NumPy image with NumPy boxes and labels",
+      "fuse_cv2_tensor_in": "BCHW float32 [0, 1] CPU tensor with dense tensor boxes and labels"
+    }
+  },
+  "measurements": [
+    {
+      "pipeline": "albumentations",
+      "chain": "two_op",
+      "resolution": 640,
+      "median_ms": 0.751,
+      "p10_ms": 0.653,
+      "p90_ms": 0.861
+    },
+    {
+      "pipeline": "fuse_cv2",
+      "chain": "two_op",
+      "resolution": 640,
+      "median_ms": 0.659,
+      "p10_ms": 0.504,
+      "p90_ms": 0.837
+    },
+    {
+      "pipeline": "fuse_torch",
+      "chain": "two_op",
+      "resolution": 640,
+      "median_ms": 5.368,
+      "p10_ms": 5.13,
+      "p90_ms": 5.802
+    },
+    {
+      "pipeline": "fuse_cv2_tensor_in",
+      "chain": "two_op",
+      "resolution": 640,
+      "median_ms": 0.836,
+      "p10_ms": 0.648,
+      "p90_ms": 1.163
+    },
+    {
+      "pipeline": "albumentations",
+      "chain": "two_op",
+      "resolution": 1024,
+      "median_ms": 1.3,
+      "p10_ms": 1.065,
+      "p90_ms": 2.115
+    },
+    {
+      "pipeline": "fuse_cv2",
+      "chain": "two_op",
+      "resolution": 1024,
+      "median_ms": 1.005,
+      "p10_ms": 0.835,
+      "p90_ms": 1.426
+    },
+    {
+      "pipeline": "fuse_torch",
+      "chain": "two_op",
+      "resolution": 1024,
+      "median_ms": 12.727,
+      "p10_ms": 12.112,
+      "p90_ms": 14.789
+    },
+    {
+      "pipeline": "fuse_cv2_tensor_in",
+      "chain": "two_op",
+      "resolution": 1024,
+      "median_ms": 1.546,
+      "p10_ms": 1.108,
+      "p90_ms": 2.798
+    },
+    {
+      "pipeline": "albumentations",
+      "chain": "four_op",
+      "resolution": 640,
+      "median_ms": 1.999,
+      "p10_ms": 1.67,
+      "p90_ms": 2.444
+    },
+    {
+      "pipeline": "fuse_cv2",
+      "chain": "four_op",
+      "resolution": 640,
+      "median_ms": 0.712,
+      "p10_ms": 0.601,
+      "p90_ms": 0.877
+    },
+    {
+      "pipeline": "fuse_torch",
+      "chain": "four_op",
+      "resolution": 640,
+      "median_ms": 5.412,
+      "p10_ms": 5.14,
+      "p90_ms": 5.937
+    },
+    {
+      "pipeline": "fuse_cv2_tensor_in",
+      "chain": "four_op",
+      "resolution": 640,
+      "median_ms": 0.778,
+      "p10_ms": 0.619,
+      "p90_ms": 0.962
+    },
+    {
+      "pipeline": "albumentations",
+      "chain": "four_op",
+      "resolution": 1024,
+      "median_ms": 2.588,
+      "p10_ms": 2.086,
+      "p90_ms": 3.025
+    },
+    {
+      "pipeline": "fuse_cv2",
+      "chain": "four_op",
+      "resolution": 1024,
+      "median_ms": 0.991,
+      "p10_ms": 0.793,
+      "p90_ms": 1.262
+    },
+    {
+      "pipeline": "fuse_torch",
+      "chain": "four_op",
+      "resolution": 1024,
+      "median_ms": 12.887,
+      "p10_ms": 12.25,
+      "p90_ms": 15.439
+    },
+    {
+      "pipeline": "fuse_cv2_tensor_in",
+      "chain": "four_op",
+      "resolution": 1024,
+      "median_ms": 1.311,
+      "p10_ms": 1.042,
+      "p90_ms": 2.043
+    }
+  ],
+  "source_identity": {
+    "base_revision": "1b454ed",
+    "changes": "Wave 3 runtime, prior to commit",
+    "runtime_sha256": {
+      "src/fuse_augmentations/affine/segment.py": "38b4db6973ad7ac58a12761b0d8fd2ecc9b58d8b38aa4c224d32f69770d07247",
+      "src/fuse_augmentations/pipeline.py": "a0306fd359a20b58320ff7877cf92471d28e354ac6ef4f5bb76526f5652e9d8a"
+    }
+  },
+  "recorded_date": "2026-09-06",
+  "measurement_limit": "One full sweep on a shared host; ambient thread counts recorded. Independent sweeps vary; ratios are workload observations, not guaranteed gains."
+}
