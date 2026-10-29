@@ -96,11 +96,11 @@ repos:
       - id: check-doctest-fences
         name: 🧪 Doctest examples wrapped in ```pycon fences
         entry: python .github/scripts/check_doctest_fences.py
-        language: system
+        language: python
         files: ^src/.*\.py$
       - id: check-unused-assets
         name: 🖼️ Every docs/assets file is referenced by a page
         entry: python .github/scripts/check_unused_assets.py
-        language: system
+        language: python
         pass_filenames: false
         always_run: true

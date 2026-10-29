@@ -1,0 +1,77 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 330" width="800" height="330" role="img" aria-labelledby="t d" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">
+  <title id="t">Native chain versus fused warp</title>
+  <desc id="d">Two lanes share one clock. In the native lane an image tile is rotated, translated and flipped by three separate warps and is resampled at each, softening a little every time. In the fused lane the three matrices first merge into one matrix M, and the tile reaches the same final pose through a single warp, resampled once. The softening is exaggerated for illustration.</desc>
+  <defs>
+    <pattern id="ck" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#fff"/><rect width="4" height="4" fill="#000"/><rect x="4" y="4" width="4" height="4" fill="#000"/></pattern>
+    <g id="tile">
+      <rect x="-28" y="-28" width="56" height="56" fill="#fff" stroke="#333" stroke-width="2"/>
+      <path d="M-16,-20 h28 v8 h-20 v8 h14 v7 h-14 v17 h-8 z" fill="#1f4fd1"/>
+      <rect x="4" y="4" width="16" height="16" fill="url(#ck)"/>
+    </g>
+    <filter id="blurN" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="0"><animate attributeName="stdDeviation" dur="8s" repeatCount="indefinite" calcMode="discrete" values="0;0.7;1.4;2.1;0" keyTimes="0;0.237;0.401;0.565;0.98"/></feGaussianBlur>
+    </filter>
+    <filter id="blurF" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="0"><animate attributeName="stdDeviation" dur="8s" repeatCount="indefinite" calcMode="discrete" values="0;0.7;0" keyTimes="0;0.401;0.98"/></feGaussianBlur>
+    </filter>
+  </defs>
+  <rect width="800" height="330" rx="10" fill="#fff"/>
+  <g fill="#000">
+    <text x="20" y="30" font-weight="600">Native: 3 warps, image resampled 3×</text>
+    <text x="20" y="192" font-weight="600">Fused: matrices multiply first, image resampled once</text>
+  </g>
+  <g stroke="#bbb" stroke-width="2" stroke-dasharray="4 4"><line x1="60" y1="100" x2="740" y2="100"/><line x1="60" y1="262" x2="740" y2="262"/></g>
+  <g font-size="12" fill="#555" text-anchor="middle"><text x="60" y="164">input</text><text x="720" y="164">output</text><text x="60" y="324">input</text><text x="720" y="324">output</text></g>
+
+  <!-- native lane: one station per transform -->
+  <g fill="#d4edda" stroke="#00a000" stroke-width="2">
+    <rect x="175" y="52" width="110" height="96" rx="8"><animate attributeName="stroke-width" dur="8s" repeatCount="indefinite" values="2;2;5;2;2" keyTimes="0;0.2;0.237;0.29;1"/></rect>
+    <rect x="335" y="52" width="110" height="96" rx="8"><animate attributeName="stroke-width" dur="8s" repeatCount="indefinite" values="2;2;5;2;2" keyTimes="0;0.364;0.401;0.454;1"/></rect>
+    <rect x="495" y="52" width="110" height="96" rx="8"><animate attributeName="stroke-width" dur="8s" repeatCount="indefinite" values="2;2;5;2;2" keyTimes="0;0.528;0.565;0.618;1"/></rect>
+  </g>
+  <g text-anchor="middle" fill="#000">
+    <text x="230" y="67" fill="#b000b0" font-weight="600">Rotate</text><text x="390" y="67" fill="#b000b0" font-weight="600">Translate</text><text x="550" y="67" fill="#b000b0" font-weight="600">HFlip</text>
+    <text x="230" y="142" font-size="11">resample 1</text><text x="390" y="142" font-size="11">resample 2</text><text x="550" y="142" font-size="11">resample 3</text>
+  </g>
+
+  <!-- fused lane: one station for the composed matrix -->
+  <rect x="250" y="214" width="280" height="96" rx="8" fill="#d4edda" stroke="#00a000" stroke-width="2"><animate attributeName="stroke-width" dur="8s" repeatCount="indefinite" values="2;2;5;2;2" keyTimes="0;0.364;0.401;0.454;1"/></rect>
+  <g text-anchor="middle" fill="#000">
+    <text x="390" y="229" font-size="12" font-weight="600">M = M_hflip · M_trans · M_rot</text>
+    <text x="390" y="304" font-size="11">resample 1 (only)</text>
+  </g>
+  <g text-anchor="middle" font-size="12" font-weight="600">
+    <g><rect x="265" y="247" width="70" height="30" rx="5" fill="#f7d0f7" stroke="#ff00ff" stroke-width="2"/><text x="300" y="266" fill="#000">Rotate</text>
+      <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite" values="0,0;0,0;90,0;90,0" keyTimes="0;0.04;0.2;1"/>
+      <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.18;0.22;1"/></g>
+    <g><rect x="355" y="247" width="70" height="30" rx="5" fill="#f7d0f7" stroke="#ff00ff" stroke-width="2"/><text x="390" y="266" fill="#000">Translate</text>
+      <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.18;0.22;1"/></g>
+    <g><rect x="445" y="247" width="70" height="30" rx="5" fill="#f7d0f7" stroke="#ff00ff" stroke-width="2"/><text x="480" y="266" fill="#000">HFlip</text>
+      <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite" values="0,0;0,0;-90,0;-90,0" keyTimes="0;0.04;0.2;1"/>
+      <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.18;0.22;1"/></g>
+    <g opacity="0"><rect x="365" y="247" width="50" height="30" rx="5" fill="#ee8fee" stroke="#ff00ff" stroke-width="3"/><text x="390" y="267" fill="#000" font-size="15">M</text>
+      <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.19;0.23;0.33;0.36;1"/></g>
+  </g>
+
+  <!-- native tile: each warp applies one transform and blurs once more -->
+  <g filter="url(#blurN)">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M60,100 L720,100" keyPoints="0;0;1;1" keyTimes="0;0.0625;0.75;1" calcMode="linear"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.04;0.9;0.95;1"/>
+    <use href="#tile">
+      <animateTransform attributeName="transform" type="scale" additive="sum" dur="8s" repeatCount="indefinite" calcMode="discrete" values="1,1;-1,1;1,1" keyTimes="0;0.565;0.98"/>
+      <animateTransform attributeName="transform" type="translate" additive="sum" dur="8s" repeatCount="indefinite" calcMode="discrete" values="0,0;0,10;0,0" keyTimes="0;0.401;0.98"/>
+      <animateTransform attributeName="transform" type="rotate" additive="sum" dur="8s" repeatCount="indefinite" calcMode="discrete" values="0;20;0" keyTimes="0;0.237;0.98"/>
+    </use>
+  </g>
+
+  <!-- fused tile: all three transforms land at once, one blur -->
+  <g filter="url(#blurF)">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M60,262 L720,262" keyPoints="0;0;1;1" keyTimes="0;0.0625;0.75;1" calcMode="linear"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.04;0.9;0.95;1"/>
+    <use href="#tile">
+      <animateTransform attributeName="transform" type="scale" additive="sum" dur="8s" repeatCount="indefinite" calcMode="discrete" values="1,1;-1,1;1,1" keyTimes="0;0.401;0.98"/>
+      <animateTransform attributeName="transform" type="translate" additive="sum" dur="8s" repeatCount="indefinite" calcMode="discrete" values="0,0;0,10;0,0" keyTimes="0;0.401;0.98"/>
+      <animateTransform attributeName="transform" type="rotate" additive="sum" dur="8s" repeatCount="indefinite" calcMode="discrete" values="0;20;0" keyTimes="0;0.401;0.98"/>
+    </use>
+  </g>
+</svg>

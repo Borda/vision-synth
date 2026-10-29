@@ -124,52 +124,9 @@ You keep the readable pipeline: rotate, scale, shear, translate, flip. The engin
 
 A conventional chain may interpolate the same pixels after every geometric operation:
 
-**Native composite — each transform is its own warp (3 warps):**
+![Animated: the native chain resamples the image at each of three warps, the fused route multiplies the matrices first and resamples once](https://raw.githubusercontent.com/Borda/vision-synth/main/docs/assets/images/animated-native-vs-fused-warps.svg)
 
-```mermaid
-flowchart LR
-  IN["Input<br/>image + annotations"]
-  subgraph W1["Warp 1"]
-    A1[Rotate]
-  end
-  subgraph W2["Warp 2"]
-    A2[Translate]
-  end
-  subgraph W3["Warp 3"]
-    A3[HFlip]
-  end
-  OUT["Output<br/>image + annotations"]
-  IN --> W1 --> W2 --> W3 --> OUT
-  classDef warp fill:#f7d0f7,stroke:#ff00ff,color:#000;
-  classDef input fill:#ffff00,stroke:#cccc00,color:#000;
-  class A1,A2,A3 warp;
-  class IN input;
-  style W1 fill:#d4edda,stroke:#00ff00;
-  style W2 fill:#d4edda,stroke:#00ff00;
-  style W3 fill:#d4edda,stroke:#00ff00;
-```
-
-**Fused composite — the transforms collapse into one fused block (1 warp):**
-
-```mermaid
-flowchart TB
-  subgraph steps [" "]
-    direction LR
-    T1[Rotate] -.-> T2[Translate] -.-> T3[HFlip]
-  end
-  subgraph flow [" "]
-    direction LR
-    FIN["Input<br/>image + annotations"] --> FB["Fused block · warp 1<br/>M = M_hflip · M_trans · M_rot"] --> FOUT["Output<br/>image + annotations"]
-  end
-  steps --> FB
-  classDef warp fill:#f7d0f7,stroke:#ff00ff,color:#000;
-  classDef input fill:#ffff00,stroke:#cccc00,color:#000;
-  class T1,T2,T3 warp;
-  class FIN input;
-  style steps fill:#ffffff,stroke:#ffffff;
-  style flow fill:#ffffff,stroke:#ffffff;
-  style FB fill:#d4edda,stroke:#00ff00,color:#000;
-```
+> Both lanes reach the same pose; the native tile is resampled three times, the fused tile once. The softening is exaggerated for illustration.
 
 Repeated interpolation adds work, creates intermediate tensors, and can progressively discard high-frequency detail. Matrix composition is cheap by comparison: for a compatible run, the package samples the individual parameters, multiplies their homogeneous matrices in declared order, and evaluates the result through one sampling grid.
 
