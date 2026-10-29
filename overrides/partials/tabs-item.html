@@ -1,0 +1,73 @@
+{#-
+  Overrides material/templates/partials/tabs-item.html to render second-level
+  navigation as a roll-down menu under each top-level tab.
+
+  The disclosure follows the WAI-ARIA "disclosure navigation with top-level
+  links" pattern: the tab stays a plain link to the section landing page, and a
+  sibling button owns the menu's expanded state. Hover opens the menu too, via
+  CSS; nav_dropdown.js keeps aria-expanded in sync with every open path.
+-#}
+{% macro render_content(nav_item, ref) %}
+  {% set ref = ref or nav_item %}
+  {% if nav_item == ref or "navigation.indexes" in features %}
+    {% if nav_item.is_index and nav_item.meta.icon %}
+      {% include ".icons/" ~ nav_item.meta.icon ~ ".svg" %}
+    {% endif %}
+  {% endif %}
+  {{ ref.title }}
+{% endmacro %}
+{% macro render_menu(nav_item, menu_id) %}
+  <ul class="md-tabs__menu" {% if menu_id %}id="{{ menu_id }}"{% endif %}>
+    {% for child in nav_item.children %}
+      {% if child.children %}
+        <li class="md-tabs__menu-item md-tabs__menu-item--group">
+          <span class="md-tabs__menu-label">{{ child.title }}</span>
+          {{ render_menu(child) }}
+        </li>
+      {% else %}
+        <li class="md-tabs__menu-item">
+          <a
+            href="{{ child.url | url }}"
+            class="md-tabs__menu-link{% if child.active %} md-tabs__menu-link--active{% endif %}"
+            {% if child.active %}aria-current="page"{% endif %}
+          >
+            {{ child.title }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endmacro %}
+{% macro render(nav_item, ref) %}
+  {% set ref = ref or nav_item %}
+  {% set class = "md-tabs__item" %}
+  {% if ref.active %}
+    {% set class = class ~ " md-tabs__item--active" %}
+  {% endif %}
+  {% if nav_item.children %}
+    {% set first = nav_item.children | first %}
+    {% set menu_id = "md-tabs-menu-" ~ (nav_item.title | lower | replace(" ", "-") | replace("/", "-")) %}
+    <li class="{{ class }} md-tabs__item--nested">
+      <a href="{{ (first.children | first).url | url if first.children else first.url | url }}" class="md-tabs__link">
+        {{ nav_item.title }}
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="{{ menu_id }}"
+        aria-label="{{ lang.t('nav') }}: {{ nav_item.title }}"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      {{ render_menu(nav_item, menu_id) }}
+    </li>
+  {% else %}
+    <li class="{{ class }}">
+      <a href="{{ nav_item.url | url }}" class="md-tabs__link">
+        {{ render_content(nav_item) }}
+      </a>
+    </li>
+  {% endif %}
+{% endmacro %}

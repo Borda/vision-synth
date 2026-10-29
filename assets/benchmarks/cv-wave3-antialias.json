@@ -1,0 +1,221 @@
+{
+  "scope": "CPU float32 RGB224, threads1, five warmups/thirty calls/three repeats; fixed seed23",
+  "prefilter_scales_xy": [
+    [0.25, 0.5],
+    [0.4, 0.2],
+    [0.9, 0.9],
+    [1.0, 1.0]
+  ],
+  "crop": "full-canvas Kornia RandomResizedCrop 224 to 56; full public pipeline with flag off/on",
+  "rows": [
+    {
+      "batch": 1,
+      "run": 0,
+      "heterogeneous_scales": {
+        "median_ms": 0.012791,
+        "p95_ms": 0.0140042
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 0.40237500000000004,
+        "p95_ms": 0.5341876499999999
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 0.2905835,
+        "p95_ms": 0.3161769
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 0.747917,
+        "p95_ms": 0.82445015
+      }
+    },
+    {
+      "batch": 1,
+      "run": 1,
+      "heterogeneous_scales": {
+        "median_ms": 0.0125625,
+        "p95_ms": 0.0129663
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 0.390312,
+        "p95_ms": 0.40721685
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 0.2875415,
+        "p95_ms": 0.3130641
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 0.738646,
+        "p95_ms": 0.79191235
+      }
+    },
+    {
+      "batch": 1,
+      "run": 2,
+      "heterogeneous_scales": {
+        "median_ms": 0.0148535,
+        "p95_ms": 0.02399534999999999
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 0.3878335,
+        "p95_ms": 0.41838749999999997
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 0.282146,
+        "p95_ms": 0.3056372
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 0.7330004999999999,
+        "p95_ms": 0.7572731
+      }
+    },
+    {
+      "batch": 8,
+      "run": 0,
+      "heterogeneous_scales": {
+        "median_ms": 0.014979,
+        "p95_ms": 0.0172519
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 1.661979,
+        "p95_ms": 1.8308062499999997
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 0.5253540000000001,
+        "p95_ms": 0.8071640999999995
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 4.2605005,
+        "p95_ms": 4.6394224
+      }
+    },
+    {
+      "batch": 8,
+      "run": 1,
+      "heterogeneous_scales": {
+        "median_ms": 0.015,
+        "p95_ms": 0.016693899999999998
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 1.6747085,
+        "p95_ms": 1.91276645
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 0.5067295,
+        "p95_ms": 0.7049975499999999
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 4.11625,
+        "p95_ms": 4.4215728
+      }
+    },
+    {
+      "batch": 8,
+      "run": 2,
+      "heterogeneous_scales": {
+        "median_ms": 0.0156455,
+        "p95_ms": 0.0177247
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 1.762896,
+        "p95_ms": 1.97589785
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 0.5149999999999999,
+        "p95_ms": 0.6442627999999999
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 4.247374499999999,
+        "p95_ms": 4.56014155
+      }
+    },
+    {
+      "batch": 32,
+      "run": 0,
+      "heterogeneous_scales": {
+        "median_ms": 0.0186455,
+        "p95_ms": 0.02281875
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 6.704708999999999,
+        "p95_ms": 7.4735378
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 1.394438,
+        "p95_ms": 1.64594985
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 14.679896,
+        "p95_ms": 15.67229605
+      }
+    },
+    {
+      "batch": 32,
+      "run": 1,
+      "heterogeneous_scales": {
+        "median_ms": 0.0181665,
+        "p95_ms": 0.019081399999999995
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 6.336292,
+        "p95_ms": 6.67499755
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 1.400687,
+        "p95_ms": 1.52683095
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 14.991937499999999,
+        "p95_ms": 15.676901599999999
+      }
+    },
+    {
+      "batch": 32,
+      "run": 2,
+      "heterogeneous_scales": {
+        "median_ms": 0.018125,
+        "p95_ms": 0.0187122
+      },
+      "heterogeneous_prefilter": {
+        "median_ms": 6.355292,
+        "p95_ms": 6.7628269
+      },
+      "uniform_crop_antialias_False": {
+        "median_ms": 1.38,
+        "p95_ms": 1.61225205
+      },
+      "uniform_crop_antialias_True": {
+        "median_ms": 15.306833000000001,
+        "p95_ms": 16.7475083
+      }
+    }
+  ],
+  "B32_prefilter_scalar_events": [
+    {
+      "key": "aten::item",
+      "count": 50,
+      "self_cpu_time_us": 7.196000000008098
+    },
+    {
+      "key": "aten::_local_scalar_dense",
+      "count": 50,
+      "self_cpu_time_us": 2.254999999996471
+    }
+  ],
+  "limits": "CPU scalar extraction counts do not measure accelerator synchronization latency; no model-quality claim",
+  "source_identity": {
+    "base_revision": "1b454ed",
+    "changes": "Wave 3 runtime, prior to commit",
+    "runtime_sha256": {
+      "src/fuse_augmentations/affine/segment.py": "38b4db6973ad7ac58a12761b0d8fd2ecc9b58d8b38aa4c224d32f69770d07247",
+      "src/fuse_augmentations/pipeline.py": "a0306fd359a20b58320ff7877cf92471d28e354ac6ef4f5bb76526f5652e9d8a"
+    }
+  },
+  "recorded_date": "2026-09-06",
+  "reproduction": "experiments/bench_antialias.py; timing cases ported unchanged from disposable probe",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.10.19",
+    "torch": "2.10.0",
+    "kornia": "0.8.2"
+  }
+}

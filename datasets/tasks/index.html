@@ -1,0 +1,3117 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Detection, segmentation, OBB, and keypoint annotations, with every family's keypoint schema.">
+      
+      
+        <meta name="author" content="Jiri Borovec">
+      
+      
+        <link rel="canonical" href="https://borda.github.io/vision-synth/datasets/tasks/">
+      
+      
+        <link rel="prev" href="../shapes/">
+      
+      
+        <link rel="next" href="../outputs/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Tasks and keypoints - vision-synth</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="vision-synth">
+  <meta property="og:title" content="Tasks and keypoints">
+  <meta property="og:description" content="Detection, segmentation, OBB, and keypoint annotations, with every family's keypoint schema.">
+  <meta property="og:url" content="https://borda.github.io/vision-synth/datasets/tasks/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Tasks and keypoints">
+  <meta name="twitter:description" content="Detection, segmentation, OBB, and keypoint annotations, with every family's keypoint schema.">
+  <link rel="alternate" type="text/plain" href="https://borda.github.io/vision-synth/llms.txt" title="LLM documentation index">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tasks-and-keypoints" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="vision-synth" class="md-header__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vision-synth
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tasks and keypoints
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
+        Get started
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-get-started"
+        aria-label="Navigation: Get started"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-get-started">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/installation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Install
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/quickstart/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quickstart
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/how-fusion-works/"
+            class="md-tabs__menu-link"
+            
+          >
+            How fusion works
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/capabilities/"
+            class="md-tabs__menu-link"
+            
+          >
+            Capabilities
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../known-limitations/"
+            class="md-tabs__menu-link"
+            
+          >
+            Known limitations
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../guides/backend-pipelines/" class="md-tabs__link">
+        Guides
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-guides"
+        aria-label="Navigation: Guides"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-guides">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/backend-pipelines/"
+            class="md-tabs__menu-link"
+            
+          >
+            Backend pipelines
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Declarative configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/auxiliary-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Auxiliary targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/introspection/"
+            class="md-tabs__menu-link"
+            
+          >
+            Introspection
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/reproducibility/"
+            class="md-tabs__menu-link"
+            
+          >
+            Reproducibility
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--active md-tabs__item--nested">
+      <a href="../" class="md-tabs__link">
+        Synthetic datasets
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-synthetic-datasets"
+        aria-label="Navigation: Synthetic datasets"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-synthetic-datasets">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../prototyping/"
+            class="md-tabs__menu-link"
+            
+          >
+            Prototyping and convergence checks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../shapes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Shape families
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="./"
+            class="md-tabs__menu-link md-tabs__menu-link--active"
+            aria-current="page"
+          >
+            Tasks and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../outputs/"
+            class="md-tabs__menu-link"
+            
+          >
+            Annotation formats
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../difficulty/"
+            class="md-tabs__menu-link"
+            
+          >
+            Difficulty bands
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../customization/"
+            class="md-tabs__menu-link"
+            
+          >
+            Customization and extension
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../applications/" class="md-tabs__link">
+        Applications
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-applications"
+        aria-label="Navigation: Applications"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-applications">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/synthetic-data-experiments/"
+            class="md-tabs__menu-link"
+            
+          >
+            Synthetic data experiments
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/generate-and-augment/"
+            class="md-tabs__menu-link"
+            
+          >
+            Generate and augment
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/classification/"
+            class="md-tabs__menu-link"
+            
+          >
+            Classification
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/segmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Segmentation and dense targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/detection-and-keypoints/"
+            class="md-tabs__menu-link"
+            
+          >
+            Detection and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/test-time-augmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Test-time augmentation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/performance-planning/"
+            class="md-tabs__menu-link"
+            
+          >
+            Performance planning
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../research/quality-and-fidelity/" class="md-tabs__link">
+        Research
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-research"
+        aria-label="Navigation: Research"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-research">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/quality-and-fidelity/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quality and fidelity
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/parity-tolerances/"
+            class="md-tabs__menu-link"
+            
+          >
+            Measured tolerances
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/benchmarks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Benchmarks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/methodology/"
+            class="md-tabs__menu-link"
+            
+          >
+            Methodology
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../reference/core/" class="md-tabs__link">
+        API reference
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-api-reference"
+        aria-label="Navigation: API reference"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-api-reference">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/core/"
+            class="md-tabs__menu-link"
+            
+          >
+            Core pipeline
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/types-and-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Types and targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/advanced/"
+            class="md-tabs__menu-link"
+            
+          >
+            Advanced internals
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-generation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset generation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-scenes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset scenes and outputs
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="vision-synth" class="md-nav__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vision-synth
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/how-fusion-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How fusion works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../known-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/backend-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarative configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/auxiliary-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auxiliary targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/introspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prototyping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coordinate-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coordinate conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovering-a-tighter-box-under-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recovering a tighter box under rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keypoints-pose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keypoints / pose
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Keypoints / pose">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#landmarks-and-the-silhouette" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Landmarks and the silhouette
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occluded-landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Occluded landmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absent-landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absent landmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#symbol-keypoint-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symbol keypoint schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#letter-keypoint-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Letter keypoint schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../difficulty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Difficulty bands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../applications/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/synthetic-data-experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic data experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/generate-and-augment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate and augment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation and dense targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/detection-and-keypoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/test-time-augmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-time augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/performance-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/quality-and-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality and fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/parity-tolerances/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measured tolerances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/types-and-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-scenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset scenes and outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coordinate-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coordinate conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovering-a-tighter-box-under-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recovering a tighter box under rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keypoints-pose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keypoints / pose
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Keypoints / pose">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#landmarks-and-the-silhouette" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Landmarks and the silhouette
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occluded-landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Occluded landmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absent-landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absent landmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#symbol-keypoint-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symbol keypoint schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#letter-keypoint-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Letter keypoint schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="tasks-and-keypoints">Tasks and keypoints<a class="headerlink" href="#tasks-and-keypoints" title="Permanent link">&para;</a></h1>
+<h2 id="tasks">Tasks<a class="headerlink" href="#tasks" title="Permanent link">&para;</a></h2>
+<p>Each task exposes a different annotation representation. In the looping previews below (yellow overlay), every generated image appears first bare, then with its exported annotation drawn back on. The clips share the same seeded sample stream, so the shapes line up one-for-one — only the label type differs.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Detection</label><label for="__tabbed_1_2">Segmentation</label><label for="__tabbed_1_3">OBB</label><label for="__tabbed_1_4">Keypoints / pose</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Axis-aligned boxes.</p>
+<p><img alt="Synthetic detection sample with axis-aligned boxes" src="../../assets/datasets/tasks/geometry-detection.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p>Filled-shape polygons.</p>
+<p><img alt="Synthetic segmentation sample with polygon outlines" src="../../assets/datasets/tasks/geometry-segmentation.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p>Oriented boxes, derived in each shape's own upright frame: the box is the shape's axis-aligned box in its pre-rotation pose, turned rigidly with the shape — its sides always run along and across the shape's own (symmetry) axis, the way a human annotator would draw it, rather than the minimum-area rectangle, which for shapes like <code>kite</code> or <code>arrow</code> would lean off the shape's axis.</p>
+<p><img alt="Synthetic OBB sample with oriented boxes" src="../../assets/datasets/tasks/geometry-obb.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p>Animal silhouettes with the sixteen landmark points and skeleton edges.</p>
+<p><img alt="Synthetic keypoint sample with landmark overlays" src="../../assets/datasets/tasks/animals-keypoints.webp" /></p>
+</div>
+</div>
+</div>
+<p>Regenerate these clips with <code>python examples/animate_synthetic_dataset.py</code>.</p>
+<h2 id="coordinate-conventions">Coordinate conventions<a class="headerlink" href="#coordinate-conventions" title="Permanent link">&para;</a></h2>
+<p>Each annotation field is in the coordinate space of the transform that moves it, so a generated label can be handed straight to a <code>FusedCompose</code> pipeline without a conversion step:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Space</th>
+<th>Moved by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>polygon</code></td>
+<td>pixel <strong>centre</strong> — pixel <code>i</code> is the point <code>i</code></td>
+<td><code>transform_keypoints</code></td>
+</tr>
+<tr>
+<td><code>keypoints</code></td>
+<td>pixel <strong>centre</strong> (visible points; a <code>v=0</code> placeholder is a flag, not a position)</td>
+<td><code>transform_keypoints</code></td>
+</tr>
+<tr>
+<td><code>obb_corners</code></td>
+<td>pixel <strong>centre</strong> — derived from <code>polygon</code></td>
+<td><code>transform_rboxes</code></td>
+</tr>
+<tr>
+<td><code>bbox_xyxy</code></td>
+<td>pixel <strong>edge</strong> — a full <code>(H, W)</code> canvas spans <code>[0, W] x [0, H]</code></td>
+<td><code>transform_bbox_xyxy</code></td>
+</tr>
+</tbody>
+</table>
+<p>The split is not a quirk of the dataset; it mirrors the core, which resamples images and moves point fields on pixel centres while conjugating boxes to pixel edges (see <a href="../../known-limitations/">Known limitations</a>). The two spaces differ by half a pixel each way, which is invisible under identity and a generic-angle rotation but becomes a <strong>full pixel</strong> under any flip or quarter turn — so a field that travels through the wrong matrix lands one pixel off its own ink.</p>
+<p>The rasterizer works in edge space, because Pillow fills pixel <code>floor(x)</code> for a vertex at <code>x</code>. Adding <code>0.5</code> to <code>polygon</code> therefore redraws the exact shape that was generated, which is what <code>tests/test_integration/test_synth_datasets_coordinate_convention.py</code> asserts pixel for pixel.</p>
+<p><strong>Exported files carry one convention throughout.</strong> Both writers convert the point fields back to edge space at the file boundary, so a COCO record's <code>segmentation</code>, <code>keypoints</code> and <code>bbox</code> are read in a single coordinate system, as COCO and YOLO consumers expect. The split above applies to the in-memory <code>Annotation</code> only.</p>
+<h2 id="recovering-a-tighter-box-under-rotation">Recovering a tighter box under rotation<a class="headerlink" href="#recovering-a-tighter-box-under-rotation" title="Permanent link">&para;</a></h2>
+<p><code>transform_bbox_xyxy</code> returns the axis-aligned box of the four warped box corners. That is all it can do with a box as input, and under a rotation the result is looser than the object: the corners sweep a rectangle that includes background the original box never covered.</p>
+<p>A segmentation-task sample also carries the outline, so the tighter box can be recovered without any change to the pipeline — warp the polygon and take its extent:</p>
+<!--phmdoctest-skip-->
+
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fused_transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">FusedCompose</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.families.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">polygon_to_bbox_xyxy</span><span class="p">,</span> <span class="n">to_pixel_edge</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FusedCompose</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="n">data_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"input"</span><span class="p">,</span> <span class="s2">"keypoints"</span><span class="p">])</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">warped_image</span><span class="p">,</span> <span class="n">warped_points</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">tight_box</span> <span class="o">=</span> <span class="n">polygon_to_bbox_xyxy</span><span class="p">(</span><span class="n">to_pixel_edge</span><span class="p">(</span><span class="n">warped_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+</span></code></pre></div>
+<p><code>to_pixel_edge</code> is what puts the result in the same space as <code>bbox_xyxy</code> (see <a href="#coordinate-conventions">Coordinate conventions</a>); skip it and the box is half a pixel off.</p>
+<p>Measured against the axis-aligned extent of the rendered ink, over six single-object scenes per family at 192 px under a 37° rotation with scale 0.85:</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Box through the affine</th>
+<th>Box from the warped polygon</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>geometric</td>
+<td>0.76</td>
+<td>0.98</td>
+</tr>
+<tr>
+<td>symbols</td>
+<td>0.57</td>
+<td>0.97</td>
+</tr>
+<tr>
+<td>animals</td>
+<td>0.51</td>
+<td>0.96</td>
+</tr>
+<tr>
+<td>letters</td>
+<td>0.83</td>
+<td>0.97</td>
+</tr>
+</tbody>
+</table>
+<p>How much a box loosens depends on how much of it the object fills, which is why animals — thin limbs, tails — lose most and letters least. Adding 12° of shear does not close the gap. <code>tests/test_integration/test_synth_datasets_bbox_from_polygon.py</code> pins the ordering and its size.</p>
+<p><code>augment_detection_batch</code> cannot do this for you: it accepts exactly <code>data_keys=["input", "bbox_xyxy"]</code> and a <code>boxes</code>/<code>labels</code> target mapping, so no polygon reaches that boundary. The recipe above lives in caller code.</p>
+<h2 id="keypoints-pose">Keypoints / pose<a class="headerlink" href="#keypoints-pose" title="Permanent link">&para;</a></h2>
+<p>The <code>keypoints</code> task is available for three shape families, each with its own fixed, dataset-wide schema: the twelve <strong>animal</strong> silhouettes use a 16-point anatomical schema (below), the seven <strong>symbol</strong> shapes use a 7-point structural schema (see <a href="#symbol-keypoint-schema">Symbol keypoint schema</a>), and the twenty-six <strong>letter</strong> stroke figures use a 15-point grid schema (see <a href="#letter-keypoint-schema">Letter keypoint schema</a>). A dataset carries exactly one — Ultralytics' YOLO pose format declares one <code>kpt_shape</code> and COCO one <code>keypoints</code> list per category, so <code>shapes</code> must belong entirely to one family under this task; mixing any two of them, or pairing a geometric shape with any of them, raises <code>ValueError</code> at <code>SyntheticConfig</code> construction.</p>
+<p>A single set of animal names covers quadrupeds, birds, and swimmers, because the <code>front_limb_*</code> pair is whatever the animal actually has at that slot (paws, wings, or fins/flippers). <code>left</code> is the limb nearer the viewer, <code>right</code> the far one — a documented convention, since a side profile cannot truly tell left from right. Because the far point sits only slightly offset from the near one (0.8–4.1px apart at shipped instance-size defaults), left/right-paired landmarks are visually indistinguishable at default rendering sizes — worth knowing before writing a custom evaluator or training on this data.</p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>Name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>mouth</code></td>
+<td>Mouth — snout/beak/trunk tip</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>eye</code></td>
+<td>Eye landmark (hand-placed — a silhouette carries no eye)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ear</code></td>
+<td>Ear (tip where prominent, else the ear position on the head); <strong>optional</strong>, see below</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>head</code></td>
+<td>Skull centre</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>neck</code></td>
+<td>Middle of the neck, halfway between head and shoulders</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>body_top</code></td>
+<td>Shoulder/chest — the front-limb attachment region</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>body_bottom</code></td>
+<td>Hip/pelvis — the hind-limb attachment region</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>tail</code></td>
+<td>Tail tip</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>front_elbow_left</code></td>
+<td>Near front-limb bend: elbow, wing wrist, or flipper bend</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>front_elbow_right</code></td>
+<td>Far front-limb bend; overlaps the near one when not separately visible</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>front_limb_left</code></td>
+<td>Near front-limb tip: paw/hoof, wing tip, or fin/flipper tip</td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>front_limb_right</code></td>
+<td>Far front limb; overlaps the near one when not separately visible</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>hind_knee_left</code></td>
+<td>Near hind knee/hock bend; <strong>optional</strong>, see below</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>hind_knee_right</code></td>
+<td>Far hind knee/hock bend; <strong>optional</strong>, see below</td>
+</tr>
+<tr>
+<td>15</td>
+<td><code>hind_limb_left</code></td>
+<td>Near hind-limb tip (foot/hoof); <strong>optional</strong>, see below</td>
+</tr>
+<tr>
+<td>16</td>
+<td><code>hind_limb_right</code></td>
+<td>Far hind limb; <strong>optional</strong>, see below</td>
+</tr>
+</tbody>
+</table>
+<p>The skeleton connects <code>mouth</code>–<code>head</code>, <code>eye</code>–<code>head</code>, <code>ear</code>–<code>head</code>, the <code>head</code>–<code>neck</code>–<code>body_top</code>–<code>body_bottom</code>–<code>tail</code> chain, a two-segment <code>body_top</code>–<code>front_elbow</code>–<code>front_limb</code> chain per front limb, and a two-segment <code>body_bottom</code>–<code>hind_knee</code>–<code>hind_limb</code> chain per hind leg — 15 edges over 16 nodes, so an absent ear drops exactly its one edge and an absent hind leg exactly its own two, orphaning nothing. Every limb is articulated in two points because a limb's bend is the most visible pose cue on a silhouette.</p>
+<p>Visibility follows COCO: <code>v=2</code> means the point is labeled and visible inside the canvas; <code>v=0</code> means it is not labeled, either because it fell outside the canvas or because the animal does not have that landmark at all (see "Absent landmarks" below). A <code>v=0</code> point's coordinates are zeroed. Partial occlusion is not modeled.</p>
+<h3 id="landmarks-and-the-silhouette">Landmarks and the silhouette<a class="headerlink" href="#landmarks-and-the-silhouette" title="Permanent link">&para;</a></h3>
+<p>Only the <strong>letter</strong> family guarantees that a landmark lies inside the ink. A letter's outline <em>is</em> the set of points within half a stroke width of its keypoint skeleton, so every letter keypoint sits strictly inside the fill with half a stroke of clearance, by construction. <strong>Symbol</strong> landmarks are inside because the shapes are convex and their slots are structural. <strong>Animal</strong> landmarks carry no such rule: they are hand-placed against the silhouette, and the placement table in <code>synth_datasets/assets/animals/README.md</code> defines several of them as <em>tips</em> — <code>tail</code> is the tail tip, <code>front_limb_*</code>/<code>hind_limb_*</code> are limb tips. A tip on a tapering appendage sits on the boundary by intent, and at default instance sizes the boundary quantises to the outside: roughly 1% of visible animal landmarks (tails, hind limbs on <code>kangaroo</code> and <code>crocodile</code>, the <code>flamingo</code> eye) round to a pixel just off their own filled polygon, before any augmentation runs.</p>
+<p>This matters only for a consumer that <em>samples</em> at the landmark — a heatmap target, a mask lookup, an "is this landmark occluded" test. An OKS evaluator is unaffected. If you need the inside-ink property, use the letter family, or test it yourself rather than assuming it.</p>
+<p>Every landmark is a pure rigid transform (translate/scale/rotate) of its packaged template position — zero articulation, zero intra-class deformation — so a model trained on this data learns template identity plus a similarity-transform regression, not articulated pose; the dataset exercises the COCO/YOLO pose formats end-to-end, it is not a substitute for articulated-pose training data.</p>
+<h3 id="occluded-landmarks">Occluded landmarks<a class="headerlink" href="#occluded-landmarks" title="Permanent link">&para;</a></h3>
+<p><code>v=1</code> — labelled but not visible — appears only when a run sets <code>occluders</code>. An occluder is an unlabelled shape drawn <em>over</em> the labelled objects, so a landmark underneath it is still known exactly and simply cannot be seen; it keeps its coordinates and is demoted from <code>2</code> to <code>1</code> rather than zeroed. A landmark the canvas frame already clipped stays at <code>0</code> and is never promoted, since the mask has nothing to say about a point outside the image.</p>
+<p>Polygons and boxes are untouched by an occluder, which follows COCO: a polygon describes the object, not the part of it that happens to be visible. The mask a writer rasterizes from that polygon is therefore <strong>amodal</strong>, and <code>sample.scene.occluder_mask</code> publishes what was drawn over it so a consumer wanting a modal mask can subtract the two. Without occluders, <code>scene.occluder_mask</code> is <code>None</code> rather than an all-<code>False</code> array, so "none were asked for" stays distinguishable from "some were drawn and missed".</p>
+<h3 id="absent-landmarks">Absent landmarks<a class="headerlink" href="#absent-landmarks" title="Permanent link">&para;</a></h3>
+<p><code>ear</code> and the four hind-leg points (<code>hind_knee_*</code>, <code>hind_limb_*</code>) are the only landmarks an animal may lack — a whale's silhouette shows pectoral flippers (its front limbs) but no hind legs, and neither a whale nor a fish has an external ear to annotate. The packaged table carries a <code>(nan, nan)</code> row for an absent landmark rather than a faked point, always paired with <code>v=0</code>; every writer branches on that visibility flag, not on the coordinates, so an absent landmark is emitted as the documented <code>(0.0, 0.0, v=0)</code> placeholder with no special-casing for NaN. <code>fish</code> and <code>whale</code> lack all five (11 of 16 landmarks present); the other ten animals have all 16.</p>
+<p>An absent landmark and a canvas-clipped landmark both serialize identically as <code>v=0</code> (matching COCO's own "not labeled" convention). A custom-eval author computing per-keypoint recall or OKS naively — treating every <code>v=0</code> as a detector miss — will see a systematic bias on <code>fish</code> and <code>whale</code>, whose four hind-leg points are structurally absent rather than missed.</p>
+<p>A keypoint run draws from one keypoint-bearing family, and its vocabulary narrows to the shapes it draws: an all-animal run declares exactly the twelve animal categories, numbered <code>1</code>–<code>12</code> in COCO and <code>0</code>–<code>11</code> in YOLO, and every one of them carries the family's <code>keypoints</code>/<code>skeleton</code> fields. Each animal category stores one flat triple per point on each of its annotations:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"duck"</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">"keypoints"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"mouth"</span><span class="p">,</span><span class="w"> </span><span class="s2">"eye"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ear"</span><span class="p">,</span><span class="w"> </span><span class="s2">"head"</span><span class="p">,</span><span class="w"> </span><span class="s2">"neck"</span><span class="p">,</span><span class="w"> </span><span class="s2">"body_top"</span><span class="p">,</span><span class="w"> </span><span class="s2">"body_bottom"</span><span class="p">,</span><span class="w"> </span><span class="s2">"tail"</span><span class="p">,</span><span class="w"> </span><span class="s2">"front_elbow_left"</span><span class="p">,</span><span class="w"> </span><span class="s2">"front_elbow_right"</span><span class="p">,</span><span class="w"> </span><span class="s2">"front_limb_left"</span><span class="p">,</span><span class="w"> </span><span class="s2">"front_limb_right"</span><span class="p">,</span><span class="w"> </span><span class="s2">"hind_knee_left"</span><span class="p">,</span><span class="w"> </span><span class="s2">"hind_knee_right"</span><span class="p">,</span><span class="w"> </span><span class="s2">"hind_limb_left"</span><span class="p">,</span><span class="w"> </span><span class="s2">"hind_limb_right"</span><span class="p">],</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">"skeleton"</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">13</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">14</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">13</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">14</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">]]</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="nt">"annotations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">"keypoints"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">x</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">y</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">v</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="err">x</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="err">y</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="err">v</span><span class="mi">16</span><span class="p">],</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="nt">"num_keypoints"</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>num_keypoints</code> counts only <code>v&gt;0</code> triples, so a whale's absent ear and hind legs drop it to 11.</p>
+<p>YOLO pose labels extend the detection row with the same ordered triples, and <code>data.yaml</code> declares the shared shape plus its horizontal-flip mapping:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">kpt_shape</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">16</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nt">flip_idx</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">12</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">13</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">14</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">]</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nt">names</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">duck</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elephant</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="c1"># ...</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="nt">11</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">crocodile</span>
+</span></code></pre></div>
+<p><code>flip_idx</code> is the identity permutation on purpose: <code>left</code>/<code>right</code> are viewer-relative here — <code>left</code> is the limb nearer the viewer, not the animal's anatomical left — so mirroring a side profile never turns a near limb into a far one and no landmark changes index under a horizontal flip.</p>
+<p>Each pose row is <code>cls cx cy w h x1 y1 v1 ... x16 y16 v16</code> — 53 tokens, fixed-width even for a whale whose absent hind legs still emit their zeroed <code>0.000000 0.000000 0</code> triples. Each animal ships as an editable SVG asset under <code>synth_datasets/assets/animals/&lt;animal&gt;.svg</code>, carrying its outline, its keypoints (with a visible skeleton overlay), and its CC0/Public Domain Mark provenance as <code>zoo:</code>-namespaced attributes; the placement rules and hand-editing instructions live in <code>synth_datasets/assets/animals/README.md</code>.</p>
+<h3 id="symbol-keypoint-schema">Symbol keypoint schema<a class="headerlink" href="#symbol-keypoint-schema" title="Permanent link">&para;</a></h3>
+<p>The seven symbol shapes share a different, smaller schema: seven generic structural slots rather than sixteen anatomical ones. Where the animals could share names because of anatomical homology (every quadruped has a <code>body_top</code>), the symbols have no equivalent shared vocabulary — a "flank" means a kite's side corner on one shape and an arrow's barb on another — so the names describe structural role instead, and only <code>center</code> is guaranteed present.</p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>Name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>center</code></td>
+<td>The outline's own area centroid (center of mass) — <strong>mandatory</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>apex</code></td>
+<td>The distinctive distal point (optional)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>tail</code></td>
+<td>The point opposite <code>apex</code> along the main axis (optional)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>flank_left</code></td>
+<td>Mirrored pair nearest the apex (optional)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>flank_right</code></td>
+<td>Mirrored pair nearest the apex (optional)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>base_left</code></td>
+<td>Mirrored pair at the far end (optional)</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>base_right</code></td>
+<td>Mirrored pair at the far end (optional)</td>
+</tr>
+</tbody>
+</table>
+<p>Point counts run 4–6 across the seven symbols, so — exactly like the animals' absent <code>ear</code>/hind-leg rows — an unused slot is a <code>(nan, nan)</code> row paired with <code>v=0</code>, never a faked point. <code>center</code> is each symbol's own area centroid (the shoelace-formula center of mass, computed from its raw outline) rather than a hand-picked point — for every symbol shipped here that centroid lands safely inside the outline, even the concave ones (<code>arrow</code>, <code>cross</code>, <code>anchor</code>), so there is no need to fall back to a hand-placed substitute; a future, more exotic concave outline whose true centroid falls outside its own silhouette would need one.</p>
+<p>The skeleton is a <strong>star</strong>: six edges, each connecting <code>center</code> to one of the other six slots. Every optional slot is therefore a leaf, so an unused one drops exactly its own edge and orphans nothing — the same property the animal skeleton's <code>ear</code>/hind-leg leaves rely on.</p>
+<p>Unlike the animals' identity <code>flip_idx</code>, the symbol schema's horizontal flip is a genuine, non-trivial permutation: <code>flank_left</code> (index 3, 0-based) swaps with <code>flank_right</code> (4), and <code>base_left</code> (5) swaps with <code>base_right</code> (6); <code>center</code>/<code>apex</code>/<code>tail</code> sit on the symmetry axis and map to themselves. This is correct precisely because every symbol is drawn mirror-symmetric about its own vertical axis in canonical orientation — a property a square or a plain plus-sign could not offer (4-fold symmetry gives a fixed landmark no stable identity), but two-fold mirror symmetry does, since the generator's random in-plane rotation preserves winding and so keeps left and right distinguishable at any angle.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">kpt_shape</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nt">flip_idx</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nt">names</span><span class="p">:</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kite</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trapezoid</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="c1"># ...</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nt">6</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">anchor</span>
+</span></code></pre></div>
+<p>Each symbol pose row is <code>cls cx cy w h x1 y1 v1 ... x7 y7 v7</code> — 26 tokens, fixed-width even for a symbol using only 4 of the 7 slots. Each symbol ships as an editable SVG under <code>synth_datasets/symbols/&lt;symbol&gt;.svg</code>, in the same schema the animals use: one closed <code>&lt;path id="outline"&gt;</code> plus a <code>&lt;g id="keypoints"&gt;</code> of named circles. The two families store the same thing — an outline and the landmarks annotating it — so they now store it the same way, and <code>examples/edit_shape_keypoints.py</code> drags a symbol's landmarks exactly as it drags a duck's.</p>
+<h3 id="letter-keypoint-schema">Letter keypoint schema<a class="headerlink" href="#letter-keypoint-schema" title="Permanent link">&para;</a></h3>
+<p>The twenty-six letters share a third, still smaller schema: fifteen generic grid slots — <code>top_left</code>, <code>top_mid</code>, <code>top_right</code>, <code>upper_left</code>, <code>upper_mid</code>, <code>upper_right</code>, <code>mid_left</code>, <code>center</code>, <code>mid_right</code>, <code>lower_left</code>, <code>lower_mid</code>, <code>lower_right</code>, <code>bottom_left</code>, <code>bottom_mid</code>, <code>bottom_right</code> — laid out as one shared 3-column x 5-row grid. Unlike the symbols, no slot is mandatory across every letter (<code>v</code>, for instance, never touches <code>center</code>); a letter uses whichever subset it needs, so point counts run from 3 (<code>l</code>, <code>v</code>) to 10 (<code>b</code>).</p>
+<p>Unlike either other family, a letter's <strong>skeleton is not shared</strong> across the family: each letter's edges are exactly its own stroke graph — the same graph the outline is wrapped around — because that graph <em>is</em> what makes it that letter, not a cosmetic overlay on a silhouette every member shares. COCO's per-category <code>skeleton</code> and the animated-preview overlay both resolve this per letter rather than reading one dataset-wide tuple.</p>
+<p>Unlike the animal and symbol landmarks, which need an inward inset to keep them off their own outline's boundary, a letter's keypoints need no correction at all: they are exactly the nodes the outline was wrapped around, and the wrap leaves every one of them half a stroke width inside the fill — including a stroke's free end, which sits at the center of its own round cap.</p>
+<p>The horizontal-flip <code>flip_idx</code> swaps each row's left/right slot and holds the middle column fixed. Note that a mirrored letter is generally a different letter (or no letter at all), so a horizontal flip is not the label-preserving augmentation here that it is for an animal silhouette; the field is published for format completeness.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">kpt_shape</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">flip_idx</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">14</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">13</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">12</span><span class="p p-Indicator">]</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nt">names</span><span class="p">:</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="c1"># ...</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">25</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">z</span>
+</span></code></pre></div>
+<p>Each letter pose row is <code>cls cx cy w h x1 y1 v1 ... x15 y15 v15</code> — 50 tokens, fixed-width even for <code>i</code>, which uses only 3 of the 15 slots. Each letter ships as an editable SVG under <code>synth_datasets/assets/letters/&lt;letter&gt;.svg</code>, but in a <em>graph</em> schema rather than an outline one: a <code>&lt;g id="nodes"&gt;</code> of named grid positions and a <code>&lt;g id="strokes"&gt;</code> of <code>&lt;line&gt;</code> edges (optionally curved by <code>zoo:bulge</code>, cut by <code>zoo:cut</code>). There is no outline in the file — the silhouette is generated by stroking that graph at load time, which is what keeps <code>LETTER_STROKE_WIDTH</code> and <code>LETTER_COUNTER_GAP</code> tunable after the fact and keeps a node a single draggable point instead of a consequence baked into a hundred outline vertices. <code>examples/edit_shape_keypoints.py</code> opens letters too, drawing the strokes themselves so dragging a node visibly reshapes the letter.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../shapes/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Shape families">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Shape families
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../outputs/" class="md-footer__link md-footer__link--next" aria-label="Next: Annotation formats">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Annotation formats
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025–2026 Jiri Borovec
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/Borda/vision-synth" target="_blank" rel="noopener" title="vision-synth on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/nav_dropdown.js"></script>
+      
+        <script src="../../javascripts/pycon_copy.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
