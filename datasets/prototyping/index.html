@@ -1,0 +1,2938 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Prototype computer vision pipelines with synthetic COCO or YOLO data, check model convergence on a fixed tiny dataset, and scale difficulty with controlled experiments.">
+      
+      
+        <meta name="author" content="Jiri Borovec">
+      
+      
+        <link rel="canonical" href="https://borda.github.io/vision-synth/datasets/prototyping/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../shapes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Prototyping and convergence checks - vision-synth</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="vision-synth">
+  <meta property="og:title" content="Prototyping and convergence checks">
+  <meta property="og:description" content="Prototype computer vision pipelines with synthetic COCO or YOLO data, check model convergence on a fixed tiny dataset, and scale difficulty with controlled experiments.">
+  <meta property="og:url" content="https://borda.github.io/vision-synth/datasets/prototyping/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Prototyping and convergence checks">
+  <meta name="twitter:description" content="Prototype computer vision pipelines with synthetic COCO or YOLO data, check model convergence on a fixed tiny dataset, and scale difficulty with controlled experiments.">
+  <link rel="alternate" type="text/plain" href="https://borda.github.io/vision-synth/llms.txt" title="LLM documentation index">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prototype-a-model-with-synthetic-data" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="vision-synth" class="md-header__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vision-synth
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Prototyping and convergence checks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
+        Get started
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-get-started"
+        aria-label="Navigation: Get started"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-get-started">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/installation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Install
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/quickstart/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quickstart
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/how-fusion-works/"
+            class="md-tabs__menu-link"
+            
+          >
+            How fusion works
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/capabilities/"
+            class="md-tabs__menu-link"
+            
+          >
+            Capabilities
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../known-limitations/"
+            class="md-tabs__menu-link"
+            
+          >
+            Known limitations
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../guides/backend-pipelines/" class="md-tabs__link">
+        Guides
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-guides"
+        aria-label="Navigation: Guides"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-guides">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/backend-pipelines/"
+            class="md-tabs__menu-link"
+            
+          >
+            Backend pipelines
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Declarative configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/auxiliary-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Auxiliary targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/introspection/"
+            class="md-tabs__menu-link"
+            
+          >
+            Introspection
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/reproducibility/"
+            class="md-tabs__menu-link"
+            
+          >
+            Reproducibility
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--active md-tabs__item--nested">
+      <a href="../" class="md-tabs__link">
+        Synthetic datasets
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-synthetic-datasets"
+        aria-label="Navigation: Synthetic datasets"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-synthetic-datasets">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="./"
+            class="md-tabs__menu-link md-tabs__menu-link--active"
+            aria-current="page"
+          >
+            Prototyping and convergence checks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../shapes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Shape families
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../tasks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Tasks and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../outputs/"
+            class="md-tabs__menu-link"
+            
+          >
+            Annotation formats
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../difficulty/"
+            class="md-tabs__menu-link"
+            
+          >
+            Difficulty bands
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../customization/"
+            class="md-tabs__menu-link"
+            
+          >
+            Customization and extension
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../applications/" class="md-tabs__link">
+        Applications
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-applications"
+        aria-label="Navigation: Applications"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-applications">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/synthetic-data-experiments/"
+            class="md-tabs__menu-link"
+            
+          >
+            Synthetic data experiments
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/generate-and-augment/"
+            class="md-tabs__menu-link"
+            
+          >
+            Generate and augment
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/classification/"
+            class="md-tabs__menu-link"
+            
+          >
+            Classification
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/segmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Segmentation and dense targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/detection-and-keypoints/"
+            class="md-tabs__menu-link"
+            
+          >
+            Detection and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/test-time-augmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Test-time augmentation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/performance-planning/"
+            class="md-tabs__menu-link"
+            
+          >
+            Performance planning
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../research/quality-and-fidelity/" class="md-tabs__link">
+        Research
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-research"
+        aria-label="Navigation: Research"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-research">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/quality-and-fidelity/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quality and fidelity
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/parity-tolerances/"
+            class="md-tabs__menu-link"
+            
+          >
+            Measured tolerances
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/benchmarks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Benchmarks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/methodology/"
+            class="md-tabs__menu-link"
+            
+          >
+            Methodology
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../reference/core/" class="md-tabs__link">
+        API reference
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-api-reference"
+        aria-label="Navigation: API reference"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-api-reference">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/core/"
+            class="md-tabs__menu-link"
+            
+          >
+            Core pipeline
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/types-and-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Types and targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/advanced/"
+            class="md-tabs__menu-link"
+            
+          >
+            Advanced internals
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-generation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset generation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-scenes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset scenes and outputs
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="vision-synth" class="md-nav__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vision-synth
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/how-fusion-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How fusion works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../known-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/backend-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarative configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/auxiliary-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auxiliary targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/introspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#choose-a-starting-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose a starting point
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-export-a-small-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Export a small dataset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-check-convergence-on-fixed-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Check convergence on fixed data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-increase-difficulty-deliberately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Increase difficulty deliberately
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-stream-when-disk-export-is-unnecessary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Stream when disk export is unnecessary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-a-passing-experiment-establishes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What a passing experiment establishes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../difficulty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Difficulty bands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../applications/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/synthetic-data-experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic data experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/generate-and-augment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate and augment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation and dense targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/detection-and-keypoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/test-time-augmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-time augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/performance-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/quality-and-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality and fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/parity-tolerances/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measured tolerances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/types-and-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-scenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset scenes and outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#choose-a-starting-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose a starting point
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-export-a-small-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Export a small dataset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-check-convergence-on-fixed-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Check convergence on fixed data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-increase-difficulty-deliberately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Increase difficulty deliberately
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-stream-when-disk-export-is-unnecessary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Stream when disk export is unnecessary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-a-passing-experiment-establishes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What a passing experiment establishes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="prototype-a-model-with-synthetic-data">Prototype a model with synthetic data<a class="headerlink" href="#prototype-a-model-with-synthetic-data" title="Permanent link">&para;</a></h1>
+<p>Use <code>vision-synth</code> to generate labelled images before collecting a real dataset: check your loader and targets, try to overfit a tiny training set, then measure performance as scenes become harder. It supplies the data; your training framework supplies the model, optimizer, loss, and metrics. No training framework beyond the package's base dependencies is needed to generate images.</p>
+<h2 id="choose-a-starting-point">Choose a starting point<a class="headerlink" href="#choose-a-starting-point" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Data recipe</th>
+<th>Check in your application</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prototype a loader or model interface</td>
+<td>20 small images, one object each, <code>fmt="coco"</code> or <code>fmt="yolo"</code></td>
+<td>Load images, draw decoded labels, run a forward/backward step; loss and gradients must be finite.</td>
+</tr>
+<tr>
+<td>Check whether training can converge</td>
+<td>Reuse a fixed set of 8–32 easy images</td>
+<td>Training loss falls and predictions fit those same images. This tests the training path, not generalization.</td>
+</tr>
+<tr>
+<td>Check synthetic generalization</td>
+<td>Keep a separate validation set fixed while training</td>
+<td>Track held-out task metrics, per-class errors, and training/validation loss together.</td>
+</tr>
+<tr>
+<td>Find sensitivity to a nuisance</td>
+<td>Change only background, blur, clutter, or object size</td>
+<td>Compare the same checkpoint across fixed evaluation conditions.</td>
+</tr>
+<tr>
+<td>Try curriculum learning</td>
+<td>Train on progressively harder configurations</td>
+<td>Compare against a fixed-difficulty baseline at the same training budget. Advancement is controlled by your trainer.</td>
+</tr>
+<tr>
+<td>Scale the sample count</td>
+<td>Increase <code>num_images</code> or use <code>SyntheticIterableDataset</code></td>
+<td>Measure loader throughput and memory separately from model quality. More samples do not themselves make scenes harder.</td>
+</tr>
+</tbody>
+</table>
+<p>These counts are starting budgets, not measured convergence requirements. Choose acceptance thresholds and a step limit for your model before running an experiment.</p>
+<h2 id="1-export-a-small-dataset">1. Export a small dataset<a class="headerlink" href="#1-export-a-small-dataset" title="Permanent link">&para;</a></h2>
+<p>Install with <code>pip install vision-synth</code>. This complete example writes and checks a 20-image COCO detection dataset. Replace the temporary directory with a new output path to retain it for your trainer.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_dataset</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">out_dir</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">counts</span> <span class="o">=</span> <span class="n">generate_dataset</span><span class="p">(</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="n">out_dir</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="n">num_images</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="n">fmt</span><span class="o">=</span><span class="s2">"coco"</span><span class="p">,</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n">task</span><span class="o">=</span><span class="s2">"detection"</span><span class="p">,</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="n">class_mode</span><span class="o">=</span><span class="s2">"shape"</span><span class="p">,</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="n">img_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="n">min_objects</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="n">max_objects</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="n">min_size_ratio</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="n">max_size_ratio</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        <span class="n">rotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="n">seed</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="p">)</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="k">for</span> <span class="n">split</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="n">labels</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">((</span><span class="n">root</span> <span class="o">/</span> <span class="n">split</span> <span class="o">/</span> <span class="s2">"_annotations.coco.json"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="s2">"images"</span><span class="p">])</span> <span class="o">==</span> <span class="n">count</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="s2">"annotations"</span><span class="p">])</span> <span class="o">==</span> <span class="n">count</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">[</span><span class="s2">"images"</span><span class="p">]:</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>            <span class="k">assert</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">split</span> <span class="o">/</span> <span class="n">item</span><span class="p">[</span><span class="s2">"file_name"</span><span class="p">])</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="nb">print</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>Image counts for the prototype dataset</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>{'train': 14, 'val': 4, 'test': 2}
+</span></code></pre></div>
+
+</details>
+
+<p>Use <code>fmt="yolo"</code> for a <code>data.yaml</code> plus image/label directories. Change <code>task</code> to <code>segmentation</code> or <code>obb</code> for polygons or oriented boxes. For <code>task="keypoints"</code>, also choose shapes from one keypoint-bearing family: animals, symbols, or letters. Geometric primitives do not supply a pose schema. See <a href="../tasks/">Tasks and keypoints</a> and <a href="../outputs/">Annotation formats</a> before wiring targets into a model: COCO categories are 1-based, YOLO classes are 0-based, and COCO OBB corners are carried in <code>segmentation</code>.</p>
+<h2 id="2-check-convergence-on-fixed-data">2. Check convergence on fixed data<a class="headerlink" href="#2-check-convergence-on-fixed-data" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Inspect a few images with labels decoded by your actual loader. Confirm class names, box coordinates, image scaling, and any keypoint visibility handling.</li>
+<li>Repeatedly train on the same tiny training subset. Initially disable random training augmentation and keep generated images fixed; fresh images on every pass would test a different question.</li>
+<li>Record training loss and predictions at fixed step intervals. A decreasing loss alone is insufficient: boxes, masks, or landmarks must fit the targets too.</li>
+<li>If fitting fails, inspect target conversion, loss inputs, gradients, learning rate, and model capacity before increasing data difficulty.</li>
+<li>Once the tiny-set check passes, train on a larger set and evaluate on separate fixed validation images. Reserve the test split for the final comparison.</li>
+</ol>
+<p>Use your task's metrics: box AP for detection, mask IoU/AP for segmentation, oriented-box IoU/AP for OBB, and a metric consistent with the family's landmark and visibility schema for pose. The package does not prescribe a universal loss threshold, step count, or guaranteed accuracy.</p>
+<p>Keep split membership stable: changing <code>num_images</code> or split ratios in a seeded export can move samples between splits. Freeze an exported evaluation set for comparisons. For separate generation calls, avoid reusing the same seed and configuration for training and validation, which would replay samples. Record seeds, full configuration, package/dependency versions, and any source background files; a seed alone is not a cross-version reproducibility guarantee.</p>
+<h2 id="3-increase-difficulty-deliberately">3. Increase difficulty deliberately<a class="headerlink" href="#3-increase-difficulty-deliberately" title="Permanent link">&para;</a></h2>
+<p>There is no <code>difficulty=</code> argument or automatic curriculum scheduler. Use <code>SyntheticConfig</code> fields. Start with one change at a time so a metric change has an interpretable cause; use the <a href="../difficulty/">suggested difficulty bands</a> when you want combined stress conditions.</p>
+<p>This paired evaluation recipe preserves the shape vocabulary and object placement while adding background noise. It checks that the pixels change and boxes remain aligned before you evaluate a model on the two conditions.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">replace</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoiseBackground</span><span class="p">,</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">SyntheticGenerator</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">baseline</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">img_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">task</span><span class="o">=</span><span class="s2">"detection"</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">class_mode</span><span class="o">=</span><span class="s2">"shape"</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">min_objects</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">max_objects</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">min_size_ratio</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="n">max_size_ratio</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">)</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">noisy</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">NoiseBackground</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mi">12</span><span class="p">))</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">plain_samples</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">23</span><span class="p">)</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="n">noisy_samples</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">23</span><span class="p">)</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">paired</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="k">for</span> <span class="n">plain</span><span class="p">,</span> <span class="n">changed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plain_samples</span><span class="p">,</span> <span class="n">noisy_samples</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    <span class="k">for</span> <span class="n">original</span><span class="p">,</span> <span class="n">modified</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plain</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">changed</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="k">assert</span> <span class="n">original</span><span class="o">.</span><span class="n">bbox_xyxy</span> <span class="o">==</span> <span class="n">modified</span><span class="o">.</span><span class="n">bbox_xyxy</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>        <span class="k">assert</span> <span class="n">original</span><span class="o">.</span><span class="n">class_id</span> <span class="o">==</span> <span class="n">modified</span><span class="o">.</span><span class="n">class_id</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>    <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">plain</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">changed</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="n">paired</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="k">assert</span> <span class="n">paired</span> <span class="o">==</span> <span class="mi">4</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="nb">print</span><span class="p">(</span><span class="n">paired</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>Paired evaluation images with unchanged boxes</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>4
+</span></code></pre></div>
+
+</details>
+
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Config fields</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Background variation</td>
+<td><code>background=NoiseBackground(...)</code> or <code>TextureBackground(...)</code></td>
+<td>Test separation from the canvas.</td>
+</tr>
+<tr>
+<td>Smaller targets</td>
+<td><code>min_size_ratio</code>, <code>max_size_ratio</code>, <code>img_size</code></td>
+<td>Track object size in pixels (ratios are of the shorter canvas side); resizing by the trainer can erase small details.</td>
+</tr>
+<tr>
+<td>More objects</td>
+<td><code>min_objects</code>, <code>max_objects</code>, <code>overlap_iou</code></td>
+<td>Increase scene density; placement constraints can yield fewer objects than requested.</td>
+</tr>
+<tr>
+<td>Background clutter</td>
+<td><code>distractors</code>, optional distractor shape/color pools</td>
+<td>Add unlabelled shapes behind targets.</td>
+</tr>
+<tr>
+<td>Partial occlusion</td>
+<td><code>occluders</code></td>
+<td>Boxes and polygons retain full-object geometry; covered keypoints become visibility <code>1</code>. These are not visible-only segmentation masks.</td>
+</tr>
+<tr>
+<td>Camera effects</td>
+<td><code>degrade=(GaussianBlur(...), JPEG(...))</code></td>
+<td>Bake effects into pixels; generation does not resample them at each training step.</td>
+</tr>
+<tr>
+<td>More classes or finer silhouettes</td>
+<td><code>shapes</code>, <code>class_mode</code></td>
+<td>Changes the learning task and can renumber classes; keep vocabulary fixed within a curriculum.</td>
+</tr>
+</tbody>
+</table>
+<p>Background, clutter, and degradation side streams preserve placement at a fixed seed. Size, shape, object-count, and placement changes do not carry that promise. The easy/moderate/hard bands change several factors, including vocabulary: their training-free statistics do not establish model convergence or an accuracy ranking.</p>
+<p>For a curriculum, construct the next configuration in your trainer after an explicit validation criterion or epoch budget. Evaluate each stage on the same frozen suite and report regressions on easier cases. A single checkpoint tested across harder scenes measures robustness; retraining separately at each difficulty measures learnability. Keep those experiments distinct.</p>
+<h2 id="4-stream-when-disk-export-is-unnecessary">4. Stream when disk export is unnecessary<a class="headerlink" href="#4-stream-when-disk-export-is-unnecessary" title="Permanent link">&para;</a></h2>
+<p><code>SyntheticGenerator(config).generate(n, seed=...)</code> yields individual <code>Sample</code> objects. <code>SyntheticIterableDataset</code> integrates that stream with PyTorch; it does not convert samples to a model-specific target dictionary.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticIterableDataset</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">SyntheticIterableDataset</span><span class="p">(</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">num_images</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">task</span><span class="o">=</span><span class="s2">"detection"</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">class_mode</span><span class="o">=</span><span class="s2">"shape"</span><span class="p">,</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">seed</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">)</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loader</span><span class="p">))</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="nb">print</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>Image layout before model preprocessing</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>(64, 64, 3) uint8
+</span></code></pre></div>
+
+</details>
+
+<p>Convert the HWC RGB arrays and ragged annotations to your trainer's tensor and target contract. Keep <code>collate_fn=list</code> until that conversion is defined. For fresh streams each epoch, build a new dataset and loader with <code>epoch=...</code>; there is no <code>set_epoch()</code> method. See <a href="../outputs/#distributed-ranks-and-epochs">distributed ranks and epochs</a> for worker seeding, per-rank counts, and persistent-worker limits.</p>
+<p>Direct generation and YOLO export keep sample storage bounded; COCO export accumulates annotation metadata per split. DataLoader batches and worker prefetching add memory. See <a href="../outputs/#in-memory-streaming-and-training-feed">streaming memory contracts</a> before sizing a large run.</p>
+<h2 id="what-a-passing-experiment-establishes">What a passing experiment establishes<a class="headerlink" href="#what-a-passing-experiment-establishes" title="Permanent link">&para;</a></h2>
+<p>A tiny-set pass shows that the tested training path can fit those examples. Held-out synthetic results measure performance under the chosen generator distribution. Neither establishes accuracy on photographs or production data. Use real held-out data for that decision, and keep synthetic runs as fast, reproducible development checks.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../shapes/" class="md-footer__link md-footer__link--next" aria-label="Next: Shape families">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Shape families
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025–2026 Jiri Borovec
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/Borda/vision-synth" target="_blank" rel="noopener" title="vision-synth on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/nav_dropdown.js"></script>
+      
+        <script src="../../javascripts/pycon_copy.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

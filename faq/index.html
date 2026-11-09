@@ -1,0 +1,3186 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Answers about synthetic computer vision datasets, COCO/YOLO generation, model prototyping, difficulty controls, and image augmentation compatibility.">
+      
+      
+        <meta name="author" content="Jiri Borovec">
+      
+      
+        <link rel="canonical" href="https://borda.github.io/vision-synth/faq/">
+      
+      
+        <link rel="prev" href="../reference/datasets-scenes/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Frequently asked questions - vision-synth</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="vision-synth">
+  <meta property="og:title" content="Frequently asked questions">
+  <meta property="og:description" content="Answers about synthetic computer vision datasets, COCO/YOLO generation, model prototyping, difficulty controls, and image augmentation compatibility.">
+  <meta property="og:url" content="https://borda.github.io/vision-synth/faq/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Frequently asked questions">
+  <meta name="twitter:description" content="Answers about synthetic computer vision datasets, COCO/YOLO generation, model prototyping, difficulty controls, and image augmentation compatibility.">
+  <link rel="alternate" type="text/plain" href="https://borda.github.io/vision-synth/llms.txt" title="LLM documentation index">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#frequently-asked-questions" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="vision-synth" class="md-header__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vision-synth
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Frequently asked questions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../getting-started/installation/" class="md-tabs__link">
+        Get started
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-get-started"
+        aria-label="Navigation: Get started"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-get-started">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../getting-started/installation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Install
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../getting-started/quickstart/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quickstart
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../concepts/how-fusion-works/"
+            class="md-tabs__menu-link"
+            
+          >
+            How fusion works
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../concepts/capabilities/"
+            class="md-tabs__menu-link"
+            
+          >
+            Capabilities
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../known-limitations/"
+            class="md-tabs__menu-link"
+            
+          >
+            Known limitations
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../guides/backend-pipelines/" class="md-tabs__link">
+        Guides
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-guides"
+        aria-label="Navigation: Guides"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-guides">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../guides/backend-pipelines/"
+            class="md-tabs__menu-link"
+            
+          >
+            Backend pipelines
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../guides/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Declarative configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../guides/auxiliary-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Auxiliary targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../guides/introspection/"
+            class="md-tabs__menu-link"
+            
+          >
+            Introspection
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../guides/reproducibility/"
+            class="md-tabs__menu-link"
+            
+          >
+            Reproducibility
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../datasets/" class="md-tabs__link">
+        Synthetic datasets
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-synthetic-datasets"
+        aria-label="Navigation: Synthetic datasets"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-synthetic-datasets">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/prototyping/"
+            class="md-tabs__menu-link"
+            
+          >
+            Prototyping and convergence checks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/shapes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Shape families
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/tasks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Tasks and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/outputs/"
+            class="md-tabs__menu-link"
+            
+          >
+            Annotation formats
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/difficulty/"
+            class="md-tabs__menu-link"
+            
+          >
+            Difficulty bands
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../datasets/customization/"
+            class="md-tabs__menu-link"
+            
+          >
+            Customization and extension
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../applications/" class="md-tabs__link">
+        Applications
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-applications"
+        aria-label="Navigation: Applications"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-applications">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/synthetic-data-experiments/"
+            class="md-tabs__menu-link"
+            
+          >
+            Synthetic data experiments
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/generate-and-augment/"
+            class="md-tabs__menu-link"
+            
+          >
+            Generate and augment
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/classification/"
+            class="md-tabs__menu-link"
+            
+          >
+            Classification
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/segmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Segmentation and dense targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/detection-and-keypoints/"
+            class="md-tabs__menu-link"
+            
+          >
+            Detection and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/test-time-augmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Test-time augmentation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../applications/performance-planning/"
+            class="md-tabs__menu-link"
+            
+          >
+            Performance planning
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../research/quality-and-fidelity/" class="md-tabs__link">
+        Research
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-research"
+        aria-label="Navigation: Research"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-research">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../research/quality-and-fidelity/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quality and fidelity
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../research/parity-tolerances/"
+            class="md-tabs__menu-link"
+            
+          >
+            Measured tolerances
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../research/benchmarks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Benchmarks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../research/methodology/"
+            class="md-tabs__menu-link"
+            
+          >
+            Methodology
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../reference/core/" class="md-tabs__link">
+        API reference
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-api-reference"
+        aria-label="Navigation: API reference"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-api-reference">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../reference/core/"
+            class="md-tabs__menu-link"
+            
+          >
+            Core pipeline
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../reference/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../reference/types-and-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Types and targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../reference/advanced/"
+            class="md-tabs__menu-link"
+            
+          >
+            Advanced internals
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../reference/datasets-generation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset generation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../reference/datasets-scenes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset scenes and outputs
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="vision-synth" class="md-nav__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vision-synth
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/how-fusion-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How fusion works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../known-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/backend-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarative configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/auxiliary-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auxiliary targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/introspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../datasets/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/prototyping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/difficulty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Difficulty bands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../applications/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/synthetic-data-experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic data experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/generate-and-augment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate and augment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation and dense targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/detection-and-keypoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/test-time-augmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-time augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applications/performance-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/quality-and-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality and fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/parity-tolerances/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measured tolerances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/types-and-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/datasets-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/datasets-scenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset scenes and outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-generate-synthetic-computer-vision-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I generate synthetic computer-vision datasets?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-synthetic-data-tasks-and-formats-are-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which synthetic-data tasks and formats are supported?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#do-i-need-real-images-torch-or-an-optional-augmentation-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need real images, torch, or an optional augmentation backend?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#does-the-package-train-models-or-provide-a-difficulty-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does the package train models or provide a difficulty setting?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-vision-synth-a-drop-in-replacement-for-native-compose-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is vision-synth a drop-in replacement for native Compose classes?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-the-package-actually-optimize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does the package actually optimize?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#will-it-make-my-training-pipeline-faster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Will it make my training pipeline faster?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#does-it-run-on-cuda-or-apple-mps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does it run on CUDA or Apple MPS?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-fused-output-pixel-identical-to-the-source-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is fused output pixel-identical to the source backend?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#are-all-kornia-torchvision-and-albumentations-transforms-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Are all Kornia, TorchVision, and Albumentations transforms supported?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-an-unknown-spatial_kernel-barrier-warning-safe-to-ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is an Unknown ... SPATIAL_KERNEL barrier warning safe to ignore?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-auxiliary-targets-are-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which auxiliary targets are supported?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-do-masks-contain-fill-values-near-a-transformed-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do masks contain fill values near a transformed boundary?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-backpropagate-through-a-transformed-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I backpropagate through a transformed mask?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#are-boxes-clipped-to-the-output-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Are boxes clipped to the output image?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-pass-albumentations-image-mask-numpy-dictionaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I pass Albumentations image=..., mask=... NumPy dictionaries?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-output_backendnumpy-return" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does output_backend="numpy" return?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-should-i-seed-a-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How should I seed a pipeline?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-randomnessbackend-guarantee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does randomness="backend" guarantee?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#does-reorderpolicypointwise-preserve-my-declared-operation-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does ReorderPolicy.POINTWISE preserve my declared operation order?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-transform_matrix-represent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does transform_matrix represent?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-n_warps_saved-a-measured-speedup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is n_warps_saved a measured speedup?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-should-i-use-antialiastrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When should I use antialias=True?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-undo-augmentation-on-predictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I undo augmentation on predictions?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-should-i-keep-the-native-backend-instead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When should I keep the native backend instead?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-generate-synthetic-computer-vision-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I generate synthetic computer-vision datasets?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-synthetic-data-tasks-and-formats-are-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which synthetic-data tasks and formats are supported?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#do-i-need-real-images-torch-or-an-optional-augmentation-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I need real images, torch, or an optional augmentation backend?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#does-the-package-train-models-or-provide-a-difficulty-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does the package train models or provide a difficulty setting?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-vision-synth-a-drop-in-replacement-for-native-compose-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is vision-synth a drop-in replacement for native Compose classes?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-the-package-actually-optimize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does the package actually optimize?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#will-it-make-my-training-pipeline-faster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Will it make my training pipeline faster?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#does-it-run-on-cuda-or-apple-mps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does it run on CUDA or Apple MPS?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-fused-output-pixel-identical-to-the-source-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is fused output pixel-identical to the source backend?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#are-all-kornia-torchvision-and-albumentations-transforms-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Are all Kornia, TorchVision, and Albumentations transforms supported?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-an-unknown-spatial_kernel-barrier-warning-safe-to-ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is an Unknown ... SPATIAL_KERNEL barrier warning safe to ignore?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-auxiliary-targets-are-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which auxiliary targets are supported?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-do-masks-contain-fill-values-near-a-transformed-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do masks contain fill values near a transformed boundary?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-backpropagate-through-a-transformed-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I backpropagate through a transformed mask?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#are-boxes-clipped-to-the-output-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Are boxes clipped to the output image?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-pass-albumentations-image-mask-numpy-dictionaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I pass Albumentations image=..., mask=... NumPy dictionaries?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-output_backendnumpy-return" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does output_backend="numpy" return?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-should-i-seed-a-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How should I seed a pipeline?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-randomnessbackend-guarantee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does randomness="backend" guarantee?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#does-reorderpolicypointwise-preserve-my-declared-operation-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does ReorderPolicy.POINTWISE preserve my declared operation order?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-does-transform_matrix-represent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does transform_matrix represent?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is-n_warps_saved-a-measured-speedup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is n_warps_saved a measured speedup?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-should-i-use-antialiastrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When should I use antialias=True?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#can-i-undo-augmentation-on-predictions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can I undo augmentation on predictions?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-should-i-keep-the-native-backend-instead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When should I keep the native backend instead?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="frequently-asked-questions">Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h1>
+<h2 id="can-i-generate-synthetic-computer-vision-datasets">Can I generate synthetic computer-vision datasets?<a class="headerlink" href="#can-i-generate-synthetic-computer-vision-datasets" title="Permanent link">&para;</a></h2>
+<p>Yes. <code>synth_datasets</code> draws labelled shapes from geometric, animal, symbol, and letter families. <code>generate_dataset</code> writes COCO or YOLO files, <code>SyntheticGenerator</code> yields in-memory <code>Sample</code> objects, and <code>SyntheticIterableDataset</code> streams samples to a PyTorch <code>DataLoader</code>. See <a href="../datasets/">Synthetic data generation</a>.</p>
+<h2 id="which-synthetic-data-tasks-and-formats-are-supported">Which synthetic-data tasks and formats are supported?<a class="headerlink" href="#which-synthetic-data-tasks-and-formats-are-supported" title="Permanent link">&para;</a></h2>
+<p>The generator supports detection (axis-aligned boxes), segmentation (polygons), oriented bounding boxes (OBB), and keypoints/pose. On disk, it writes COCO or YOLO; the in-memory stream exposes <code>Sample</code> annotations. Keypoints require one keypoint-bearing family — animals, symbols, or letters — because geometric primitives have no pose schema. See <a href="../datasets/tasks/">Tasks and keypoints</a> and <a href="../datasets/outputs/">Annotation formats</a>.</p>
+<h2 id="do-i-need-real-images-torch-or-an-optional-augmentation-backend">Do I need real images, torch, or an optional augmentation backend?<a class="headerlink" href="#do-i-need-real-images-torch-or-an-optional-augmentation-backend" title="Permanent link">&para;</a></h2>
+<p>No extras are needed for direct dataset generation: the base package (<code>pip install vision-synth</code>) includes Pillow and NumPy, and <code>import synth_datasets</code> never imports torch. Torch is required for the image-augmentation engine and for <code>SyntheticIterableDataset</code> when using a PyTorch <code>DataLoader</code>; install <code>vision-synth[torch]</code> for either. The generator is not a photorealistic renderer, so use real held-out images when deciding whether a model transfers to production. See <a href="../datasets/shapes/">Shape families</a> and <a href="../getting-started/installation/">Installation</a>.</p>
+<h2 id="does-the-package-train-models-or-provide-a-difficulty-setting">Does the package train models or provide a difficulty setting?<a class="headerlink" href="#does-the-package-train-models-or-provide-a-difficulty-setting" title="Permanent link">&para;</a></h2>
+<p>No. Your external training framework owns the model, optimizer, loss, metrics, and convergence decisions. There is no <code>difficulty=</code> argument or automatic curriculum: vary <code>SyntheticConfig</code> fields such as <code>background</code>, <code>degrade</code>, <code>distractors</code>, <code>occluders</code>, object size, and object count. Use <a href="../datasets/prototyping/">Prototyping and convergence checks</a> for the experiment sequence and <a href="../datasets/difficulty/">Difficulty bands</a> for suggested knob combinations. Passing a synthetic check does not establish accuracy on real images.</p>
+<h2 id="is-vision-synth-a-drop-in-replacement-for-native-compose-classes">Is <code>vision-synth</code> a drop-in replacement for native Compose classes?<a class="headerlink" href="#is-vision-synth-a-drop-in-replacement-for-native-compose-classes" title="Permanent link">&para;</a></h2>
+<p>No. It accepts supported Kornia, TorchVision, and Albumentations transform objects through its own tensor-first API. The normal fused path expects floating BCHW PyTorch tensors. It does not reproduce every native input type, target processor, hook, metadata, or output contract.</p>
+<p>Use “Compose-like tensor pipeline” as the mental model, not “behaviorally identical container.”</p>
+<h2 id="what-does-the-package-actually-optimize">What does the package actually optimize?<a class="headerlink" href="#what-does-the-package-actually-optimize" title="Permanent link">&para;</a></h2>
+<p>It composes compatible geometric matrices inside a same-backend segment and applies the segment with one interpolation pass. It can also combine supported linear RGB color operations into fewer matrix multiplications. Exact operations such as flips use lossless paths.</p>
+<p>Fusion stops at backend changes, unsupported operations, many passthroughs, and affine/projective boundaries.</p>
+<h2 id="will-it-make-my-training-pipeline-faster">Will it make my training pipeline faster?<a class="headerlink" href="#will-it-make-my-training-pipeline-faster" title="Permanent link">&para;</a></h2>
+<p>Possibly, but not universally. Speed depends on batch size, resolution, device, transform mix, passthrough operations, warmup, and backend. Fewer resampling passes can improve image quality without improving wall-clock time.</p>
+<p>Benchmark the complete production pipeline on the target hardware. Separate first-call compilation time from steady-state timing, synchronize accelerators, and compare against the exact native baseline you would otherwise deploy.</p>
+<h2 id="does-it-run-on-cuda-or-apple-mps">Does it run on CUDA or Apple MPS?<a class="headerlink" href="#does-it-run-on-cuda-or-apple-mps" title="Permanent link">&para;</a></h2>
+<p>Torch-backed fused segments can run on CUDA and MPS. That does not mean every pipeline stays on device: a CPU/native passthrough can introduce transfers. Inspect <code>fusion_plan</code> and benchmark end to end.</p>
+<p><code>compile=True</code> is experimental and environment-dependent on non-CPU devices; it is a no-op on CPU. There is no universal CUDA/MPS speedup guarantee.</p>
+<h2 id="is-fused-output-pixel-identical-to-the-source-backend">Is fused output pixel-identical to the source backend?<a class="headerlink" href="#is-fused-output-pixel-identical-to-the-source-backend" title="Permanent link">&para;</a></h2>
+<p>No general parity guarantee exists. A fused pipeline intentionally replaces multiple warps with one, and execution can differ in coordinate centers, interpolation, borders, clipping, and random draw order.</p>
+<p>TorchVision geometry has a known center/<code>align_corners</code> difference. The Albumentations torch execution strategy differs numerically from OpenCV. Color <code>clip_policy="final"</code> differs from native per-operation clipping when intermediate values leave the image gamut.</p>
+<p>Validate task metrics and representative images, not only output shapes.</p>
+<h2 id="are-all-kornia-torchvision-and-albumentations-transforms-supported">Are all Kornia, TorchVision, and Albumentations transforms supported?<a class="headerlink" href="#are-all-kornia-torchvision-and-albumentations-transforms-supported" title="Permanent link">&para;</a></h2>
+<p>No. Each adapter has a finite registry. Registered operations may fuse; unregistered operations generally become passthrough barriers, warn, or are refused. Some configurations of registered classes are unsupported, including TorchVision <code>RandomRotation(expand=True)</code>.</p>
+<p>Use the capability documentation and inspect <code>fusion_plan_descriptors</code> after construction. Do not infer support from an upstream class merely existing.</p>
+<h2 id="is-an-unknown-spatial_kernel-barrier-warning-safe-to-ignore">Is an <code>Unknown ... SPATIAL_KERNEL barrier</code> warning safe to ignore?<a class="headerlink" href="#is-an-unknown-spatial_kernel-barrier-warning-safe-to-ignore" title="Permanent link">&para;</a></h2>
+<p>Not in a pipeline with masks, boxes, or keypoints.</p>
+<div class="admonition danger">
+<p class="admonition-title">Unknown spatial transforms can corrupt training targets</p>
+<p>With <code>data_keys</code>, an unknown or unclassified spatial transform is rejected before any segment executes. The image-only path may still run an unknown transform natively, so treat every warning as a review point there.</p>
+</div>
+<p>For image-only pipelines, the warning still means fusion stopped and native passthrough behavior applies.</p>
+<h2 id="which-auxiliary-targets-are-supported">Which auxiliary targets are supported?<a class="headerlink" href="#which-auxiliary-targets-are-supported" title="Permanent link">&para;</a></h2>
+<p>The tensor <code>data_keys</code> path supports masks, dense xyxy or xywh boxes, and dense keypoints for registered geometric operations. See <a href="../guides/auxiliary-targets/">Auxiliary targets</a> before using it for detection or segmentation.</p>
+<p>It does not provide a full detection processor: no box clipping, visibility or area filtering, class-label propagation, variable-length batching, or keypoint visibility policy is included.</p>
+<h2 id="why-do-masks-contain-fill-values-near-a-transformed-boundary">Why do masks contain fill values near a transformed boundary?<a class="headerlink" href="#why-do-masks-contain-fill-values-near-a-transformed-boundary" title="Permanent link">&para;</a></h2>
+<p>Mask sampling uses the independent scalar <code>mask_fill</code>, which defaults to <code>0</code> and is independent of the image's <code>padding_mode</code>. Set <code>mask_fill</code> to a finite dtype-compatible background or ignore label when <code>0</code> is not valid.</p>
+<h2 id="can-i-backpropagate-through-a-transformed-mask">Can I backpropagate through a transformed mask?<a class="headerlink" href="#can-i-backpropagate-through-a-transformed-mask" title="Permanent link">&para;</a></h2>
+<p>The default nearest mask path is deliberately detached and has no <code>grad_fn</code>. Use <code>mask_interpolation="bilinear"</code> with a floating soft mask when gradients through mask values are required. Bilinear interpolation mixes neighboring values and must not be used for integer class IDs.</p>
+<h2 id="are-boxes-clipped-to-the-output-image">Are boxes clipped to the output image?<a class="headerlink" href="#are-boxes-clipped-to-the-output-image" title="Permanent link">&para;</a></h2>
+<p>No. Boxes are transformed and axis-aligned, but coordinates can remain negative or exceed image bounds. Clip and filter them after augmentation, and apply the same validity mask to labels and instance metadata.</p>
+<h2 id="can-i-pass-albumentations-image-mask-numpy-dictionaries">Can I pass Albumentations <code>image=...</code>, <code>mask=...</code> NumPy dictionaries?<a class="headerlink" href="#can-i-pass-albumentations-image-mask-numpy-dictionaries" title="Permanent link">&para;</a></h2>
+<p>Yes, when the pipeline declares <code>data_keys</code>: masks, boxes, keypoints and rotated boxes route through the same composed matrix as the tensor path, and a NumPy image comes back in the dtype it was passed in. Without <code>data_keys</code> the NumPy path stays image-only. Either way the targets follow this package's contract -- use native Albumentations when its dictionary label processors are a requirement.</p>
+<h2 id="what-does-output_backendnumpy-return">What does <code>output_backend="numpy"</code> return?<a class="headerlink" href="#what-does-output_backendnumpy-return" title="Permanent link">&para;</a></h2>
+<p>Images and masks become channel-last NumPy arrays on CPU. A batch of one is squeezed to HWC; larger batches are BHWC. Conversion detaches autograd and moves device data to CPU. Boxes and keypoints remain PyTorch tensors because image layout conversion does not apply to coordinates.</p>
+<h2 id="how-should-i-seed-a-pipeline">How should I seed a pipeline?<a class="headerlink" href="#how-should-i-seed-a-pipeline" title="Permanent link">&para;</a></h2>
+<p>For backend-free, Kornia, and TorchVision paths, control PyTorch randomness and keep batch shape/order fixed. Albumentations fused geometry also needs global NumPy activation gates and transform-internal parameter generators seeded.</p>
+<p>See <a href="../guides/reproducibility/">Reproducibility</a> for single-process and DataLoader examples.</p>
+<h2 id="what-does-randomnessbackend-guarantee">What does <code>randomness="backend"</code> guarantee?<a class="headerlink" href="#what-does-randomnessbackend-guarantee" title="Permanent link">&para;</a></h2>
+<p>It preserves the backend's intended batch sampling style where the adapter can represent it. It does not guarantee the same random stream, parameters, or pixels as calling the native container.</p>
+<p><code>randomness="per_sample"</code> requests independent samples where the adapter has a canonical per-sample sampler. The backend-free direct path is already per-sample, so this option does not change its parameter sampling.</p>
+<h2 id="does-reorderpolicypointwise-preserve-my-declared-operation-order">Does <code>ReorderPolicy.POINTWISE</code> preserve my declared operation order?<a class="headerlink" href="#does-reorderpolicypointwise-preserve-my-declared-operation-order" title="Permanent link">&para;</a></h2>
+<p>No. It moves pointwise/color operations across geometric operations to enlarge fusion windows. Padding, interpolation, and clipping can make the reordered result materially different.</p>
+<p>Use <code>ReorderPolicy.NONE</code> for order-sensitive or parity-oriented experiments. Remember that <code>from_params</code> and <code>from_config</code> currently default to <code>POINTWISE</code>.</p>
+<h2 id="what-does-transform_matrix-represent">What does <code>transform_matrix</code> represent?<a class="headerlink" href="#what-does-transform_matrix-represent" title="Permanent link">&para;</a></h2>
+<p>It is the actual forward pixel-centre matrix from the most recent call's last supported matrix-producing segment. Fused affine/projective, exact D4/flip/quarter-turn, and direct deterministic <code>letterbox</code> segments publish a <code>(B, 3, 3)</code> matrix. It is not a whole-pipeline matrix across multiple segments, backend boundaries, passthroughs, or affine/projective boundaries. It is <code>None</code> when the latest call produced no supported matrix.</p>
+<p>Use <code>return_matrix=True</code> to retrieve the same last-segment matrix with the call. The property is mutable per-call state, so do not read it concurrently from a shared pipeline instance.</p>
+<h2 id="is-n_warps_saved-a-measured-speedup">Is <code>n_warps_saved</code> a measured speedup?<a class="headerlink" href="#is-n_warps_saved-a-measured-speedup" title="Permanent link">&para;</a></h2>
+<p>No. It is a planning heuristic. It does not measure runtime, transfers, or native interpolation calls exactly. Exact flips can contribute even though native flips are already non-interpolating.</p>
+<h2 id="when-should-i-use-antialiastrue">When should I use <code>antialias=True</code>?<a class="headerlink" href="#when-should-i-use-antialiastrue" title="Permanent link">&para;</a></h2>
+<p>Use it experimentally for aggressive crop-resize downscales and validate image quality and speed. Each sample is evaluated independently; safe samples remain unfiltered. Enabling the option requires Kornia and raises <code>ImportError</code> during pipeline construction when that optional dependency is missing. The flag is off by default.</p>
+<h2 id="can-i-undo-augmentation-on-predictions">Can I undo augmentation on predictions?<a class="headerlink" href="#can-i-undo-augmentation-on-predictions" title="Permanent link">&para;</a></h2>
+<p>Yes, with <code>pipe.inverse(prediction, matrix=matrix)</code>, where <code>matrix</code> is the matrix returned by the exact paired <code>forward(..., return_matrix=True)</code> call. Each <code>inverse</code> call must be paired with its own forward call's matrix; do not read the mutable <code>transform_matrix</code> property instead.</p>
+<p>This supports one fused affine or projective image segment only. Exact D4/flip/quarter-turn and direct deterministic <code>letterbox</code> calls publish coordinate matrices, but their images remain outside this inverse API. It raises for crop-resize, color/LUT/blur or passthrough segments, exact-only segments, and multi-segment pipelines, since <code>return_matrix</code> records only the last segment's matrix. Boxes are axis-aligned, so a forward-then-inverse box is exact only for axis-aligned transforms and inflates under rotation, shear, or a projective warp.</p>
+<p>See <a href="../guides/introspection/">Introspection</a> and the README's <a href="https://github.com/Borda/vision-synth#test-time-de-augmentation">Test-time de-augmentation</a> example.</p>
+<h2 id="when-should-i-keep-the-native-backend-instead">When should I keep the native backend instead?<a class="headerlink" href="#when-should-i-keep-the-native-backend-instead" title="Permanent link">&para;</a></h2>
+<p>Keep the native pipeline when you require PIL/TVTensor/native dictionary input, native target processors, exact native pixels or RNG streams, unsupported spatial transforms, or an upstream option the adapter does not preserve.</p>
+<p>Use <code>vision-synth</code> when BCHW tensor input, registered transforms, fused numerics, and measured task-level results meet your requirements. Review <a href="../known-limitations/">Known limitations</a> before production use.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../reference/datasets-scenes/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dataset scenes and outputs">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Dataset scenes and outputs
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025–2026 Jiri Borovec
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/Borda/vision-synth" target="_blank" rel="noopener" title="vision-synth on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/nav_dropdown.js"></script>
+      
+        <script src="../javascripts/pycon_copy.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

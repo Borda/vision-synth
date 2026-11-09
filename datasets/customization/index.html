@@ -1,0 +1,3431 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Reproducibility and tuning knobs, custom splits and fills, extending the shape vocabulary, and editing the packaged SVG assets.">
+      
+      
+        <meta name="author" content="Jiri Borovec">
+      
+      
+        <link rel="canonical" href="https://borda.github.io/vision-synth/datasets/customization/">
+      
+      
+        <link rel="prev" href="../difficulty/">
+      
+      
+        <link rel="next" href="../../applications/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Customization and extension - vision-synth</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="vision-synth">
+  <meta property="og:title" content="Customization and extension">
+  <meta property="og:description" content="Reproducibility and tuning knobs, custom splits and fills, extending the shape vocabulary, and editing the packaged SVG assets.">
+  <meta property="og:url" content="https://borda.github.io/vision-synth/datasets/customization/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Customization and extension">
+  <meta name="twitter:description" content="Reproducibility and tuning knobs, custom splits and fills, extending the shape vocabulary, and editing the packaged SVG assets.">
+  <link rel="alternate" type="text/plain" href="https://borda.github.io/vision-synth/llms.txt" title="LLM documentation index">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#customization-and-extension" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="vision-synth" class="md-header__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vision-synth
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Customization and extension
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
+        Get started
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-get-started"
+        aria-label="Navigation: Get started"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-get-started">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/installation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Install
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../getting-started/quickstart/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quickstart
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/how-fusion-works/"
+            class="md-tabs__menu-link"
+            
+          >
+            How fusion works
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../concepts/capabilities/"
+            class="md-tabs__menu-link"
+            
+          >
+            Capabilities
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../known-limitations/"
+            class="md-tabs__menu-link"
+            
+          >
+            Known limitations
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../guides/backend-pipelines/" class="md-tabs__link">
+        Guides
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-guides"
+        aria-label="Navigation: Guides"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-guides">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/backend-pipelines/"
+            class="md-tabs__menu-link"
+            
+          >
+            Backend pipelines
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Declarative configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/auxiliary-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Auxiliary targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/introspection/"
+            class="md-tabs__menu-link"
+            
+          >
+            Introspection
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../guides/reproducibility/"
+            class="md-tabs__menu-link"
+            
+          >
+            Reproducibility
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--active md-tabs__item--nested">
+      <a href="../" class="md-tabs__link">
+        Synthetic datasets
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-synthetic-datasets"
+        aria-label="Navigation: Synthetic datasets"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-synthetic-datasets">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../prototyping/"
+            class="md-tabs__menu-link"
+            
+          >
+            Prototyping and convergence checks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../shapes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Shape families
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../tasks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Tasks and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../outputs/"
+            class="md-tabs__menu-link"
+            
+          >
+            Annotation formats
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../difficulty/"
+            class="md-tabs__menu-link"
+            
+          >
+            Difficulty bands
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="./"
+            class="md-tabs__menu-link md-tabs__menu-link--active"
+            aria-current="page"
+          >
+            Customization and extension
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../applications/" class="md-tabs__link">
+        Applications
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-applications"
+        aria-label="Navigation: Applications"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-applications">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/"
+            class="md-tabs__menu-link"
+            
+          >
+            Overview
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/synthetic-data-experiments/"
+            class="md-tabs__menu-link"
+            
+          >
+            Synthetic data experiments
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/generate-and-augment/"
+            class="md-tabs__menu-link"
+            
+          >
+            Generate and augment
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/classification/"
+            class="md-tabs__menu-link"
+            
+          >
+            Classification
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/segmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Segmentation and dense targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/detection-and-keypoints/"
+            class="md-tabs__menu-link"
+            
+          >
+            Detection and keypoints
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/test-time-augmentation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Test-time augmentation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../applications/performance-planning/"
+            class="md-tabs__menu-link"
+            
+          >
+            Performance planning
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../research/quality-and-fidelity/" class="md-tabs__link">
+        Research
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-research"
+        aria-label="Navigation: Research"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-research">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/quality-and-fidelity/"
+            class="md-tabs__menu-link"
+            
+          >
+            Quality and fidelity
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/parity-tolerances/"
+            class="md-tabs__menu-link"
+            
+          >
+            Measured tolerances
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/benchmarks/"
+            class="md-tabs__menu-link"
+            
+          >
+            Benchmarks
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../research/methodology/"
+            class="md-tabs__menu-link"
+            
+          >
+            Methodology
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+    <li class="md-tabs__item md-tabs__item--nested">
+      <a href="../../reference/core/" class="md-tabs__link">
+        API reference
+      </a>
+      <button
+        type="button"
+        class="md-tabs__toggle"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-controls="md-tabs-menu-api-reference"
+        aria-label="Navigation: API reference"
+      >
+        <span class="md-tabs__caret"></span>
+      </button>
+      
+  <ul class="md-tabs__menu" id="md-tabs-menu-api-reference">
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/core/"
+            class="md-tabs__menu-link"
+            
+          >
+            Core pipeline
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/configuration/"
+            class="md-tabs__menu-link"
+            
+          >
+            Configuration
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/types-and-targets/"
+            class="md-tabs__menu-link"
+            
+          >
+            Types and targets
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/advanced/"
+            class="md-tabs__menu-link"
+            
+          >
+            Advanced internals
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-generation/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset generation
+          </a>
+        </li>
+      
+    
+      
+        <li class="md-tabs__menu-item">
+          <a
+            href="../../reference/datasets-scenes/"
+            class="md-tabs__menu-link"
+            
+          >
+            Dataset scenes and outputs
+          </a>
+        </li>
+      
+    
+  </ul>
+
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="vision-synth" class="md-nav__button md-logo" aria-label="vision-synth" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vision-synth
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Borda/vision-synth" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Borda/vision-synth
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/how-fusion-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How fusion works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../known-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/backend-pipelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarative configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/auxiliary-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auxiliary targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/introspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introspection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/reproducibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prototyping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prototyping and convergence checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape families
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tasks and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../difficulty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Difficulty bands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customization and extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reproducibility-and-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproducibility and tuning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reproducibility and tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a background
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#photographic-backgrounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Photographic backgrounds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baking-degradations-into-the-pixels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baking degradations into the pixels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-unlabelled-clutter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding unlabelled clutter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occluding-the-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Occluding the objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breaking-leftright-symmetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking left/right symmetry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-splits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom splits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-fill-colors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom fill colors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-your-own-background-or-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing your own background or degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extending-the-vocabulary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extending the vocabulary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extending the vocabulary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registering-an-output-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registering an output format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-the-packaged-assets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing the packaged assets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#end-to-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-end example
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../applications/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/synthetic-data-experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic data experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/generate-and-augment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate and augment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation and dense targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/detection-and-keypoints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection and keypoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/test-time-augmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-time augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/performance-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/quality-and-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality and fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/parity-tolerances/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measured tolerances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/types-and-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/datasets-scenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset scenes and outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reproducibility-and-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproducibility and tuning
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reproducibility and tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a background
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#photographic-backgrounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Photographic backgrounds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baking-degradations-into-the-pixels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baking degradations into the pixels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-unlabelled-clutter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding unlabelled clutter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occluding-the-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Occluding the objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breaking-leftright-symmetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking left/right symmetry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-splits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom splits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-fill-colors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom fill colors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-your-own-background-or-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing your own background or degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extending-the-vocabulary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extending the vocabulary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extending the vocabulary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registering-an-output-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registering an output format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-the-packaged-assets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing the packaged assets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#end-to-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-end example
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="customization-and-extension">Customization and extension<a class="headerlink" href="#customization-and-extension" title="Permanent link">&para;</a></h1>
+<h2 id="reproducibility-and-tuning">Reproducibility and tuning<a class="headerlink" href="#reproducibility-and-tuning" title="Permanent link">&para;</a></h2>
+<p>Pass <code>seed=</code> for byte-identical output; all randomness flows through a single <code>numpy.random.Generator</code>. Tune content through <code>generate_dataset(**config_kwargs)</code> or a full <code>SyntheticConfig</code>:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SplitRatios</span><span class="p">,</span> <span class="n">generate_dataset</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">out_dir</span><span class="p">:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">counts</span> <span class="o">=</span> <span class="n">generate_dataset</span><span class="p">(</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">out_dir</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">num_images</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="n">fmt</span><span class="o">=</span><span class="s2">"yolo"</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="n">task</span><span class="o">=</span><span class="s2">"obb"</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="n">split_ratios</span><span class="o">=</span><span class="n">SplitRatios</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="n">max_objects</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="p">)</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="nb">print</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>Per-split image counts for the 80/20 OBB split</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>{'train': 160, 'val': 40}
+</span></code></pre></div>
+
+</details>
+
+<p><code>SyntheticConfig</code> knobs: <code>img_size</code>, <code>min_objects</code>/<code>max_objects</code>, <code>min_size_ratio</code>/<code>max_size_ratio</code>, <code>overlap_iou</code>, <code>boundary_tolerance</code>, <code>rotate</code>, <code>asymmetry_jitter</code>, <code>background</code>, <code>degrade</code>, <code>distractors</code>, <code>distractor_shapes</code>, <code>distractor_colors</code>, <code>occluders</code>, <code>class_mode</code>, <code>task</code>, <code>shapes</code>, <code>colors</code>. <code>img_size</code> is an <code>int</code> for a square canvas or a <code>(width, height)</code> pair for a rectangular one; the object size ratios apply to the shorter side. Overlapping candidates (IoU above <code>overlap_iou</code>) and out-of-bounds candidates (more than <code>boundary_tolerance</code> outside the frame) are rejected during placement.</p>
+<p><code>task</code> and <code>class_mode</code> are config fields only. <code>generate_dataset</code> takes no <code>task=</code> argument of its own — pass it as a keyword and it flows into the config, or set it on a <code>SyntheticConfig</code> you build yourself, but not both.</p>
+<h3 id="choosing-a-background">Choosing a background<a class="headerlink" href="#choosing-a-background" title="Permanent link">&para;</a></h3>
+<p><code>background</code> accepts a plain fill — a <code>Color</code> or its name (<code>"red"</code>), an <code>(r, g, b)</code> triple, or a <code>Fill</code> — or one of the background types, which carry their own parameters and render themselves. The mode <em>is</em> the type: a <code>NoiseBackground</code> has a <code>sigma</code> and a <code>TextureBackground</code> does not, so there is no combination of mode and parameter that has to be rejected by hand.</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>parameters</th>
+<th>what it changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SolidBackground</code></td>
+<td><code>color</code></td>
+<td>one flat fill — the default, and what a bare triple normalizes to</td>
+</tr>
+<tr>
+<td><code>GradientBackground</code></td>
+<td><code>stops</code>, <code>direction</code>, <code>radial</code></td>
+<td>a linear or radial ramp, so intensity is no longer one global value</td>
+</tr>
+<tr>
+<td><code>NoiseBackground</code></td>
+<td><code>base</code>, <code>sigma</code></td>
+<td>per-pixel Gaussian grain, which removes the trivial edge detector</td>
+</tr>
+<tr>
+<td><code>ImpulseNoiseBackground</code></td>
+<td><code>base</code>, <code>amount</code>, <code>salt_ratio</code></td>
+<td>salt-and-pepper pixels, heavy-tailed and blur-resistant</td>
+</tr>
+<tr>
+<td><code>TextureBackground</code></td>
+<td><code>base</code>, <code>amplitude</code>, <code>frequency</code>, <code>octaves</code>, <code>quantize</code></td>
+<td>value noise at a chosen scale, so false positives become possible</td>
+</tr>
+</tbody>
+</table>
+<p>On a rectangular canvas, <code>TextureBackground.frequency</code> counts features across the shorter side, and <code>GradientBackground(radial=True)</code> centres on the canvas centre along each axis.</p>
+<p>Each picture below is a pair: on the left the canvas that mode painted, on the right that same canvas with the objects drawn onto it and their exported <code>bbox_xyxy</code> in yellow. The left half is there because a texture or a photographic crop stops being readable once shapes cover it.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:6"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><input id="__tabbed_1_6" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">SolidBackground()</label><label for="__tabbed_1_2">GradientBackground()</label><label for="__tabbed_1_3">GradientBackground(radial=True)</label><label for="__tabbed_1_4">NoiseBackground(sigma=24)</label><label for="__tabbed_1_5">ImpulseNoiseBackground()</label><label for="__tabbed_1_6">TextureBackground()</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="A flat fill, bare and with objects" src="../../assets/datasets/scene/backgrounds/solid.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="A linear ramp, bare and with objects" src="../../assets/datasets/scene/backgrounds/gradient.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="A radial ramp, bare and with objects" src="../../assets/datasets/scene/backgrounds/gradient-radial.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Per-pixel Gaussian grain, bare and with objects" src="../../assets/datasets/scene/backgrounds/noise.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Salt-and-pepper pixels, bare and with objects" src="../../assets/datasets/scene/backgrounds/impulse.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Value noise at object scale, bare and with objects" src="../../assets/datasets/scene/backgrounds/texture.webp" /></p>
+</div>
+</div>
+</div>
+<p>Every picture is rendered from one seed, so the three shapes sit in the same three places on every canvas above. That is not a rendering coincidence — it is the contract below, pictured. Regenerate them with <code>python examples/render_scene_gallery.py --groups backgrounds</code>, and the rest of this page's pictures by dropping the flag.</p>
+<p>Every background draws from a side stream of its own, never from the placement stream, so switching one on at a fixed seed leaves every object exactly where it was:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoiseBackground</span><span class="p">,</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">SyntheticGenerator</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">flat</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_objects</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">noisy</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">max_objects</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">background</span><span class="o">=</span><span class="n">NoiseBackground</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">24.0</span><span class="p">),</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">flat_stream</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">noisy_stream</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">placements</span> <span class="o">=</span> <span class="p">[[</span><span class="n">a</span><span class="o">.</span><span class="n">bbox_xyxy</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">flat_stream</span><span class="p">]</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">unmoved</span> <span class="o">=</span> <span class="p">[[</span><span class="n">a</span><span class="o">.</span><span class="n">bbox_xyxy</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">noisy_stream</span><span class="p">]</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="nb">print</span><span class="p">(</span><span class="n">placements</span> <span class="o">==</span> <span class="n">unmoved</span><span class="p">)</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">SyntheticConfig</span><span class="p">()</span><span class="o">.</span><span class="n">background</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>The same placements under a different canvas</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>True
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>SolidBackground
+</span></code></pre></div>
+
+</details>
+
+<p><code>config.background</code> reads back as a background object whichever spelling went in, so a caller that wants the flat fill asks for <code>config.background.color.rgb</code> rather than for the field itself. Two spellings that used to work no longer do: the field was previously handed straight to Pillow, so a colour <em>name</em> (<code>background="white"</code>, <code>background="#204080"</code>) reached <code>Image.new</code> and rendered. It is now validated like every other fill and raises at construction. Pass the triple — <code>(255, 255, 255)</code> — or a <code>Color</code> member. This is the first validation the field has ever had, and it is also what rejects a typo that previously rendered as black. Keep <code>NoiseBackground.sigma</code> at or below <code>32</code> for any run scored against a rasterized-ink oracle: the oracle finds ink by colour distance, Gaussian noise is unbounded, and its tail — not its mean — is what starts producing false ink above that.</p>
+<h3 id="photographic-backgrounds">Photographic backgrounds<a class="headerlink" href="#photographic-backgrounds" title="Permanent link">&para;</a></h3>
+<p><code>ImageBackground</code> crops the canvas out of your own pictures, which buys the spatial statistics of real scenes without any labelling cost — the labels still come from the shapes drawn on top. It is the only mode that reads files the package does not ship, and the only one whose parameter has no default: there is nothing to ship a default directory from, and an empty one is refused at construction rather than rendered as black.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageBackground</span><span class="p">,</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">SyntheticGenerator</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">folder</span><span class="p">:</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">90</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"wall.png"</span><span class="p">)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">config</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">ImageBackground</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">)))</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">background_source</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>Which picture the sample stood on</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>wall.png
+</span></code></pre></div>
+
+</details>
+
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">ImageBackground(folder)</label><label for="__tabbed_2_2">ImageBackground(folder, grayscale=True)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="A crop of a picture on disk, bare and with objects" src="../../assets/datasets/scene/backgrounds/image.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="The same crop with its colour dropped" src="../../assets/datasets/scene/backgrounds/image-grayscale.webp" /></p>
+</div>
+</div>
+</div>
+<p>The two pictures above crop from a directory of generated pictures rather than photographs, since what the mode does with a file does not depend on what the file is of. <code>grayscale=True</code> is the right-hand one: same structure, no colour to compete with a colour-named class.</p>
+<p>Which file a sample was cropped from reaches <code>sample.scene.background_source</code> as a POSIX-form path relative to <code>image_dir</code>, so a photographic dataset stays traceable rather than merely reproducible in principle. The directory is searched recursively, and every candidate is opened before the directory is accepted, so a corrupt file or a subdirectory that merely happens to end in <code>.png</code> is refused where you can see it rather than from inside the renderer. Files are listed in sorted order, so a seed picks the same picture on any machine; a picture smaller than the canvas is scaled up proportionally rather than refused; and <code>grayscale=True</code> keeps the structure while dropping the colour, which matters when the run's classes are colour-named and a photographic canvas would otherwise compete with them. The directory listing is cached per process — a background reading a directory that changes underneath it has no reproducible meaning anyway.</p>
+<h3 id="baking-degradations-into-the-pixels">Baking degradations into the pixels<a class="headerlink" href="#baking-degradations-into-the-pixels" title="Permanent link">&para;</a></h3>
+<p><code>degrade</code> takes a tuple of pointwise effects applied, in order, after the last shape is drawn. Each changes pixel <em>values</em> and never pixel <em>positions</em>, so no label moves — anything geometric belongs to <code>FusedCompose</code>, not here.</p>
+<table>
+<thead>
+<tr>
+<th>effect</th>
+<th>parameter</th>
+<th>what it costs a model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GaussianNoise(sigma)</code></td>
+<td>0–32</td>
+<td>edge localisation and small-object recall</td>
+</tr>
+<tr>
+<td><code>GaussianBlur(radius)</code></td>
+<td>0–3 px</td>
+<td>corner keypoints, and the OBB angle on a square-ish shape</td>
+</tr>
+<tr>
+<td><code>JPEG(quality)</code></td>
+<td>1–95</td>
+<td>block artefacts around thin letter strokes</td>
+</tr>
+<tr>
+<td><code>Contrast(factor)</code></td>
+<td>0.3–1.0</td>
+<td>colour-mode classes converge toward each other</td>
+</tr>
+<tr>
+<td><code>ColorCast(gain)</code></td>
+<td>per channel 0.7–1.3</td>
+<td>red-versus-green separation under a white balance error</td>
+</tr>
+<tr>
+<td><code>Vignette(strength)</code></td>
+<td>0–0.6</td>
+<td>objects near the border darken, which interacts with <code>boundary_tolerance</code></td>
+</tr>
+<tr>
+<td><code>Quantize(levels)</code></td>
+<td>2–256</td>
+<td>flat fills band, a cheap stand-in for low bit depth</td>
+</tr>
+</tbody>
+</table>
+<p>Each picture pairs the effect on a bare canvas with the effect on the full scene, at the strength its tab names — stronger than the defaults in most cases, because a panel this size has to show what the knob does rather than what a conservative default looks like.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:8"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><input id="__tabbed_3_5" name="__tabbed_3" type="radio" /><input id="__tabbed_3_6" name="__tabbed_3" type="radio" /><input id="__tabbed_3_7" name="__tabbed_3" type="radio" /><input id="__tabbed_3_8" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">none</label><label for="__tabbed_3_2">GaussianNoise(sigma=16)</label><label for="__tabbed_3_3">GaussianBlur(radius=1.5)</label><label for="__tabbed_3_4">JPEG(quality=15)</label><label for="__tabbed_3_5">Contrast(factor=0.45)</label><label for="__tabbed_3_6">ColorCast(gain=(1.3, 1.0, 0.7))</label><label for="__tabbed_3_7">Vignette(strength=0.7)</label><label for="__tabbed_3_8">Quantize(levels=4)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="The scene with no degradation" src="../../assets/datasets/scene/degradations/none.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Gaussian noise on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/gaussian-noise.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Blur on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/gaussian-blur.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="JPEG blocking on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/jpeg.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Reduced contrast on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/contrast.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="A white-balance error on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/color-cast.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Corner darkening on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/vignette.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Banding on a bare canvas and on the scene" src="../../assets/datasets/scene/degradations/quantize.webp" /></p>
+</div>
+</div>
+</div>
+<p>The pairing separates two costs that look alike in a single image. A degradation runs over the whole image, so the left panel is the effect on flat pixels and the right is the same effect where an edge has to survive it: <code>GaussianNoise</code> and <code>Quantize</code> visibly change the empty canvas, while <code>GaussianBlur</code> and <code>JPEG</code> leave it almost untouched and spend themselves entirely on the boundaries. Every picture carries the same boxes — not one of these effects moves a pixel, only recolours it.</p>
+<p>This is not a duplicate of the augmentation pipeline. A <code>degrade</code> tuple describes pixels baked into an on-disk dataset — a fixed property of the data, replayable from its seed — where a transform in a training loop resamples every epoch, and a dataset can carry both:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">JPEG</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">GaussianBlur</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">SyntheticConfig</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">SyntheticGenerator</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">plain</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_objects</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">degraded</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">max_objects</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">degrade</span><span class="o">=</span><span class="p">(</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">JPEG</span><span class="p">(</span><span class="n">quality</span><span class="o">=</span><span class="mi">50</span><span class="p">)),</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="p">)</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="n">plain_stream</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">plain</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="n">degraded_stream</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">degraded</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="n">boxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">bbox_xyxy</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">plain_stream</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">]</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="n">unmoved</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">bbox_xyxy</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">degraded_stream</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">]</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="nb">print</span><span class="p">(</span><span class="n">boxes</span> <span class="o">==</span> <span class="n">unmoved</span><span class="p">)</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">SyntheticConfig</span><span class="p">()</span><span class="o">.</span><span class="n">degrade</span><span class="p">))</span>
+</span></code></pre></div>
+<details>
+<summary>Degraded pixels, identical labels</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>True
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>0
+</span></code></pre></div>
+
+</details>
+
+<p>Note what sits downstream of this chain: <code>generate_dataset</code> writes every image as JPEG at quality 95, so a dataset on disk already carries one lossy encode whatever <code>degrade</code> says. <code>JPEG(quality)</code> is therefore a second, harsher pass rather than the only one, and the exact <code>(255, 255, 255)</code>/<code>(0, 0, 0)</code> endpoints <code>ImpulseNoiseBackground</code> produces are softened by ringing on the way to disk — they survive intact only for a <code>Sample</code> consumed in memory. The floor of the difficulty ladder is set by the writer, not by the config.</p>
+<p>The tuple is a tuple because order matters: blurring and then compressing is not the same picture as compressing and then blurring. Each step takes <code>uint8</code> and returns <code>uint8</code>, so quantisation error accumulates between steps rather than being carried in float to the end — which is what a real camera pipeline does.</p>
+<h3 id="adding-unlabelled-clutter">Adding unlabelled clutter<a class="headerlink" href="#adding-unlabelled-clutter" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">neither</label><label for="__tabbed_4_2">distractors=6</label><label for="__tabbed_4_3">occluders=3</label><label for="__tabbed_4_4">distractors=6, occluders=3</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><img alt="The scene with no unlabelled ink" src="../../assets/datasets/scene/clutter/none.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Unlabelled shapes drawn under the objects" src="../../assets/datasets/scene/clutter/distractors.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Unlabelled shapes drawn over the objects" src="../../assets/datasets/scene/clutter/occluders.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Both knobs at once" src="../../assets/datasets/scene/clutter/both.webp" /></p>
+</div>
+</div>
+</div>
+<p>Two knobs add ink that no annotation mentions: <code>distractors</code> go under the labelled objects, <code>occluders</code> go over them, and the last picture runs both. Only the three labelled shapes carry a box, in all four — every other mark is unlabelled and stays that way, which is the entire point of these knobs. Those three sit in the same places throughout, as they do across the backgrounds above, since clutter draws from a side stream too.</p>
+<p>These four show no bare canvas, unlike every picture above: neither knob touches the canvas, so that panel would be the same flat grey four times. <code>occluders</code> has its own section below.</p>
+<p><code>distractors</code> draws that many shapes <em>under</em> the labelled objects, from shapes and colours no class owns. Nothing about them reaches an annotation — no class id, no box, no landmark table — so what they cost a model is the ability to find objects by asking "is there a shape here" instead of "which shape is this":</p>
+<div class="highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">SyntheticGenerator</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">plain</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_objects</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">cluttered</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_objects</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">distractors</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">plain_stream</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">plain</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">cluttered_stream</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">cluttered</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">plain_stream</span><span class="p">]</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="n">unchanged</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cluttered_stream</span><span class="p">]</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">unchanged</span><span class="p">)</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="nb">print</span><span class="p">([</span><span class="n">fill</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">distractors</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">resolved_distractor_colors</span><span class="p">])</span>
+</span></code></pre></div>
+<details>
+<summary>Clutter in the pixels, nothing in the labels</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>True
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>['slate', 'sand', 'brown', 'teal', 'plum', 'olive']
+</span></code></pre></div>
+
+</details>
+
+<p>Both pools default to a complement so clutter never wears a class's own appearance: <code>distractor_shapes</code> is every shape <code>shapes</code> does not use, and <code>distractor_colors</code> is the packaged <code>DISTRACTOR_PALETTE</code> minus any RGB triple <code>colors</code> already claims. The fields read back as whatever you passed — <code>None</code> included — and <code>resolved_distractor_shapes</code> / <code>resolved_distractor_colors</code> give the concrete pools, derived on read so they stay correct after a <code>dataclasses.replace</code> that changed <code>shapes</code> or <code>colors</code>. The colour complement is taken against that palette rather than against <code>colors</code> itself because <code>colors</code> defaults to the whole <code>Color</code> vocabulary, which would leave nothing to draw with; asking for clutter when either pool really is empty raises at construction and names which one it was. Placement is best effort and carries no IoU constraint — being overlapped is the point — so an item that cannot be placed within its own attempt budget is skipped rather than raised over.</p>
+<h3 id="occluding-the-objects">Occluding the objects<a class="headerlink" href="#occluding-the-objects" title="Permanent link">&para;</a></h3>
+<p><code>occluders</code> draws that many unlabelled shapes <em>over</em> the labelled ones, from the same two distractor pools. It is the one knob that touches a label, and the only one: a landmark it covers is demoted from COCO visibility <code>2</code> to <code>1</code>, while polygons and boxes stay exactly where they were. Occluders respect neither <code>boundary_tolerance</code> nor <code>overlap_iou</code> — an occluder that runs half off the frame is a realistic occluder.</p>
+<p>What was covered is published on the sample rather than left implicit:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">SyntheticGenerator</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.families.animals</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnimalShape</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">config</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">img_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">task</span><span class="o">=</span><span class="s2">"keypoints"</span><span class="p">,</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="n">shapes</span><span class="o">=</span><span class="p">(</span><span class="n">AnimalShape</span><span class="o">.</span><span class="n">DUCK</span><span class="p">,</span> <span class="n">AnimalShape</span><span class="o">.</span><span class="n">CAMEL</span><span class="p">),</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">min_objects</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="n">max_objects</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">min_size_ratio</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="n">max_size_ratio</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">occluders</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="p">)</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">annotation</span><span class="o">.</span><span class="n">keypoints</span> <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">annotations</span><span class="p">]</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="n">flags</span> <span class="o">=</span> <span class="p">{</span><span class="n">triple</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span> <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">table</span><span class="p">}</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="n">unoccluded</span> <span class="o">=</span> <span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="mi">32</span><span class="p">))</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">flags</span><span class="p">))</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">occluder_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">unoccluded</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">occluder_mask</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>Visibility flags under occlusion</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>[1, 2]
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>(96, 96)
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>None
+</span></code></pre></div>
+
+</details>
+
+<p><code>sample.scene</code> is a <code>SceneRecord</code> — one typed side-car for everything describing the whole image rather than one object in it, so later additions land there and touch no consumer. It compares by identity rather than by field, because a generated equality over a raster field raises instead of returning a bool, and the mask buffer is read-only: a mutated mask would silently disagree with the visibility flags already computed from it.</p>
+<h3 id="breaking-leftright-symmetry">Breaking left/right symmetry<a class="headerlink" href="#breaking-leftright-symmetry" title="Permanent link">&para;</a></h3>
+<p>Most shapes are drawn mirror-symmetric about their own vertical axis in canonical orientation (every geometric shape, every symbol, most letters), so their oriented bounding box otherwise always shows identical left/right margins — real oriented objects (vehicles, ships) rarely are. <code>asymmetry_jitter</code> (default <code>0.0</code>, a fraction in <code>[0, 0.5)</code>) narrows a randomly chosen half — left or right of that axis, before rotation — of each placed object by up to that fraction, independently per instance. The animal silhouettes and roughly two-thirds of the letters are already asymmetric on their own (a letter's own strokes rarely balance left-right the way a symbol's outline is authored to), so the jitter is redundant orientation variety for them rather than the sole source of it — it still applies uniformly to every shape but <code>circle</code>, which is excluded for the separate reason below:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticConfig</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">asymmetry_jitter</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span><span class="o">.</span><span class="n">asymmetry_jitter</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="go">0.15</span>
+</span></code></pre></div>
+<p><code>circle</code> is always excluded — it never rotates either, so an unrotated skew would bias every circle toward the same absolute image direction instead of varying with a random orientation. Under <code>Task.KEYPOINTS</code> the same draw skews the polygon and the landmark table together, so a shape and its keypoints never drift apart. <code>0.0</code> (the default) draws exactly the RNG sequence this package always has, so existing seeded configurations are unaffected.</p>
+<h3 id="custom-splits">Custom splits<a class="headerlink" href="#custom-splits" title="Permanent link">&para;</a></h3>
+<p><code>SplitRatios</code> names train/val/test because that is what almost every caller wants, not because the set is closed. <code>SplitRatios.custom</code> takes any names at all:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SplitRatios</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">holdout</span> <span class="o">=</span> <span class="n">SplitRatios</span><span class="o">.</span><span class="n">custom</span><span class="p">({</span><span class="s2">"train"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s2">"calib"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">holdout</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</span></code></pre></div>
+<details>
+<summary>Custom split fractions</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>{'train': 0.6, 'calib': 0.2, 'test': 0.2}
+</span></code></pre></div>
+
+</details>
+
+<p>The arithmetic is unchanged: fractions must be non-negative and sum to 1, or construction raises.</p>
+<p>For YOLO output, every custom split is written under <code>images/&lt;split&gt;/</code> and <code>labels/&lt;split&gt;/</code>. <code>data.yaml</code> exposes only the standard <code>train</code>, <code>val</code>, and <code>test</code> keys; it does not list <code>calib</code>. Pass <code>images/calib</code> explicitly to a calibration tool that needs it. If you need a custom split as a trainer's validation or test input, configure that trainer with its path explicitly.</p>
+<h3 id="custom-fill-colors">Custom fill colors<a class="headerlink" href="#custom-fill-colors" title="Permanent link">&para;</a></h3>
+<p><code>colors</code> accepts a named <code>Color</code>, any 8-bit <code>(r, g, b)</code> triple, or an explicit <code>Fill</code>. All three are normalized to <code>Fill</code> at construction, so <code>config.colors</code> reads back as <code>Fill</code> objects whichever spelling went in — the same one-type-inside rule <code>task</code> and <code>class_mode</code> already follow.</p>
+<p>A <code>Fill</code> carries the RGB to draw with and, when it came from a named <code>Color</code>, that name. A raw triple has no name, so <code>Fill.label</code> falls back to the hex value — which is what keeps class naming well defined under <code>ClassMode.COLOR</code> and <code>ClassMode.SHAPE_COLOR</code> without inventing color names:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    <span class="n">ClassMode</span><span class="p">,</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">Color</span><span class="p">,</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">DEFAULT_SHAPES</span><span class="p">,</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">SyntheticConfig</span><span class="p">,</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">class_names</span><span class="p">,</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">)</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">gold</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="p">((</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">Color</span><span class="o">.</span><span class="n">RED</span><span class="p">))</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="nb">print</span><span class="p">([</span><span class="n">fill</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">gold</span><span class="o">.</span><span class="n">colors</span><span class="p">])</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">class_names</span><span class="p">(</span><span class="n">ClassMode</span><span class="o">.</span><span class="n">SHAPE_COLOR</span><span class="p">,</span> <span class="n">DEFAULT_SHAPES</span><span class="p">,</span> <span class="n">gold</span><span class="o">.</span><span class="n">colors</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span>
+</span></code></pre></div>
+<details>
+<summary>Class names for a custom fill</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>['ffd700', 'red']
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>['ffd700_square', 'red_square']
+</span></code></pre></div>
+
+</details>
+
+<p>Entries that define classes must be unique: <code>shapes</code> in shape and shape-color mode, and <code>colors</code> RGB values in color and shape-color mode. Two fills with the same pixels cannot carry different color class IDs; duplicate class names are also rejected. The ignored pool may repeat as a sampling weight (<code>colors</code> in shape mode, <code>shapes</code> in color mode). These checks apply when constructing <code>SyntheticConfig</code> or calling <code>class_vocabulary</code> directly.</p>
+<h3 id="writing-your-own-background-or-degradation">Writing your own background or degradation<a class="headerlink" href="#writing-your-own-background-or-degradation" title="Permanent link">&para;</a></h3>
+<p><code>Background</code> and <code>Degradation</code> are abstract base classes, so a new canvas or camera effect is a subclass rather than a new config field. A background implements <code>render(rng, img_size)</code> and returns a writable <code>(height, width, 3)</code> <code>uint8</code> array; a degradation implements <code>apply(image, rng)</code> and returns a new array of the same shape. The generator passes <code>img_size</code> as a plain <code>int</code> for a square canvas and as <code>(width, height)</code> for a rectangular one; <code>as_canvas_size</code> turns either spelling into <code>(width, height)</code>. Override <code>consumes_randomness</code> to return <code>False</code> when the class draws nothing random: the generator then hands it <code>None</code> instead of a side stream.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Background</span><span class="p">,</span> <span class="n">Degradation</span><span class="p">,</span> <span class="n">SyntheticConfig</span><span class="p">,</span> <span class="n">SyntheticGenerator</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_canvas_size</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">StripeBackground</span><span class="p">(</span><span class="n">Background</span><span class="p">):</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">    </span><span class="sd">"""Vertical grey stripes, eight pixels wide."""</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    <span class="nd">@property</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">consumes_randomness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># deterministic, so the generator hands render() no stream</span>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">]:</span>
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">as_canvas_size</span><span class="p">(</span><span class="n">img_size</span><span class="p">)</span>
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>        <span class="n">columns</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a><span class="k">class</span><span class="w"> </span><span class="nc">Invert</span><span class="p">(</span><span class="n">Degradation</span><span class="p">):</span>
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a><span class="w">    </span><span class="sd">"""Photographic negative."""</span>
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>
+</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>    <span class="nd">@property</span>
+</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">consumes_randomness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>
+</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">],</span> <span class="n">rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">]:</span>
+</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>        <span class="k">return</span> <span class="mi">255</span> <span class="o">-</span> <span class="n">image</span>
+</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
+</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a><span class="n">config</span> <span class="o">=</span> <span class="n">SyntheticConfig</span><span class="p">(</span><span class="n">img_size</span><span class="o">=</span><span class="p">(</span><span class="mi">96</span><span class="p">,</span> <span class="mi">48</span><span class="p">),</span> <span class="n">background</span><span class="o">=</span><span class="n">StripeBackground</span><span class="p">(),</span> <span class="n">degrade</span><span class="o">=</span><span class="p">(</span><span class="n">Invert</span><span class="p">(),))</span>
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a><span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">SyntheticGenerator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>A rectangular canvas painted by the custom background</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>(48, 96, 3)
+</span></code></pre></div>
+
+</details>
+
+<p>Both classes draw from their own side stream, never from the placement stream, so switching one on never moves an object at a fixed seed.</p>
+<h2 id="extending-the-vocabulary">Extending the vocabulary<a class="headerlink" href="#extending-the-vocabulary" title="Permanent link">&para;</a></h2>
+<p>Every shape family — the analytic primitives, the animals, the symbols, the letters — is registered once in <code>synth_datasets.families</code>, and every other module reads that registry rather than naming the families itself:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SHAPE_FAMILIES</span><span class="p">,</span> <span class="n">family_of</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets.families.animals</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnimalShape</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">summary</span> <span class="o">=</span> <span class="p">[(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">members</span><span class="p">),</span> <span class="n">f</span><span class="o">.</span><span class="n">has_keypoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">SHAPE_FAMILIES</span><span class="p">]</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">family_of</span><span class="p">(</span><span class="n">AnimalShape</span><span class="o">.</span><span class="n">DUCK</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>The registered families</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>[('primitives', 4, False), ('animals', 12, True), ('symbols', 7, True), ('letters', 26, True)]
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>animals
+</span></code></pre></div>
+
+</details>
+
+<p>A <code>ShapeFamily</code> carries its members, an outline accessor, and — for a keypoint-bearing family — its schema and landmark placer. Adding a fifth family means writing the module and appending one entry: the enum derives from <code>ShapeEnum</code>, so <code>Shape</code> covers it with no second edit. It used to mean editing six places that each encoded the family list differently, where missing one failed quietly: forget the landmark dispatch and the family generated no keypoints at all, which the writer then serialized as a structurally valid all-zero table.</p>
+<h3 id="registering-an-output-format">Registering an output format<a class="headerlink" href="#registering-an-output-format" title="Permanent link">&para;</a></h3>
+<p><code>OutputFormat</code> is a closed enum, but the writer table behind it is not. <code>register_writer</code> accepts any key, and <code>generate_dataset(fmt=...)</code> then resolves it like a built-in format. A custom writer that overrides <code>owned_paths</code> also gets the built-ins' refusal to write into a populated destination and their <code>overwrite=True</code> replacement; calling <code>self.record_output(splits, output_dir)</code> at the end of <code>write</code> records those paths in the <code>.vision-synth.json</code> manifest, which is what lets a later <code>overwrite</code> remove a split this run no longer writes:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_datasets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    <span class="n">ClassMode</span><span class="p">,</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>    <span class="n">DEFAULT_SHAPES</span><span class="p">,</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>    <span class="n">Task</span><span class="p">,</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>    <span class="n">YoloWriter</span><span class="p">,</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>    <span class="n">class_vocabulary</span><span class="p">,</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>    <span class="n">get_writer</span><span class="p">,</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>    <span class="n">register_writer</span><span class="p">,</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="p">)</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="k">class</span><span class="w"> </span><span class="nc">UltralyticsWriter</span><span class="p">(</span><span class="n">YoloWriter</span><span class="p">):</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="w">    </span><span class="sd">"""A YOLO writer with house conventions layered on."""</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="n">register_writer</span><span class="p">(</span><span class="s2">"ultralytics"</span><span class="p">,</span> <span class="n">UltralyticsWriter</span><span class="p">)</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="n">vocabulary</span> <span class="o">=</span> <span class="n">class_vocabulary</span><span class="p">(</span><span class="n">ClassMode</span><span class="o">.</span><span class="n">SHAPE</span><span class="p">,</span> <span class="n">DEFAULT_SHAPES</span><span class="p">)</span>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="n">writer</span> <span class="o">=</span> <span class="n">get_writer</span><span class="p">(</span><span class="s2">"ultralytics"</span><span class="p">,</span> <span class="n">Task</span><span class="o">.</span><span class="n">DETECTION</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">)</span>
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span></code></pre></div>
+<details>
+<summary>The registered writer</summary>
+
+<div class="highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>UltralyticsWriter
+</span></code></pre></div>
+
+</details>
+
+<h3 id="editing-the-packaged-assets">Editing the packaged assets<a class="headerlink" href="#editing-the-packaged-assets" title="Permanent link">&para;</a></h3>
+<p>All three asset-backed families are read by one parser (<code>synth_datasets.families.svgio</code>) and edited by one tool:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>python<span class="w"> </span>examples/edit_shape_keypoints.py<span class="w"> </span>duck<span class="w">      </span><span class="c1"># an animal silhouette</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>python<span class="w"> </span>examples/edit_shape_keypoints.py<span class="w"> </span>anchor<span class="w">    </span><span class="c1"># a symbol outline</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>python<span class="w"> </span>examples/edit_shape_keypoints.py<span class="w"> </span>r<span class="w">         </span><span class="c1"># a letter stroke graph</span>
+</span></code></pre></div>
+<p>Press and hold a point to drag it, release to drop, <code>s</code> to save back into the SVG, <code>q</code> to quit. Saving rewrites the point group and everything derived from it — an outline family's skeleton, a letter's stroke and cut coordinates — so the file always renders as what it loads as.</p>
+<h2 id="end-to-end-example">End-to-end example<a class="headerlink" href="#end-to-end-example" title="Permanent link">&para;</a></h2>
+<p><code>examples/generate_synthetic_dataset.py</code> writes every format × task combination and prints the per-split counts:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>python<span class="w"> </span>examples/generate_synthetic_dataset.py<span class="w"> </span>--outdir<span class="w"> </span>shapes_out<span class="w"> </span>--num-images<span class="w"> </span><span class="m">50</span><span class="w"> </span>--seed<span class="w"> </span><span class="m">0</span>
+</span></code></pre></div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../difficulty/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Difficulty bands">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Difficulty bands
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../applications/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025–2026 Jiri Borovec
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/Borda/vision-synth" target="_blank" rel="noopener" title="vision-synth on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/nav_dropdown.js"></script>
+      
+        <script src="../../javascripts/pycon_copy.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
